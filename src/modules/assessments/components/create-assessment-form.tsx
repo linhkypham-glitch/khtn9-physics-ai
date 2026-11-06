@@ -191,7 +191,7 @@ export function CreateAssessmentForm({ lessons, aiConfigured }: { lessons: Lesso
                 <Sparkles />
                 <AlertTitle>Chức năng AI chưa được cấu hình</AlertTitle>
                 <AlertDescription>
-                  <p>Quản trị viên cần thêm biến môi trường <code>ANTHROPIC_API_KEY</code> trên Vercel (Settings → Environment Variables) rồi Redeploy. Trong lúc chờ, hãy dùng “Tự động từ ngân hàng”.</p>
+                  <p>Quản trị viên cần thêm biến môi trường <code>GEMINI_API_KEY</code> (miễn phí) hoặc <code>ANTHROPIC_API_KEY</code> trên Vercel (Settings → Environment Variables) rồi Redeploy. Trong lúc chờ, hãy dùng “Tự động từ ngân hàng”.</p>
                 </AlertDescription>
               </Alert>
             )

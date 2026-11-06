@@ -65,11 +65,16 @@ export function SetupStatusPanel({ status }: { status: SetupStatus }) {
           </Row>
           <Row level={status.ai.configured ? "ok" : "warn"} title="Dịch vụ AI">
             {status.ai.configured ? (
-              `Đã cấu hình nhà cung cấp: ${status.ai.provider} (${status.ai.model}).`
+              <>
+                Đã cấu hình nhà cung cấp: {status.ai.provider} ({status.ai.model}).
+                {status.ai.provider === "gemini" && (
+                  <> Lưu ý: ở gói miễn phí, Google có thể dùng dữ liệu gửi lên để cải thiện sản phẩm – ứng dụng không gửi họ tên học sinh cho AI.</>
+                )}
+              </>
             ) : (
               <>
                 Chức năng AI chưa được cấu hình – các chức năng khác vẫn hoạt động bình thường. {status.ai.reason}
-                {status.ai.provider === "anthropic" && <> Cần đặt <code>{aiKeyEnvName("anthropic")}</code>.</>}
+                {!status.ai.provider && <> Đặt <code>{aiKeyEnvName("gemini")}</code> (có gói miễn phí) hoặc <code>{aiKeyEnvName("anthropic")}</code>.</>}
               </>
             )}
           </Row>

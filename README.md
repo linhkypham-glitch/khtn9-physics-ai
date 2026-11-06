@@ -74,11 +74,17 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
   quản trị viên có công tắc tắt toàn hệ thống. Chỉ hiển thị họ tên, lớp, điểm, thời gian, số ý đúng.
 - **AI viết bản nháp nhận xét** quá trình học tập từ số liệu thật (không suy đoán phẩm chất, hoàn cảnh); giáo viên đọc, sửa rồi mới lưu.
 
-### Bật AI tạo đề
+### Bật AI (tạo đề, gợi ý chấm tự luận, nháp nhận xét)
 
-Thêm biến môi trường trên Vercel (Settings → Environment Variables) rồi Redeploy:
-`ANTHROPIC_API_KEY` = khoá API Anthropic (console.anthropic.com). Tuỳ chọn `AI_MODEL` (mặc định `claude-opus-5-5`).
-Chi phí API do tài khoản Anthropic của bạn chi trả. Ứng dụng bật `fallbacks: "default"`: nếu bộ lọc an toàn của model từ chối, máy chủ Anthropic tự chạy lại trên model dự phòng.
+Chọn **một** trong hai nhà cung cấp, thêm biến môi trường trên Vercel (Settings → Environment Variables) rồi Redeploy:
+
+| Nhà cung cấp | Biến cần đặt | Chi phí | Ghi chú |
+|---|---|---|---|
+| **Google Gemini** | `GEMINI_API_KEY` (lấy tại aistudio.google.com → Get API key) | Có gói miễn phí, giới hạn số lượt/phút và /ngày | Gói miễn phí: Google có thể dùng dữ liệu gửi lên để cải thiện sản phẩm. Model mặc định `gemini-2.5-flash`. |
+| **Anthropic Claude** | `ANTHROPIC_API_KEY` (console.anthropic.com) | Trả phí theo lượt dùng | Model mặc định `claude-opus-5-5`; rẻ hơn: `AI_MODEL=claude-haiku-5-5`. Bật `fallbacks: "default"`. |
+
+Nếu đặt cả hai khoá, dùng `AI_PROVIDER=gemini` hoặc `AI_PROVIDER=anthropic` để chọn. `AI_MODEL` (tuỳ chọn) chỉ áp dụng khi khớp nhà cung cấp.
+Ứng dụng **không gửi họ tên học sinh** cho AI (nhận xét dùng nhãn thay thế rồi điền tên ở máy chủ); bài tự luận chỉ gửi nội dung bài làm.
 
 ### Chưa có
 

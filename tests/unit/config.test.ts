@@ -31,7 +31,26 @@ describe("Cấu hình AI", () => {
   it("báo chưa cấu hình khi thiếu cả AI_PROVIDER và key", () => {
     vi.stubEnv("AI_PROVIDER", "");
     vi.stubEnv("ANTHROPIC_API_KEY", "");
+    vi.stubEnv("GEMINI_API_KEY", "");
     expect(getAiConfigStatus().configured).toBe(false);
+  });
+
+  it("tự nhận Gemini khi chỉ có GEMINI_API_KEY; bỏ qua AI_MODEL của nhà cung cấp khác", () => {
+    vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("ANTHROPIC_API_KEY", "");
+    vi.stubEnv("GEMINI_API_KEY", "g-test");
+    vi.stubEnv("AI_MODEL", "claude-haiku-5-5");
+    expect(getAiConfigStatus()).toMatchObject({ configured: true, provider: "gemini", model: "gemini-2.5-flash", apiKey: "g-test" });
+    vi.stubEnv("AI_MODEL", "gemini-2.5-pro");
+    expect(getAiConfigStatus()).toMatchObject({ provider: "gemini", model: "gemini-2.5-pro" });
+  });
+
+  it("AI_PROVIDER=gemini nhưng thiếu key thì báo đúng biến", () => {
+    vi.stubEnv("AI_PROVIDER", "gemini");
+    vi.stubEnv("GEMINI_API_KEY", "");
+    const s = getAiConfigStatus();
+    expect(s.configured).toBe(false);
+    if (!s.configured) expect(s.reason).toContain("GEMINI_API_KEY");
   });
 
   it("tự nhận Anthropic khi chỉ có ANTHROPIC_API_KEY, model mặc định claude-opus-5-5", () => {

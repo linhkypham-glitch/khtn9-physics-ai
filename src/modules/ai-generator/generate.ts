@@ -1,9 +1,6 @@
 import "server-only";
 
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-
-import { getAiConfigStatus } from "@/lib/ai/config";
+import { generateStructured } from "@/lib/ai/structured";
 import { AiResponseSchema, type AiQuestion } from "./schema";
 
 export type LessonContext = {
@@ -61,36 +58,16 @@ Các câu hỏi ĐÃ CÓ trong ngân hàng (không được lặp lại):
 ${existing || "(chưa có)"}`;
 }
 
-/** Gọi Claude tạo câu hỏi (structured outputs). Kết quả còn phải qua validateAiQuestions và giáo viên duyệt. */
+/** Gọi AI tạo câu hỏi (đầu ra theo lược đồ). Kết quả còn phải qua validateAiQuestions và giáo viên duyệt. */
 export async function generateQuestionsWithAi(req: GenerateRequest): Promise<GenerateResult> {
-  const cfg = getAiConfigStatus();
-  if (!cfg.configured) return { ok: false, error: `Chức năng AI chưa được cấu hình. ${cfg.reason}` };
-
-  const client = new Anthropic({ apiKey: cfg.apiKey, timeout: 5 * 60 * 1000, maxRetries: 2 });
-  try {
-    const response = await client.beta.messages.parse({
-      model: cfg.model,
-      max_tokens: 16000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: "high", format: betaZodOutputFormat(AiResponseSchema) },
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(req) }],
-    });
-
-    if (response.stop_reason === "refusal") {
-      return { ok: false, error: "AI từ chối yêu cầu này. Hãy điều chỉnh yêu cầu và thử lại." };
-    }
-    if (response.stop_reason === "max_tokens") {
-      return { ok: false, error: "Yêu cầu quá dài – hãy giảm số câu hỏi mỗi lần tạo." };
-    }
-    if (!response.parsed_output) return { ok: false, error: "AI trả về dữ liệu không đúng định dạng. Vui lòng thử lại." };
-    return { ok: true, questions: response.parsed_output.questions, model: response.model };
-  } catch (error) {
-    console.error("[ai-generator]", error);
-    if (error instanceof Anthropic.AuthenticationError) return { ok: false, error: "API key của AI không hợp lệ." };
-    if (error instanceof Anthropic.RateLimitError) return { ok: false, error: "AI đang quá tải hoặc hết hạn mức – thử lại sau ít phút." };
-    if (error instanceof Anthropic.APIError) return { ok: false, error: `Lỗi dịch vụ AI (${error.status ?? "không rõ"}).` };
-    return { ok: false, error: "Không kết nối được dịch vụ AI." };
-  }
+  const res = await generateStructured({
+    schema: AiResponseSchema,
+    system: SYSTEM_PROMPT,
+    user: buildUserPrompt(req),
+    maxTokens: 16000,
+    effort: "high",
+    timeoutMs: 5 * 60 * 1000,
+    tag: "ai-generator",
+  });
+  return res.ok ? { ok: true, questions: res.data.questions, model: res.model } : res;
 }

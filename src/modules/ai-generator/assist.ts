@@ -1,10 +1,8 @@
 import "server-only";
 
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 
-import { getAiConfigStatus } from "@/lib/ai/config";
+import { generateStructured, type AiResult } from "@/lib/ai/structured";
 
 /**
  * AI HỖ TRỢ GIÁO VIÊN (chỉ gợi ý – giáo viên quyết định):
@@ -12,32 +10,8 @@ import { getAiConfigStatus } from "@/lib/ai/config";
  *  - viết nhận xét quá trình học tập từ dữ liệu kết quả.
  */
 
-type AiResult<T> = { ok: true; data: T; model: string } | { ok: false; error: string };
-
-async function callStructured<T extends z.ZodType>(schema: T, system: string, user: string, maxTokens = 4000): Promise<AiResult<z.infer<T>>> {
-  const cfg = getAiConfigStatus();
-  if (!cfg.configured) return { ok: false, error: `Chức năng AI chưa được cấu hình. ${cfg.reason}` };
-  const client = new Anthropic({ apiKey: cfg.apiKey, timeout: 120_000, maxRetries: 2 });
-  try {
-    const response = await client.beta.messages.parse({
-      model: cfg.model,
-      max_tokens: maxTokens,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: "medium", format: betaZodOutputFormat(schema) },
-      system,
-      messages: [{ role: "user", content: user }],
-    });
-    if (response.stop_reason === "refusal") return { ok: false, error: "AI từ chối yêu cầu này." };
-    if (!response.parsed_output) return { ok: false, error: "AI trả về dữ liệu không đúng định dạng." };
-    return { ok: true, data: response.parsed_output as z.infer<T>, model: response.model };
-  } catch (error) {
-    console.error("[ai-assist]", error);
-    if (error instanceof Anthropic.AuthenticationError) return { ok: false, error: "API key của AI không hợp lệ." };
-    if (error instanceof Anthropic.RateLimitError) return { ok: false, error: "AI đang quá tải – thử lại sau." };
-    if (error instanceof Anthropic.APIError) return { ok: false, error: `Lỗi dịch vụ AI (${error.status ?? "không rõ"}).` };
-    return { ok: false, error: "Không kết nối được dịch vụ AI." };
-  }
+function callStructured<T extends z.ZodType>(schema: T, system: string, user: string, maxTokens = 4000): Promise<AiResult<z.infer<T>>> {
+  return generateStructured({ schema, system, user, maxTokens, effort: "medium", tag: "ai-assist" });
 }
 
 const EssaySuggestion = z.object({
@@ -75,6 +49,8 @@ ${input.answer.slice(0, 5000)}
 }
 
 const CommentOut = z.object({ comment: z.string() });
+/** Họ tên học sinh không được gửi cho dịch vụ AI (giảm thiểu dữ liệu cá nhân). */
+const NAME_TOKEN = "[HOC_SINH]";
 
 /** Viết nhận xét quá trình học tập từ dữ liệu thật (không suy đoán phẩm chất, hoàn cảnh). */
 export async function writeStudentComment(input: {
@@ -88,7 +64,7 @@ export async function writeStudentComment(input: {
 }): Promise<AiResult<{ comment: string }>> {
   const pct = (c: number, t: number) => (t ? `${Math.round((c / t) * 100)}% (${c}/${t})` : "chưa có");
   const data = [
-    `Học sinh: ${input.name}`,
+    `Học sinh: ${NAME_TOKEN}`,
     `Bài kiểm tra (theo thời gian): ${input.assessments.map((a) => `${a.title} – ${a.score}/10 (${a.date})`).join("; ") || "chưa có"}`,
     `Tự đánh giá theo bài: ${input.practice.map((p) => `${p.lesson}: ${p.score}/10`).join("; ") || "chưa có"}`,
     `Tỉ lệ đúng theo chương: ${input.byChapter.map((c) => `${c.label}: ${pct(c.correct, c.total)}`).join("; ") || "chưa có"}`,
@@ -96,13 +72,16 @@ export async function writeStudentComment(input: {
     `Theo dạng câu hỏi: ${input.byType.map((c) => `${c.label}: ${pct(c.correct, c.total)}`).join("; ") || "chưa có"}`,
     `Số lần lưu kết quả thí nghiệm ảo: ${input.labRuns}`,
   ].join("\n");
-  return callStructured(
+  const res = await callStructured(
     CommentOut,
     `Bạn là giáo viên Vật lý lớp 9 viết nhận xét quá trình học tập cho học sinh.
 Chỉ dựa trên số liệu được cung cấp. TUYỆT ĐỐI không suy đoán phẩm chất, tính cách, năng lực chung, gia đình hay hoàn cảnh của học sinh.
 Nhận xét bằng tiếng Việt, 3–5 câu, giọng khích lệ, cụ thể: kết quả chung, tiến bộ (nếu có dữ liệu), nội dung nắm vững, nội dung cần ôn tập, gợi ý luyện tập (bài học, thí nghiệm ảo, dạng câu).
-Không lặp lại toàn bộ số liệu; không dùng ký hiệu markdown.`,
+Không lặp lại toàn bộ số liệu; không dùng ký hiệu markdown.
+Gọi học sinh bằng đúng nhãn ${NAME_TOKEN} (hệ thống sẽ tự thay bằng tên thật).`,
     data,
     1500,
   );
+  if (!res.ok) return res;
+  return { ...res, data: { comment: res.data.comment.replaceAll(NAME_TOKEN, input.name) } };
 }

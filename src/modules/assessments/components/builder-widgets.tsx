@@ -95,7 +95,7 @@ export function AiGeneratePanel({ assessmentId, aiConfigured }: { assessmentId: 
   const [pending, start] = useTransition();
   const [r, setR] = useState<ActionResult | null>(null);
   if (!aiConfigured) {
-    return <p className="text-sm text-muted-foreground">Chức năng AI chưa được cấu hình (cần <code>ANTHROPIC_API_KEY</code> trên máy chủ).</p>;
+    return <p className="text-sm text-muted-foreground">Chức năng AI chưa được cấu hình (cần <code>GEMINI_API_KEY</code> hoặc <code>ANTHROPIC_API_KEY</code> trên máy chủ).</p>;
   }
   return (
     <div className="flex flex-col gap-3">
