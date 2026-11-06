@@ -1,5 +1,6 @@
 import {
   BookOpen,
+  ClipboardList,
   LayoutDashboard,
   School,
   Settings,
@@ -31,7 +32,8 @@ export const NAV_BY_ROLE: Record<UserRole, NavGroup[]> = {
       items: [
         { href: "/teacher", label: "Tổng quan", icon: LayoutDashboard, exact: true },
         { href: "/teacher/classes", label: "Lớp học", icon: School },
-        { href: "/teacher/curriculum", label: "Chương trình học", icon: BookOpen },
+        { href: "/teacher/curriculum", label: "Bài học & thí nghiệm", icon: BookOpen },
+        { href: "/teacher/questions", label: "Ngân hàng câu hỏi", icon: ClipboardList },
       ],
     },
   ],
@@ -40,8 +42,9 @@ export const NAV_BY_ROLE: Record<UserRole, NavGroup[]> = {
       label: "Quản trị",
       items: [
         { href: "/admin", label: "Tổng quan", icon: LayoutDashboard, exact: true },
-        { href: "/admin/classes", label: "Lớp học", icon: School },
-        { href: "/admin/curriculum", label: "Chương trình học", icon: BookOpen },
+        { href: "/teacher/classes", label: "Lớp học", icon: School },
+        { href: "/admin/curriculum", label: "Bài học & thí nghiệm", icon: BookOpen },
+        { href: "/teacher/questions", label: "Ngân hàng câu hỏi", icon: ClipboardList },
         { href: "/admin/settings", label: "Cấu hình hệ thống", icon: Settings },
       ],
     },

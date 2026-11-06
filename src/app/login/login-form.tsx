@@ -23,21 +23,23 @@ export function LoginForm({ next, disabled }: { next: string; disabled: boolean 
         </Alert>
       )}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="identifier">Email</Label>
         <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
+          id="identifier"
+          name="identifier"
+          type="text"
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
           placeholder="ten@truong.edu.vn"
-          defaultValue={state.email}
-          aria-invalid={Boolean(state.fieldErrors?.email)}
-          aria-describedby={state.fieldErrors?.email ? "email-error" : undefined}
+          defaultValue={state.identifier}
+          aria-invalid={Boolean(state.fieldErrors?.identifier)}
+          aria-describedby={state.fieldErrors?.identifier ? "identifier-error" : undefined}
           disabled={disabled}
           required
         />
-        {state.fieldErrors?.email && (
-          <p id="email-error" className="text-sm text-destructive">{state.fieldErrors.email}</p>
+        {state.fieldErrors?.identifier && (
+          <p id="identifier-error" className="text-sm text-destructive">{state.fieldErrors.identifier}</p>
         )}
       </div>
       <div className="flex flex-col gap-2">

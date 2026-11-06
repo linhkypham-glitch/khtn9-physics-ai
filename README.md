@@ -17,7 +17,7 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
 | Milestone | Nội dung | Trạng thái |
 |---|---|---|
 | 1 | Nền tảng: dự án, giao diện, đăng nhập, phân quyền, schema + RLS, seed chương trình học, dashboard | ✅ Hoàn thành |
-| 2 | Học liệu, ngân hàng bài tập, thí nghiệm ảo | ⏳ |
+| 2 | Học liệu, ngân hàng câu hỏi, thí nghiệm ảo, luyện tập – tự đánh giá, quản lý lớp, học sinh vào học không mật khẩu | ✅ Hoàn thành |
 | 3 | Soạn đề, giao bài, làm bài, chấm điểm, giải thích đáp án | ⏳ |
 | 4 | AI tạo câu hỏi / đề / ma trận / bản đặc tả, AI phân tích | ⏳ |
 | 5 | Bảng xếp hạng, phân tích học tập, xuất Excel/CSV | ⏳ |
@@ -33,10 +33,24 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
 - `GET /api/health` cho giám sát.
 - Ứng dụng vẫn chạy khi chưa cấu hình Supabase hoặc AI, kèm thông báo rõ ràng.
 
+### Đã hoạt động (Milestone 2)
+
+- **Học sinh vào học không cần mật khẩu**: mở link → *Vào học* → nhập họ tên + lớp. Nhập cùng tên lớp được xếp chung lớp;
+  nhập lại đúng họ tên + lớp thì vào lại đúng hồ sơ (giữ kết quả). Phiên học sinh là cookie httpOnly ký HMAC, 180 ngày.
+- **Giáo viên**: tạo lớp, nhận lớp do học sinh tạo, thêm/xoá học sinh, khoá tự đăng ký, **tải lên Excel** (cột Họ và tên,
+  Lớp, Mã HS – có file mẫu), xem điểm trung bình từng học sinh.
+- **Nội dung 16 bài**: mục tiêu, yêu cầu cần đạt, lý thuyết, công thức, ví dụ, mô tả thí nghiệm SGK (đối chiếu kế hoạch bài dạy KHTN 9 KNTT).
+- **16 thí nghiệm ảo tương tác** (mỗi bài một mô phỏng, bám thí nghiệm SGK): thanh trượt, số đo, công thức, đồ thị,
+  Bắt đầu/Tạm dừng/Đặt lại, bảng số liệu, câu hỏi khám phá, lưu kết quả.
+- **Ngân hàng 112 câu hỏi** (7 câu/bài: trắc nghiệm, đúng – sai 4 ý, trả lời ngắn) có lời giải, công thức, ghi nhớ.
+  *Luyện tập* (kiểm tra từng câu) và *Tự đánh giá* (đồng hồ, đánh dấu xem lại, tự lưu nháp, chấm thang 10 ở máy chủ,
+  đúng – sai chấm 0,1/0,25/0,5/1). Đáp án không bao giờ gửi xuống trình duyệt trước khi nộp.
+- **Kết quả học tập** theo bài và tiến độ trên dashboard (dữ liệu thật).
+- Giao diện **tone cam**, mỗi chương một màu nhận diện.
+
 ### Chưa có
 
-Quản lý tài khoản/lớp qua giao diện (hiện thao tác bằng SQL/Supabase Dashboard), soạn học liệu, thí nghiệm ảo,
-ngân hàng câu hỏi, đề kiểm tra, AI, báo cáo, bảng xếp hạng – theo các milestone tiếp theo.
+Giáo viên soạn/sửa câu hỏi và học liệu trên giao diện, đề kiểm tra & giao bài theo lớp, AI, báo cáo Excel, bảng xếp hạng.
 
 > **Lưu ý về mục lục:** danh mục chính thức gồm Bài 2 → Bài 17, tức **16 bài** (không phải 17). Ứng dụng giữ nguyên văn danh mục, không tự thêm bài.
 
@@ -84,8 +98,9 @@ npm run dev
    ```bash
    npx supabase db push
    ```
-3. Trong SQL Editor, chạy `supabase/seed/01_curriculum.sql` và `supabase/seed/02_system_settings.sql`.
+3. Trong SQL Editor, chạy `supabase/seed/01_curriculum.sql` → `05_experiments.sql` (hoặc dán một lần file `supabase/cloud-setup.sql`).
    **Không** chạy `90_demo_data.sql` trên môi trường thật.
+   - Đã cài Milestone 1 trước đó? Chỉ cần chạy **một lần** `supabase/cloud-update-m2.sql`.
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql
    update public.profiles set role = 'admin' where email = 'email-cua-ban@truong.edu.vn';

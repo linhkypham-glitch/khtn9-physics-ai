@@ -14,7 +14,7 @@ export function LessonsPerChapterChart({ data }: { data: LessonsPerChapterDatum[
           <XAxis dataKey="chapter" tickLine={false} axisLine={false} tick={{ fill: "#475569", fontSize: 12 }} />
           <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
           <Tooltip
-            cursor={{ fill: "rgba(37, 99, 235, 0.06)" }}
+            cursor={{ fill: "rgba(234, 88, 12, 0.08)" }}
             content={({ active, payload }) => {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload as LessonsPerChapterDatum;
@@ -28,7 +28,7 @@ export function LessonsPerChapterChart({ data }: { data: LessonsPerChapterDatum[
               );
             }}
           />
-          <Bar dataKey="lessons" name="Số bài học" fill="#2563eb" radius={[4, 4, 0, 0]} maxBarSize={48} />
+          <Bar dataKey="lessons" name="Số bài học" fill="#ea580c" radius={[4, 4, 0, 0]} maxBarSize={48} />
         </BarChart>
       </ResponsiveContainer>
     </div>

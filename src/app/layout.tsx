@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Nền tảng học tập, thí nghiệm mô phỏng, luyện tập và đánh giá môn KHTN 9 – phân môn Vật lý.",
 };
 
-export const viewport: Viewport = { themeColor: "#2563eb" };
+export const viewport: Viewport = { themeColor: "#ea580c" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

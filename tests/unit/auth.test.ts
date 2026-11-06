@@ -25,7 +25,7 @@ describe("Điều hướng theo vai trò", () => {
   it("menu của mỗi vai trò chỉ trỏ vào khu vực của vai trò đó", () => {
     for (const item of NAV_BY_ROLE.student.flatMap((g) => g.items)) expect(item.href.startsWith("/student")).toBe(true);
     for (const item of NAV_BY_ROLE.teacher.flatMap((g) => g.items)) expect(item.href.startsWith("/teacher")).toBe(true);
-    for (const item of NAV_BY_ROLE.admin.flatMap((g) => g.items)) expect(item.href.startsWith("/admin")).toBe(true);
+    for (const item of NAV_BY_ROLE.admin.flatMap((g) => g.items)) expect(/^\/(admin|teacher)/.test(item.href)).toBe(true);
   });
 
   it("xác định mục menu đang hoạt động", () => {
@@ -39,22 +39,22 @@ describe("Điều hướng theo vai trò", () => {
 
 describe("Kiểm tra dữ liệu đăng nhập", () => {
   it("chấp nhận dữ liệu hợp lệ và chuẩn hoá email", () => {
-    const r = loginSchema.safeParse({ email: "  gv@truong.edu.vn ", password: "matkhau123" });
+    const r = loginSchema.safeParse({ identifier: "  gv@truong.edu.vn ", password: "matkhau123" });
     expect(r.success).toBe(true);
-    if (r.success) expect(r.data.email).toBe("gv@truong.edu.vn");
+    if (r.success) expect(r.data.identifier).toBe("gv@truong.edu.vn");
   });
 
   it("từ chối email sai định dạng và mật khẩu quá ngắn", () => {
-    const r = loginSchema.safeParse({ email: "abc", password: "123" });
+    const r = loginSchema.safeParse({ identifier: "a", password: "123" });
     expect(r.success).toBe(false);
     if (!r.success) {
       const paths = r.error.issues.map((i) => i.path[0]);
-      expect(paths).toContain("email");
+      expect(paths).toContain("identifier");
       expect(paths).toContain("password");
     }
   });
 
   it("từ chối dữ liệu thiếu", () => {
-    expect(loginSchema.safeParse({ email: null, password: null }).success).toBe(false);
+    expect(loginSchema.safeParse({ identifier: null, password: null }).success).toBe(false);
   });
 });

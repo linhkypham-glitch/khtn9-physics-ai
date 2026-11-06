@@ -53,10 +53,15 @@ export function SetupStatusPanel({ status }: { status: SetupStatus }) {
                   : "Kết nối thành công nhưng chưa có dữ liệu. Hãy chạy migration và seed chương trình học."
                 : `Không truy vấn được database${db.error ? `: ${db.error}` : ""}. Kiểm tra URL/khóa và migration.`}
           </Row>
-          <Row level={status.serviceRole ? "ok" : "warn"} title="Khóa service-role (chỉ phía máy chủ)">
+          <Row level={status.m2.ready ? "ok" : "error"} title="Câu hỏi, thí nghiệm, lớp học (cập nhật Milestone 2)">
+            {status.m2.ready
+              ? `Đã cập nhật: ${status.m2.questions} câu hỏi, ${status.m2.experiments} thí nghiệm.`
+              : "Chưa cập nhật database. Chạy file supabase/cloud-update-m2.sql trong Supabase → SQL Editor."}
+          </Row>
+          <Row level={status.serviceRole ? "ok" : "error"} title="Khóa service-role (chỉ phía máy chủ)">
             {status.serviceRole
-              ? "Đã cấu hình. Dùng cho chức năng quản trị như tạo tài khoản."
-              : "Chưa cấu hình SUPABASE_SECRET_KEY. Cần cho chức năng quản trị tạo tài khoản (các giai đoạn sau)."}
+              ? "Đã cấu hình. Dùng cho học sinh vào học bằng họ tên, chấm bài và quản lý lớp."
+              : "Chưa cấu hình SUPABASE_SECRET_KEY – học sinh chưa vào học được, chưa chấm bài được."}
           </Row>
           <Row level={status.ai.configured ? "ok" : "warn"} title="Dịch vụ AI">
             {status.ai.configured ? (

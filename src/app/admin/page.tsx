@@ -5,7 +5,7 @@ import { BookOpen, GraduationCap, School, ShieldCheck, Users } from "lucide-reac
 import { CurriculumOverviewCard } from "@/components/dashboard/curriculum-overview-card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { ErrorState } from "@/components/dashboard/states";
-import { PageHeader } from "@/components/layout/page-header";
+import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { Button } from "@/components/ui/button";
 import { requireRole } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -37,11 +37,10 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <PageHeader
-        title={`Xin chào, ${user.fullName}`}
-        description="Tổng quan toàn hệ thống KHTN 9 – PHYSICS AI."
-        actions={<Button asChild variant="outline"><Link href="/admin/settings">Cấu hình hệ thống</Link></Button>}
-      />
+      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan toàn hệ thống KHTN 9 – PHYSICS AI.">
+        <Button asChild size="sm" className="bg-white text-orange-700 hover:bg-orange-50"><Link href="/teacher/classes">Quản lý lớp</Link></Button>
+        <Button asChild size="sm" variant="outline" className="border-white/50 bg-white/10 text-white hover:bg-white/20 hover:text-white"><Link href="/admin/settings">Cấu hình hệ thống</Link></Button>
+      </WelcomeBanner>
 
       {!counts && <div className="mb-4"><ErrorState description="Không tải được thống kê tài khoản." /></div>}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -56,7 +55,7 @@ export default async function AdminDashboard() {
         <div className="xl:col-span-3">
           <h2 className="mb-3 font-semibold">Lớp học</h2>
           {classes.ok ? (
-            <ClassesTable classes={classes.data} emptyDescription="Chưa có lớp học nào trong hệ thống." />
+            <ClassesTable classes={classes.data} hrefBase="/teacher/classes" emptyDescription="Chưa có lớp học nào trong hệ thống." />
           ) : (
             <ErrorState description={classes.error} />
           )}

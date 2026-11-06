@@ -4,8 +4,10 @@ import { ArrowRight, BarChart3, BookOpen, Layers, School } from "lucide-react";
 
 import { StatCard } from "@/components/dashboard/stat-card";
 import { EmptyState, ErrorState } from "@/components/dashboard/states";
-import { PageHeader } from "@/components/layout/page-header";
+import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
 import { getStudentClasses } from "@/modules/classes/repository";
@@ -20,13 +22,22 @@ export default async function StudentDashboard() {
   const [classes, curriculum] = await Promise.all([getStudentClasses(user.id), getCurriculum()]);
 
   const myClass = classes.ok ? classes.data[0] : undefined;
+  const admin = createSupabaseAdminClient();
+  const [{ data: attempts }, { count: labRuns }] = admin
+    ? await Promise.all([
+        admin.from("practice_attempts").select("lesson_id, score").eq("user_id", user.id).eq("mode", "self_assessment"),
+        admin.from("experiment_attempts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      ])
+    : [{ data: [] as { lesson_id: string; score: number }[] }, { count: 0 }];
+  const doneLessons = new Set((attempts ?? []).map((a) => a.lesson_id)).size;
+  const avgScore = attempts?.length ? attempts.reduce((s, a) => s + Number(a.score), 0) / attempts.length : null;
   const firstLesson = curriculum.ok ? curriculum.chapters[0]?.lessons[0] : undefined;
 
   return (
     <>
-      <PageHeader
-        title={`Xin chào, ${user.fullName}`}
-        description={myClass ? `Lớp ${myClass.name}${myClass.academicYear ? ` · Năm học ${myClass.academicYear}` : ""}` : "Chúc bạn học tốt môn Vật lý!"}
+      <WelcomeBanner
+        title={`Xin chào, ${user.fullName}! 👋`}
+        subtitle={myClass ? `Lớp ${myClass.name}${myClass.academicYear ? ` · Năm học ${myClass.academicYear}` : ""} · Hôm nay mình cùng khám phá Vật lý nhé!` : "Chúc em học tốt môn Vật lý!"}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -48,10 +59,10 @@ export default async function StudentDashboard() {
             <Card className="overflow-hidden border-0 bg-primary text-primary-foreground">
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-blue-100">Bắt đầu lộ trình học</p>
+                  <p className="text-sm text-orange-50">Bắt đầu lộ trình học</p>
                   <p className="mt-1 text-lg font-semibold">{formatLessonLabel(firstLesson)}</p>
                 </div>
-                <Button asChild variant="secondary" className="bg-white text-primary hover:bg-blue-50">
+                <Button asChild variant="secondary" className="bg-white text-primary hover:bg-orange-50">
                   <Link href={`/student/lessons/${firstLesson.slug}`}>Vào bài học <ArrowRight /></Link>
                 </Button>
               </CardContent>
@@ -75,12 +86,26 @@ export default async function StudentDashboard() {
               <CardDescription>Ghi nhận từ bài luyện tập và kiểm tra</CardDescription>
             </CardHeader>
             <CardContent>
-              <EmptyState
-                icon={BarChart3}
-                title="Chưa có dữ liệu học tập"
-                description="Tiến độ, điểm số và nội dung cần ôn tập sẽ xuất hiện khi bạn bắt đầu luyện tập và làm bài."
-                className="border-0 bg-muted/50 py-8"
-              />
+              {(attempts?.length ?? 0) === 0 && !labRuns ? (
+                <EmptyState
+                  icon={BarChart3}
+                  title="Chưa có dữ liệu học tập"
+                  description="Làm thí nghiệm và bài Tự đánh giá ở mỗi bài học – tiến độ sẽ hiện ở đây."
+                  className="border-0 bg-muted/50 py-8"
+                />
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <div className="mb-1 flex justify-between text-sm"><span>Bài đã tự đánh giá</span><b className="tabular-nums">{doneLessons}/{curriculum.ok ? countLessons(curriculum.chapters) : 16}</b></div>
+                    <Progress value={(doneLessons / (curriculum.ok ? Math.max(1, countLessons(curriculum.chapters)) : 16)) * 100} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-xl bg-orange-50 py-2"><p className="text-xl font-bold tabular-nums text-orange-700">{attempts?.length ?? 0}</p><p className="text-xs text-muted-foreground">Lần tự đánh giá</p></div>
+                    <div className="rounded-xl bg-amber-50 py-2"><p className="text-xl font-bold tabular-nums text-amber-700">{avgScore === null ? "—" : avgScore.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}</p><p className="text-xs text-muted-foreground">Điểm TB</p></div>
+                    <div className="rounded-xl bg-teal-50 py-2"><p className="text-xl font-bold tabular-nums text-teal-700">{labRuns ?? 0}</p><p className="text-xs text-muted-foreground">Thí nghiệm</p></div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

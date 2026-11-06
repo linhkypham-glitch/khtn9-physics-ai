@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getAiConfigStatus, type AiConfigStatus } from "@/lib/ai/config";
-import { isServiceRoleConfigured } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient, isServiceRoleConfigured } from "@/lib/supabase/admin";
 import { getSupabasePublicEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -9,6 +9,8 @@ export type SetupStatus = {
   supabaseEnv: boolean;
   serviceRole: boolean;
   database: { reachable: boolean; chapters: number; lessons: number; error: string | null };
+  /** Đã chạy migration + seed Milestone 2 (câu hỏi, thí nghiệm) chưa */
+  m2: { ready: boolean; questions: number; experiments: number };
   ai: AiConfigStatus;
 };
 
@@ -36,5 +38,19 @@ export async function getSetupStatus(): Promise<SetupStatus> {
     }
   }
 
-  return { supabaseEnv, serviceRole: isServiceRoleConfigured(), database, ai: getAiConfigStatus() };
+  const m2 = { ready: false, questions: 0, experiments: 0 };
+  const admin = createSupabaseAdminClient();
+  if (admin && database.reachable) {
+    const [q, e] = await Promise.all([
+      admin.from("question_bank").select("id", { count: "exact", head: true }),
+      admin.from("experiments").select("id", { count: "exact", head: true }),
+    ]);
+    if (!q.error && !e.error) {
+      m2.questions = q.count ?? 0;
+      m2.experiments = e.count ?? 0;
+      m2.ready = m2.questions > 0 && m2.experiments > 0;
+    }
+  }
+
+  return { supabaseEnv, serviceRole: isServiceRoleConfigured(), database, m2, ai: getAiConfigStatus() };
 }

@@ -12,9 +12,17 @@ import {
 } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/states";
+import { PracticePanel } from "@/components/questions/practice-panel";
+import { SelfAssessmentPanel } from "@/components/questions/self-assessment-panel";
+import { chapterTheme } from "@/lib/chapter-theme";
+import { cn } from "@/lib/utils";
+import type { PublicQuestion } from "@/modules/question-bank/types";
+import type { ExperimentDef } from "@/modules/virtual-lab/catalog";
+import { ExperimentPanel } from "@/modules/virtual-lab/experiment-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LessonMaterialRow, LessonSection } from "@/types/database";
 import type { LessonDetail } from "../repository";
@@ -61,30 +69,119 @@ function MaterialList({ items, emptyTitle, emptyDescription }: { items: LessonMa
   return <div className="grid gap-4">{items.map((m) => <MaterialItem key={m.id} m={m} />)}</div>;
 }
 
+export type LessonResults = {
+  attempts: { id: string; score: number; correctUnits: number; totalUnits: number; durationSeconds: number | null; submittedAt: string }[];
+  experimentRuns: number;
+};
+
+const dateTime = new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+function ResultsPanel({ results, viewer }: { results: LessonResults | null; viewer: "student" | "staff" }) {
+  if (!results || (results.attempts.length === 0 && results.experimentRuns === 0)) {
+    return (
+      <EmptyState
+        icon={BarChart3}
+        title={viewer === "student" ? "Em chưa có kết quả ở bài này" : "Chưa có dữ liệu kết quả học tập"}
+        description={
+          viewer === "student"
+            ? "Hãy làm thí nghiệm và bài Tự đánh giá – kết quả sẽ được lưu tại đây."
+            : "Kết quả của bạn khi làm thử sẽ hiển thị tại đây. Kết quả học sinh xem trong trang Lớp học."
+        }
+      />
+    );
+  }
+  const scores = results.attempts.map((a) => a.score);
+  const best = scores.length ? Math.max(...scores) : null;
+  const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
+  const latest = results.attempts[0];
+  const trend = results.attempts.length > 1 ? latest.score - results.attempts[results.attempts.length - 1].score : null;
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          ["Số lần tự đánh giá", String(results.attempts.length)],
+          ["Điểm cao nhất", best === null ? "—" : best.toLocaleString("vi-VN")],
+          ["Điểm trung bình", avg === null ? "—" : avg.toLocaleString("vi-VN", { maximumFractionDigits: 2 })],
+          ["Lần làm thí nghiệm đã lưu", String(results.experimentRuns)],
+        ].map(([l, v]) => (
+          <Card key={l} className="gap-1 py-4 text-center">
+            <p className="text-2xl font-bold text-primary tabular-nums">{v}</p>
+            <p className="text-xs text-muted-foreground">{l}</p>
+          </Card>
+        ))}
+      </div>
+      {trend !== null && (
+        <p className={cn("rounded-xl px-4 py-2.5 text-sm", trend >= 0 ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900")}>
+          {trend > 0 ? `📈 Tiến bộ ${trend.toLocaleString("vi-VN")} điểm so với lần làm đầu tiên.` : trend === 0 ? "Điểm giữ ổn định so với lần đầu." : "Điểm lần gần nhất thấp hơn lần đầu – hãy xem lại phần Kiến thức và Luyện tập."}
+          {latest && latest.score < 5 ? " Gợi ý: ôn lại lý thuyết, công thức và làm lại phần Luyện tập." : ""}
+        </p>
+      )}
+      {results.attempts.length > 0 && (
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Thời điểm</TableHead>
+                <TableHead className="text-right">Điểm</TableHead>
+                <TableHead className="text-right">Ý đúng</TableHead>
+                <TableHead className="text-right">Thời gian</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {results.attempts.map((a) => (
+                <TableRow key={a.id}>
+                  <TableCell className="tabular-nums">{dateTime.format(new Date(a.submittedAt))}</TableCell>
+                  <TableCell className="text-right font-bold tabular-nums">{a.score.toLocaleString("vi-VN")}</TableCell>
+                  <TableCell className="text-right tabular-nums">{a.correctUnits}/{a.totalUnits}</TableCell>
+                  <TableCell className="text-right tabular-nums">{a.durationSeconds === null ? "—" : `${Math.floor(a.durationSeconds / 60)} phút ${a.durationSeconds % 60} giây`}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Trang bài học với 5 khu vực: Kiến thức, Thí nghiệm, Luyện tập, Tự đánh giá, Kết quả học tập. */
-export function LessonView({ lesson, basePath, viewer }: { lesson: LessonDetail; basePath: string; viewer: "student" | "staff" }) {
+export function LessonView({
+  lesson,
+  basePath,
+  viewer,
+  experiment,
+  questions,
+  canSave,
+  results,
+}: {
+  lesson: LessonDetail;
+  basePath: string;
+  viewer: "student" | "staff";
+  experiment: ExperimentDef | null;
+  questions: PublicQuestion[] | null;
+  canSave: boolean;
+  results: LessonResults | null;
+}) {
+  const theme = chapterTheme(lesson.chapter.number);
   const bySection = (s: LessonSection) => lesson.materials.filter((m) => m.section === s);
   const objectives = lesson.objectives.filter((o) => o.kind === "objective");
   const requirements = lesson.objectives.filter((o) => o.kind === "requirement");
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <nav aria-label="Đường dẫn" className="mb-3 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-          <Link href={basePath} className="hover:text-foreground">Chương trình học</Link>
+      <div className={cn("relative overflow-hidden rounded-3xl bg-gradient-to-r px-6 py-6 text-white shadow-lg sm:px-8", theme.gradient)}>
+        <span aria-hidden className="absolute -right-4 -bottom-8 text-[120px] leading-none opacity-15">{theme.emoji}</span>
+        <nav aria-label="Đường dẫn" className="relative mb-3 flex flex-wrap items-center gap-1 text-sm text-white/85">
+          <Link href={basePath} className="hover:text-white hover:underline">Chương trình học</Link>
           <ChevronRight className="size-3.5" aria-hidden />
           <span>{formatChapterLabel(lesson.chapter)}</span>
         </nav>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="blue">Bài {lesson.number}</Badge>
-          {lesson.lessonType === "practice" && (
-            <Badge variant="teal"><FlaskConical /> Bài thực hành</Badge>
-          )}
+        <div className="relative flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-white/25 px-3 py-0.5 text-sm font-semibold">Bài {lesson.number}</span>
+          {lesson.lessonType === "practice" && <span className="flex items-center gap-1 rounded-full bg-white/25 px-3 py-0.5 text-sm font-semibold"><FlaskConical className="size-3.5" /> Bài thực hành</span>}
         </div>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-          Bài {lesson.number}. {lesson.title}.
-        </h1>
-        {lesson.summary && <p className="mt-2 max-w-3xl text-muted-foreground">{lesson.summary}</p>}
+        <h1 className="relative mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{lesson.title}.</h1>
+        {lesson.summary && <p className="relative mt-2 max-w-3xl text-white/90">{lesson.summary}</p>}
       </div>
 
       <Tabs defaultValue="knowledge">
@@ -126,40 +223,40 @@ export function LessonView({ lesson, basePath, viewer }: { lesson: LessonDetail;
           />
         </TabsContent>
 
-        <TabsContent value="experiment">
-          <MaterialList
-            items={bySection("experiment")}
-            emptyTitle="Chưa có thí nghiệm cho bài học này"
-            emptyDescription="Thí nghiệm mô phỏng tương tác của bài học sẽ xuất hiện tại đây."
-          />
+        <TabsContent value="experiment" className="flex flex-col gap-6">
+          {experiment ? (
+            <ExperimentPanel def={experiment} canSave={canSave} />
+          ) : (
+            <EmptyState title="Chưa có thí nghiệm ảo cho bài học này" />
+          )}
+          {bySection("experiment").length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="font-semibold">Thí nghiệm, hoạt động trong sách giáo khoa</h3>
+              <MaterialList items={bySection("experiment")} emptyTitle="" emptyDescription="" />
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="practice">
-          <MaterialList
-            items={bySection("practice")}
-            emptyTitle="Chưa có bài luyện tập"
-            emptyDescription="Câu hỏi trắc nghiệm, đúng – sai, trả lời ngắn và bài tập tính toán sẽ hiển thị tại đây."
-          />
+          {questions === null ? (
+            <EmptyState title="Chưa tải được câu hỏi" description="Máy chủ chưa cấu hình SUPABASE_SECRET_KEY." />
+          ) : questions.length === 0 ? (
+            <EmptyState title="Chưa có câu hỏi luyện tập" description="Giáo viên sẽ bổ sung câu hỏi cho bài học này." />
+          ) : (
+            <PracticePanel lessonId={lesson.id} questions={questions} />
+          )}
         </TabsContent>
 
         <TabsContent value="self_assessment">
-          <MaterialList
-            items={bySection("self_assessment")}
-            emptyTitle="Chưa có bài tự đánh giá"
-            emptyDescription="Bài kiểm tra theo bài học có chấm điểm tự động và giải thích đáp án sẽ hiển thị tại đây."
-          />
+          {questions === null || questions.length === 0 ? (
+            <EmptyState title="Chưa có bài tự đánh giá" description="Bài tự đánh giá được tạo từ ngân hàng câu hỏi của bài học." />
+          ) : (
+            <SelfAssessmentPanel lessonId={lesson.id} questions={questions} canSave={canSave} />
+          )}
         </TabsContent>
 
         <TabsContent value="results">
-          <EmptyState
-            icon={BarChart3}
-            title={viewer === "student" ? "Bạn chưa có kết quả học tập ở bài này" : "Chưa có dữ liệu kết quả học tập"}
-            description={
-              viewer === "student"
-                ? "Lịch sử học, kết quả luyện tập và nội dung cần ôn tập sẽ được ghi nhận khi bạn làm bài."
-                : "Kết quả của học sinh sẽ được tổng hợp tại đây khi có bài làm."
-            }
-          />
+          <ResultsPanel results={results} viewer={viewer} />
         </TabsContent>
       </Tabs>
 

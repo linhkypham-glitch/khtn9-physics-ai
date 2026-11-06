@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type ClassSummary = {
@@ -57,12 +58,16 @@ export async function listVisibleClasses(): Promise<Result<ClassSummary[]>> {
   return { ok: true, data: (data as unknown as ClassWithMembers[]).map(toSummary) };
 }
 
-/** Lớp của học sinh hiện tại (học sinh chỉ thấy dòng thành viên của chính mình + GV lớp). */
+/**
+ * Lớp của học sinh. `userId` PHẢI là mã hồ sơ đã được xác minh ở máy chủ (getCurrentUser):
+ * học sinh vào bằng họ tên + lớp không có phiên Supabase nên truy vấn qua service-role,
+ * luôn lọc theo đúng userId.
+ */
 export async function getStudentClasses(userId: string): Promise<Result<{ id: string; name: string; academicYear: string | null; teacherNames: string[] }[]>> {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) return { ok: false, error: "Supabase chưa được cấu hình." };
+  const admin = createSupabaseAdminClient();
+  if (!admin) return { ok: false, error: "Máy chủ chưa cấu hình SUPABASE_SECRET_KEY." };
 
-  const { data: memberships, error } = await supabase
+  const { data: memberships, error } = await admin
     .from("class_members")
     .select("class_id, classes(id, name, academic_years(name))")
     .eq("user_id", userId)
@@ -73,12 +78,15 @@ export async function getStudentClasses(userId: string): Promise<Result<{ id: st
   }
 
   const classIds = (memberships ?? []).map((m) => m.class_id);
-  // Tên giáo viên: hàm RLS is_my_teacher cho phép học sinh đọc hồ sơ GV của lớp mình.
   const { data: teachers, error: tErr } = classIds.length
-    ? await supabase.rpc("get_class_teachers", { p_class_ids: classIds })
+    ? await admin
+        .from("class_members")
+        .select("class_id, profiles(full_name)")
+        .in("class_id", classIds)
+        .eq("member_role", "teacher")
     : { data: [], error: null };
   if (tErr) {
-    console.error("[classes] get_class_teachers", tErr);
+    console.error("[classes] teachers", tErr);
     return { ok: false, error: "Không tải được thông tin giáo viên." };
   }
 
@@ -90,7 +98,10 @@ export async function getStudentClasses(userId: string): Promise<Result<{ id: st
         id: m.classes!.id,
         name: m.classes!.name,
         academicYear: m.classes!.academic_years?.name ?? null,
-        teacherNames: (teachers ?? []).filter((t) => t.class_id === m.class_id).map((t) => t.full_name),
+        teacherNames: (teachers ?? [])
+          .filter((t) => t.class_id === m.class_id)
+          .map((t) => t.profiles?.full_name ?? "")
+          .filter(Boolean),
       })),
   };
 }

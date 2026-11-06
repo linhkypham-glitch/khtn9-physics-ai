@@ -5,7 +5,7 @@ import { BookOpen, Layers, School, Users } from "lucide-react";
 import { CurriculumOverviewCard } from "@/components/dashboard/curriculum-overview-card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { EmptyState, ErrorState } from "@/components/dashboard/states";
-import { PageHeader } from "@/components/layout/page-header";
+import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
@@ -24,7 +24,10 @@ export default async function TeacherDashboard() {
 
   return (
     <>
-      <PageHeader title={`Xin chào, ${user.fullName}`} description="Tổng quan lớp học và chương trình giảng dạy KHTN 9 – Vật lý." />
+      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan lớp học và chương trình giảng dạy KHTN 9 – Vật lý.">
+        <Button asChild size="sm" className="bg-white text-orange-700 hover:bg-orange-50"><Link href="/teacher/classes">Quản lý lớp</Link></Button>
+        <Button asChild size="sm" variant="outline" className="border-white/50 bg-white/10 text-white hover:bg-white/20 hover:text-white"><Link href="/teacher/questions">Ngân hàng câu hỏi</Link></Button>
+      </WelcomeBanner>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Lớp phụ trách" value={classes.ok ? classList.length : "—"} icon={School} tone="blue" />
@@ -42,7 +45,7 @@ export default async function TeacherDashboard() {
             <CardTitle>Lớp của tôi</CardTitle>
             <CardDescription>Năm học hiện hành</CardDescription>
             <CardAction>
-              <Button asChild variant="outline" size="sm"><Link href="/teacher/classes">Chi tiết</Link></Button>
+              <Button asChild variant="outline" size="sm"><Link href="/teacher/classes">Quản lý</Link></Button>
             </CardAction>
           </CardHeader>
           <CardContent>
@@ -53,14 +56,14 @@ export default async function TeacherDashboard() {
             ) : (
               <ul className="flex flex-col gap-2">
                 {classList.map((c) => (
-                  <li key={c.id} className="flex items-center gap-3 rounded-lg border px-3 py-2.5">
+                  <li key={c.id}><Link href={`/teacher/classes/${c.id}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 hover:bg-accent">
                     <span className="flex size-10 items-center justify-center rounded-lg bg-blue-soft text-sm font-bold text-primary">{c.name}</span>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium">Lớp {c.name}</p>
                       <p className="text-xs text-muted-foreground">{c.academicYear ?? "—"}</p>
                     </div>
                     <span className="text-sm tabular-nums text-muted-foreground">{c.studentCount} HS</span>
-                  </li>
+                  </Link></li>
                 ))}
               </ul>
             )}

@@ -79,10 +79,13 @@ export default async function HomePage() {
             <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <a href="#chuong-trinh">Chương trình</a>
             </Button>
-            <Button asChild>
+            <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <Link href="/login">
-                <LogIn /> Đăng nhập
+                <LogIn /> Giáo viên
               </Link>
+            </Button>
+            <Button asChild>
+              <Link href="/vao-hoc">Vào học</Link>
             </Button>
           </nav>
         </div>
@@ -100,16 +103,16 @@ export default async function HomePage() {
               </p>
               <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-balance sm:text-5xl">
                 Học Vật lý 9 bằng <span className="text-primary">thí nghiệm</span>, luyện tập và{" "}
-                <span className="text-violet">dữ liệu</span>.
+                <span className="text-rose-600">dữ liệu</span>.
               </h1>
               <p className="mt-5 max-w-xl text-lg text-muted-foreground">
                 PHYSICS AI là nền tảng học tập, thí nghiệm mô phỏng, kiểm tra đánh giá và phân tích quá trình học
                 tập dành cho học sinh lớp 9 và giáo viên.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg">
-                  <Link href="/login">
-                    Bắt đầu học <ArrowRight />
+                <Button asChild size="lg" className="bg-gradient-to-r from-orange-600 to-amber-500 shadow-lg shadow-orange-500/30 hover:from-orange-700 hover:to-amber-600">
+                  <Link href="/vao-hoc">
+                    Vào học ngay <ArrowRight />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
@@ -132,7 +135,7 @@ export default async function HomePage() {
                   <line x1="60" y1="20" x2="160" y2="110" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
                   <line x1="160" y1="110" x2="222" y2="205" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
                   <line x1="160" y1="110" x2="260" y2="20" stroke="#f59e0b" strokeOpacity="0.3" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="160" cy="110" r="4" fill="#2563eb" />
+                  <circle cx="160" cy="110" r="4" fill="#ea580c" />
                   <text x="122" y="64" fontSize="12" fill="#475569">i</text>
                   <text x="172" y="160" fontSize="12" fill="#475569">r</text>
                 </svg>
@@ -175,7 +178,7 @@ export default async function HomePage() {
               <>
                 <p className="mt-2 mb-6 text-muted-foreground">
                   {curriculum.chapters.length} chương · {countLessons(curriculum.chapters)} bài học theo sách Kết nối
-                  tri thức với cuộc sống. Đăng nhập để học từng bài.
+                  tri thức với cuộc sống. Bấm “Vào học ngay”, nhập họ tên và lớp để bắt đầu – không cần mật khẩu.
                 </p>
                 <CurriculumSourceNotice source={curriculum.source} />
                 <CurriculumList chapters={curriculum.chapters} lessonHref={null} />

@@ -18,11 +18,11 @@ export function MobileNav({ role, homeHref }: { role: UserRole; homeHref: string
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-4">
+      <SheetContent side="left" className="bg-gradient-to-b from-orange-600 via-orange-500 to-amber-500 p-4 text-white [&>button]:text-white">
         <SheetTitle className="sr-only">Menu điều hướng</SheetTitle>
         <SheetDescription className="sr-only">Các mục chức năng theo vai trò</SheetDescription>
-        <Logo href={homeHref} className="mb-6 px-2" />
-        <SidebarNav role={role} onNavigate={() => setOpen(false)} />
+        <Logo href={homeHref} className="mb-6 px-2" inverted />
+        <SidebarNav role={role} onNavigate={() => setOpen(false)} inverted />
       </SheetContent>
     </Sheet>
   );

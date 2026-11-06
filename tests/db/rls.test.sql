@@ -185,5 +185,71 @@ begin
 end $$;
 select pg_temp.logout();
 
+-- 11. Ngân hàng câu hỏi (có đáp án) – học sinh và khách KHÔNG đọc được; giáo viên đọc được
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a1');
+do $$
+begin
+  if (select count(*) from public.question_bank) <> 0 then raise exception 'FAIL: học sinh đọc được question_bank'; end if;
+  if (select count(*) from public.question_options) <> 0 then raise exception 'FAIL: học sinh đọc được đáp án trắc nghiệm'; end if;
+  if (select count(*) from public.question_subitems) <> 0 then raise exception 'FAIL: học sinh đọc được đáp án đúng – sai'; end if;
+  raise notice 'PASS 11: học sinh không đọc được đáp án';
+end $$;
+
+-- 12. Học sinh KHÔNG tự ghi điểm vào practice_attempts
+do $$
+begin
+  begin
+    insert into public.practice_attempts (user_id, lesson_id, mode, score, correct_units, total_units)
+    select 'c0000000-0000-0000-0000-0000000009a1', id, 'self_assessment', 10, 7, 7 from public.lessons where number = 2;
+    raise exception 'FAIL: học sinh tự ghi điểm được';
+  exception when insufficient_privilege then null;
+  end;
+  raise notice 'PASS 12: học sinh không tự ghi điểm';
+end $$;
+
+-- 13. Kết quả thí nghiệm: chỉ ghi cho chính mình
+do $$
+begin
+  insert into public.experiment_attempts (experiment_id, user_id, data)
+  select id, 'c0000000-0000-0000-0000-0000000009a1', '{"ok":1}' from public.experiments where key = 'ohm-law';
+  begin
+    insert into public.experiment_attempts (experiment_id, user_id, data)
+    select id, 'c0000000-0000-0000-0000-0000000009a2', '{}' from public.experiments where key = 'ohm-law';
+    raise exception 'FAIL: học sinh ghi kết quả thí nghiệm cho người khác';
+  exception when insufficient_privilege then null;
+  end;
+  raise notice 'PASS 13: kết quả thí nghiệm chỉ ghi cho chính mình';
+end $$;
+select pg_temp.logout();
+
+-- 14. Giáo viên xem được ngân hàng câu hỏi và kết quả thí nghiệm của HS lớp mình, không thấy lớp khác
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000001');
+do $$
+begin
+  if (select count(*) from public.question_bank) <> 112 then raise exception 'FAIL: giáo viên không thấy đủ 112 câu hỏi'; end if;
+  if (select count(*) from public.experiment_attempts) <> 1 then raise exception 'FAIL: giáo viên không thấy kết quả thí nghiệm của HS lớp mình'; end if;
+  raise notice 'PASS 14: quyền giáo viên với câu hỏi và kết quả';
+end $$;
+select pg_temp.logout();
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000002');
+do $$
+begin
+  if (select count(*) from public.experiment_attempts) <> 0 then raise exception 'FAIL: GV lớp 9C thấy kết quả HS lớp 9A'; end if;
+  raise notice 'PASS 15: giáo viên không thấy kết quả của lớp khác';
+end $$;
+select pg_temp.logout();
+
+-- 16. Khách (không đăng nhập) đọc được nội dung bài học đã xuất bản, không đọc được đáp án
+set local role anon;
+do $$
+begin
+  if (select count(*) from public.lesson_materials) < 60 then raise exception 'FAIL: khách không đọc được học liệu'; end if;
+  if (select count(*) from public.learning_objectives) < 60 then raise exception 'FAIL: khách không đọc được mục tiêu'; end if;
+  if (select count(*) from public.question_bank) <> 0 then raise exception 'FAIL: khách đọc được câu hỏi'; end if;
+  if (select count(*) from public.experiments) <> 16 then raise exception 'FAIL: khách không thấy danh mục thí nghiệm'; end if;
+  raise notice 'PASS 16: truy cập mở cho nội dung bài học';
+end $$;
+reset role;
+
 rollback;
 \echo 'TẤT CẢ KIỂM THỬ RLS ĐÃ QUA'

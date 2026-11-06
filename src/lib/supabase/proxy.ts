@@ -51,8 +51,17 @@ export async function updateSession(request: NextRequest) {
     userId = null;
   }
 
-  if (!userId && isProtected(pathname)) {
+  // Học sinh vào bằng họ tên + lớp: có cookie phiên học sinh (xác minh chữ ký ở layout).
+  const isStudentArea = pathname === "/student" || pathname.startsWith("/student/");
+  const hasStudentCookie = Boolean(request.cookies.get("khtn9_hs")?.value);
+
+  if (!userId && isProtected(pathname) && !(isStudentArea && hasStudentCookie)) {
     const url = request.nextUrl.clone();
+    if (isStudentArea) {
+      url.pathname = "/vao-hoc";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
     url.pathname = "/login";
     url.search = `?next=${encodeURIComponent(pathname)}`;
     return NextResponse.redirect(url);

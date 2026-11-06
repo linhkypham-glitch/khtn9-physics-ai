@@ -7,6 +7,10 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // Cho phép tải lên file Excel danh sách học sinh (tối đa ~2 MB)
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   turbopack: {
     rules: {
       "*.css": {

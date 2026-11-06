@@ -2,34 +2,34 @@
 
 /*
  * Hệ màu PHYSICS AI
- * - primary: xanh dương #2563EB
- * - nền: trắng / xám xanh nhạt #F1F5F9
+ * - primary: cam #EA580C (tone cam ấm theo yêu cầu)
+ * - nền: trắng / kem nhạt #FFF8F1
  * - phụ: xanh ngọc (teal), vàng (amber), tím (violet)
  */
 :root {
   --radius: 0.75rem;
 
-  --background: #f1f5f9;
-  --foreground: #0f172a;
+  --background: #fff8f1;
+  --foreground: #1c1917;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1c1917;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #1c1917;
 
-  --primary: #2563eb;
+  --primary: #ea580c;
   --primary-foreground: #ffffff;
-  --secondary: #e2e8f0;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
-  --accent: #eff6ff;
-  --accent-foreground: #1d4ed8;
+  --secondary: #f5ece4;
+  --secondary-foreground: #292524;
+  --muted: #faf3ec;
+  --muted-foreground: #57534e;
+  --accent: #fff1e6;
+  --accent-foreground: #c2410c;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  --input: #cbd5e1;
-  --ring: #2563eb;
+  --border: #f0e4d8;
+  --input: #e7d5c4;
+  --ring: #f97316;
 
   --teal: #0d9488;
   --teal-soft: #ccfbf1;
@@ -37,13 +37,13 @@
   --amber-soft: #fef3c7;
   --violet: #7c3aed;
   --violet-soft: #ede9fe;
-  --blue-soft: #dbeafe;
+  --blue-soft: #ffedd5;
   --success: #16a34a;
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #334155;
-  --sidebar-active: #eff6ff;
-  --sidebar-active-foreground: #1d4ed8;
+  --sidebar: #c2410c;
+  --sidebar-foreground: #ffedd5;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #c2410c;
 }
 
 @theme inline {
@@ -98,6 +98,40 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(60rem 30rem at 100% -10%, rgb(254 215 170 / 0.55), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 0%, rgb(254 243 199 / 0.7), transparent 60%);
+    background-attachment: fixed;
     font-feature-settings: "cv11", "ss01";
+  }
+}
+
+/* Thanh trượt điều khiển thí nghiệm */
+@layer components {
+  .lab-range {
+    @apply h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-primary;
+  }
+  .lab-range::-webkit-slider-thumb {
+    @apply size-5 appearance-none rounded-full border-2 border-white bg-primary shadow-md;
+  }
+  .lab-range::-moz-range-thumb {
+    @apply size-5 rounded-full border-2 border-white bg-primary shadow-md;
+  }
+}
+
+/* Hoạt ảnh tia sáng / dòng điện chạy dọc đường */
+@keyframes ray {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+@keyframes flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-["] {
+    animation: none !important;
   }
 }

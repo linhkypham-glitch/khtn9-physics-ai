@@ -42,7 +42,8 @@ begin
     extensions.crypt('Demo@12345', extensions.gen_salt('bf')), now(),
     jsonb_strip_nulls(jsonb_build_object(
       'provider', 'email', 'providers', jsonb_build_array('email'),
-      'role', p_role, 'student_code', p_student_code)),
+      'role', p_role, 'student_code', p_student_code,
+      'username', case when p_role = 'student' then split_part(p_email, '@', 1) end)),
     jsonb_build_object('full_name', p_full_name), now(), now(),
     '', '', '', ''
   );

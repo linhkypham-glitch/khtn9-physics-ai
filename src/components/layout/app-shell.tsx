@@ -12,16 +12,21 @@ export function AppShell({ user, children }: { user: CurrentUser; children: Reac
   const home = homePathForRole(user.role);
   return (
     <div className="flex min-h-dvh">
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r bg-sidebar px-4 py-5 lg:flex">
-        <Logo href={home} className="mb-8 px-2" />
-        <SidebarNav role={user.role} />
-        <div className="mt-auto rounded-lg bg-muted px-3 py-3 text-xs text-muted-foreground">
-          Chương trình KHTN 9 – Kết nối tri thức với cuộc sống
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col overflow-hidden bg-gradient-to-b from-orange-600 via-orange-500 to-amber-500 px-4 py-5 lg:flex">
+        <div aria-hidden className="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-yellow-300/30 blur-2xl" />
+        <div aria-hidden className="pointer-events-none absolute bottom-10 -left-10 size-40 rounded-full bg-rose-400/25 blur-2xl" />
+        <Logo href={home} className="relative mb-8 px-2" inverted />
+        <div className="relative">
+          <SidebarNav role={user.role} inverted />
+        </div>
+        <div className="relative mt-auto rounded-xl bg-white/10 px-3 py-3 text-xs text-orange-50 ring-1 ring-white/10">
+          <p className="font-semibold text-white">KHTN 9 · Vật lý</p>
+          <p className="mt-0.5">Kết nối tri thức với cuộc sống</p>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-card/90 px-4 backdrop-blur sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-white/60 bg-white/75 px-4 backdrop-blur-md sm:px-6">
           <MobileNav role={user.role} homeHref={home} />
           <Logo href={home} className="lg:hidden" />
           <div className="ml-auto">
