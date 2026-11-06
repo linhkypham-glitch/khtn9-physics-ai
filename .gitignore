@@ -44,3 +44,6 @@ next-env.d.ts
 # supabase local
 supabase/.branches
 supabase/.temp
+
+# Video/ảnh quảng bá (không phải mã nguồn)
+/promo-out/
