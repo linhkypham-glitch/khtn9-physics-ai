@@ -141,6 +141,7 @@ npm run dev
    - Đã cài Milestone 1? Chạy **một lần** lần lượt `cloud-update-m2.sql` → `cloud-update-m3.sql` → `cloud-update-m4.sql`.
    - Đã cài Milestone 2? Chạy **một lần** `cloud-update-m3.sql` rồi `cloud-update-m4.sql`.
    - Đã cài Milestone 3? Chỉ chạy **một lần** `supabase/cloud-update-m4.sql`.
+   - Bị lỗi *already exists* / *does not exist* do chạy dở? Chạy `supabase/cloud-repair-m3-m4.sql` (chạy lại nhiều lần vẫn an toàn).
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql
    update public.profiles set role = 'admin' where email = 'email-cua-ban@truong.edu.vn';

@@ -32,4 +32,23 @@ writeFileSync(
   join(root, "cloud-update-m4.sql"),
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 4 (câu tự luận do giáo viên chấm, bảng xếp hạng) cho dự án đã chạy cloud-update-m3.sql.\n-- Chạy MỘT lần trong SQL Editor.\n\n${m4.map(read).join("\n\n")}`,
 );
-console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql, cloud-update-m4.sql");
+
+/**
+ * Bản "chạy lại an toàn" cho m3 + m4: dùng khi dự án đã chạy dở một phần (báo "already exists").
+ * Bỏ qua đối tượng đã có, tạo phần còn thiếu.
+ */
+function idempotent(sql) {
+  return sql
+    .replace(/^create type (public\.\w+) as enum \(([^;]*)\);/gm, (_m, name, vals) =>
+      `do $$ begin create type ${name} as enum (${vals}); exception when duplicate_object then null; end $$;`)
+    .replace(/^create table (public\.)/gm, "create table if not exists $1")
+    .replace(/^create index (\w+)/gm, "create index if not exists $1")
+    .replace(/^create trigger (\w+) (before|after) (\w+) on (public\.\w+)/gm, (m, name, _w, _e, table) => `drop trigger if exists ${name} on ${table};\n${m}`)
+    .replace(/^create policy (\w+) on (public\.\w+)/gm, (m, name, table) => `drop policy if exists ${name} on ${table};\n${m}`)
+    .replace(/add column (?!if not exists)/g, "add column if not exists ");
+}
+writeFileSync(
+  join(root, "cloud-repair-m3-m4.sql"),
+  `-- FILE SINH TỰ ĐỘNG – CHẠY LẠI AN TOÀN bản cập nhật Milestone 3 + 4.\n-- Dùng khi cloud-update-m3.sql / m4.sql báo lỗi "already exists" hoặc "does not exist" (đã chạy dở).\n-- Chạy được nhiều lần: bỏ qua phần đã có, tạo phần còn thiếu. Không xoá dữ liệu.\n\n${[...m3, ...m4].map((p) => idempotent(read(p))).join("\n\n")}`,
+);
+console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql, cloud-update-m4.sql, cloud-repair-m3-m4.sql");
