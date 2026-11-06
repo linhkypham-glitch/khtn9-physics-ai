@@ -30,14 +30,11 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
   }
 
   const admin = requireAdminClient();
-  const [{ data: info }, students, { data: attempts }] = await Promise.all([
+  const students = await listClassStudents(admin, id);
+  const [{ data: info }, { data: attempts }, { data: assignments }] = await Promise.all([
     admin.from("classes").select("name, allow_self_join, academic_years(name)").eq("id", id).single(),
-    listClassStudents(admin, id),
-    admin
-      .from("practice_attempts")
-      .select("user_id, score")
-      .eq("mode", "self_assessment")
-      .in("user_id", (await listClassStudents(admin, id)).map((s) => s.id)),
+    admin.from("practice_attempts").select("user_id, score").eq("mode", "self_assessment").in("user_id", students.map((s) => s.id)),
+    admin.from("assessment_assignments").select("id, code, due_at, is_closed, assessments(title)").eq("class_id", id).order("due_at", { ascending: false }),
   ]);
 
   const stats = new Map<string, { count: number; sum: number }>();
@@ -77,6 +74,22 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
         </Card>
       </div>
 
+      {(assignments?.length ?? 0) > 0 && (
+        <Card className="mb-6 gap-3">
+          <CardHeader><CardTitle className="text-base">Bài kiểm tra đã giao cho lớp</CardTitle></CardHeader>
+          <CardContent>
+            <ul className="divide-y">
+              {assignments!.map((g) => (
+                <li key={g.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                  <span><b>{g.assessments?.title}</b> <span className="text-muted-foreground">· mã {g.code} · hạn {dateFmt.format(new Date(g.due_at))}{g.is_closed ? " · đã đóng" : ""}</span></span>
+                  <Button asChild size="sm" variant="outline"><Link href={`/teacher/assignments/${g.id}`}>Xem kết quả</Link></Button>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
       {sorted.length === 0 ? (
         <EmptyState icon={Users} title="Lớp chưa có học sinh" description="Thêm học sinh ở trên, tải lên Excel, hoặc để học sinh tự vào lớp." />
       ) : (
@@ -89,7 +102,7 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
                 <TableHead>Mã HS</TableHead>
                 <TableHead>Ngày vào lớp</TableHead>
                 <TableHead className="text-right">Bài tự đánh giá</TableHead>
-                <TableHead className="text-right">Điểm TB</TableHead>
+                <TableHead className="text-right">Điểm TB tự đánh giá</TableHead>
                 <TableHead className="w-12"><span className="sr-only">Thao tác</span></TableHead>
               </TableRow>
             </TableHeader>
@@ -100,7 +113,7 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
                   <TableRow key={s.id}>
                     <TableCell className="tabular-nums text-muted-foreground">{i + 1}</TableCell>
                     <TableCell className="font-medium">
-                      {s.fullName} {!s.isActive && <Badge variant="destructive">Đã khoá</Badge>}
+                      <Link href={`/teacher/students/${s.id}`} className="text-primary hover:underline">{s.fullName}</Link> {!s.isActive && <Badge variant="destructive">Đã khoá</Badge>}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{s.studentCode ?? "—"}</TableCell>
                     <TableCell className="tabular-nums text-muted-foreground">{dateFmt.format(new Date(s.joinedAt))}</TableCell>

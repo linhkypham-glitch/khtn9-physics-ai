@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getAiConfigStatus, type AiConfigStatus } from "@/lib/ai/config";
+import { getAiConfigStatus } from "@/lib/ai/config";
 import { createSupabaseAdminClient, isServiceRoleConfigured } from "@/lib/supabase/admin";
 import { getSupabasePublicEnv } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -11,7 +11,7 @@ export type SetupStatus = {
   database: { reachable: boolean; chapters: number; lessons: number; error: string | null };
   /** Đã chạy migration + seed Milestone 2 (câu hỏi, thí nghiệm) chưa */
   m2: { ready: boolean; questions: number; experiments: number };
-  ai: AiConfigStatus;
+  ai: { configured: true; provider: string; model: string } | { configured: false; provider: string | null; reason: string };
 };
 
 /** Kiểm tra trạng thái cấu hình thực tế (chỉ trả về boolean/số đếm – không lộ bí mật). */
@@ -52,5 +52,13 @@ export async function getSetupStatus(): Promise<SetupStatus> {
     }
   }
 
-  return { supabaseEnv, serviceRole: isServiceRoleConfigured(), database, m2, ai: getAiConfigStatus() };
+  const ai = getAiConfigStatus();
+  // Không bao giờ trả API key ra ngoài
+  return {
+    supabaseEnv,
+    serviceRole: isServiceRoleConfigured(),
+    database,
+    m2,
+    ai: ai.configured ? { configured: true, provider: ai.provider, model: ai.model } : ai,
+  };
 }

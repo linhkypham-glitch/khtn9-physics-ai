@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, ClipboardList } from "lucide-react";
+import { CheckCircle2, ClipboardList, Pencil, Plus, Sparkles } from "lucide-react";
+
+import { QuestionStatusButtons } from "@/components/questions/question-status-buttons";
+import { Button } from "@/components/ui/button";
 
 import { EmptyState, ErrorState } from "@/components/dashboard/states";
 import { PageHeader } from "@/components/layout/page-header";
@@ -21,6 +24,7 @@ export default async function Page({ searchParams }: PageProps<"/teacher/questio
   const lessonFilter = typeof sp.bai === "string" ? Number(sp.bai) : null;
   const typeFilter = typeof sp.dang === "string" && sp.dang in TYPE_LABELS ? (sp.dang as QuestionType) : null;
   const levelFilter = typeof sp.muc === "string" && sp.muc in LEVEL_LABELS ? (sp.muc as CognitiveLevel) : null;
+  const draftOnly = sp.tt === "nhap";
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) return <ErrorState description="Supabase chưa được cấu hình." />;
@@ -33,11 +37,12 @@ export default async function Page({ searchParams }: PageProps<"/teacher/questio
   if (lessonFilter) query = query.eq("lessons.number", lessonFilter);
   if (typeFilter) query = query.eq("type", typeFilter);
   if (levelFilter) query = query.eq("level", levelFilter);
+  if (draftOnly) query = query.in("status", ["draft", "reviewed"]);
   const { data: questions, error } = await query.limit(300);
 
   const href = (patch: Record<string, string | null>) => {
     const params = new URLSearchParams();
-    const cur = { bai: lessonFilter ? String(lessonFilter) : null, dang: typeFilter, muc: levelFilter, ...patch };
+    const cur = { bai: lessonFilter ? String(lessonFilter) : null, dang: typeFilter, muc: levelFilter, tt: draftOnly ? "nhap" : null, ...patch };
     Object.entries(cur).forEach(([k, v]) => v && params.set(k, v));
     const qs = params.toString();
     return `/teacher/questions${qs ? `?${qs}` : ""}`;
@@ -47,7 +52,15 @@ export default async function Page({ searchParams }: PageProps<"/teacher/questio
 
   return (
     <>
-      <PageHeader title="Ngân hàng câu hỏi" description={`${questions?.length ?? 0} câu hỏi · lọc theo bài học, dạng câu hỏi và mức độ nhận thức`} />
+      <PageHeader
+        title="Ngân hàng câu hỏi"
+        description={`${questions?.length ?? 0} câu hỏi · lọc theo bài học, dạng câu hỏi, mức độ nhận thức và trạng thái duyệt`}
+        actions={
+          <Button asChild>
+            <Link href={`/teacher/questions/new${lessonFilter ? `?bai=${lessonFilter}` : ""}`}><Plus /> Thêm câu hỏi</Link>
+          </Button>
+        }
+      />
 
       <Card className="mb-5 gap-3 py-4">
         <CardContent className="flex flex-col gap-3">
@@ -67,6 +80,8 @@ export default async function Page({ searchParams }: PageProps<"/teacher/questio
             {(Object.keys(LEVEL_LABELS) as CognitiveLevel[]).map((l) => (
               <Link key={l} href={href({ muc: l })} className={chip(levelFilter === l)}>{LEVEL_LABELS[l]}</Link>
             ))}
+            <span className="mx-1 w-px bg-border" />
+            <Link href={href({ tt: draftOnly ? null : "nhap" })} className={chip(draftOnly)}>Chờ duyệt (nháp, AI)</Link>
           </div>
         </CardContent>
       </Card>
@@ -84,8 +99,11 @@ export default async function Page({ searchParams }: PageProps<"/teacher/questio
                   <Badge variant="blue">Bài {q.lessons.number}</Badge>
                   <Badge variant="secondary">{TYPE_LABELS[q.type]}</Badge>
                   <Badge variant={q.level === "biet" ? "teal" : q.level === "hieu" ? "amber" : "violet"}>{LEVEL_LABELS[q.level]}</Badge>
-                  <Badge variant="outline">{STATUS_LABELS[q.status]}</Badge>
+                  <Badge variant={q.status === "published" ? "outline" : "destructive"}>{STATUS_LABELS[q.status]}</Badge>
+                  {q.source.startsWith("AI") && <Badge variant="violet"><Sparkles /> AI</Badge>}
                   <span className="ml-auto font-mono text-muted-foreground">{q.code}</span>
+                  <QuestionStatusButtons id={q.id} status={q.status} />
+                  <Button asChild size="sm" variant="outline"><Link href={`/teacher/questions/${q.id}`}><Pencil /> Sửa</Link></Button>
                 </div>
                 <p className="font-medium whitespace-pre-line">{q.content}</p>
                 {q.type === "multiple_choice" && (

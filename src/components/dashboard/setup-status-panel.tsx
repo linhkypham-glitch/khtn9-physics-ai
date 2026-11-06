@@ -65,11 +65,11 @@ export function SetupStatusPanel({ status }: { status: SetupStatus }) {
           </Row>
           <Row level={status.ai.configured ? "ok" : "warn"} title="Dịch vụ AI">
             {status.ai.configured ? (
-              `Đã cấu hình nhà cung cấp: ${status.ai.provider}${status.ai.model ? ` (${status.ai.model})` : ""}.`
+              `Đã cấu hình nhà cung cấp: ${status.ai.provider} (${status.ai.model}).`
             ) : (
               <>
                 Chức năng AI chưa được cấu hình – các chức năng khác vẫn hoạt động bình thường. {status.ai.reason}
-                {status.ai.provider && <> Cần đặt <code>{aiKeyEnvName(status.ai.provider)}</code>.</>}
+                {status.ai.provider === "anthropic" && <> Cần đặt <code>{aiKeyEnvName("anthropic")}</code>.</>}
               </>
             )}
           </Row>

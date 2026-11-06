@@ -41,7 +41,7 @@ export function QuestionBody({
 }: {
   q: PublicQuestion;
   value: StudentAnswer;
-  onChange: (a: StudentAnswer) => void;
+  onChange?: (a: StudentAnswer) => void;
   result?: QuestionResult | null;
 }) {
   const locked = Boolean(result);
@@ -61,7 +61,7 @@ export function QuestionBody({
                 role="radio"
                 aria-checked={chosen}
                 disabled={locked}
-                onClick={() => onChange({ type: "multiple_choice", choice: o.label })}
+                onClick={() => onChange?.({ type: "multiple_choice", choice: o.label })}
                 className={cn(
                   "flex items-start gap-3 rounded-xl border-2 bg-card px-3 py-2.5 text-left text-sm transition-all",
                   !locked && "hover:border-orange-300 hover:bg-orange-50",
@@ -110,7 +110,7 @@ export function QuestionBody({
                       type="button"
                       disabled={locked}
                       aria-pressed={v === opt}
-                      onClick={() => onChange({ type: "true_false", items: { ...value.items, [s.label]: v === opt ? null : opt } })}
+                      onClick={() => onChange?.({ type: "true_false", items: { ...value.items, [s.label]: v === opt ? null : opt } })}
                       className={cn(
                         "flex items-center gap-1 rounded-lg border-2 px-3 py-1.5 text-xs font-semibold transition-colors",
                         v === opt
@@ -137,7 +137,7 @@ export function QuestionBody({
             disabled={locked}
             inputMode="decimal"
             maxLength={60}
-            onChange={(e) => onChange({ type: "short_answer", text: e.target.value })}
+            onChange={(e) => onChange?.({ type: "short_answer", text: e.target.value })}
             placeholder="Nhập đáp số (dùng dấu phẩy cho số thập phân)"
             className={cn("h-11 max-w-xs text-base", result && (result.status === "correct" ? "border-green-500 bg-green-50" : "border-red-400 bg-red-50"))}
             aria-label="Đáp số"

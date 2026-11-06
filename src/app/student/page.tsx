@@ -6,10 +6,12 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { EmptyState, ErrorState } from "@/components/dashboard/states";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { listStudentAssignments } from "@/modules/assessments/student";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
+import { requestTime } from "@/lib/time";
 import { getStudentClasses } from "@/modules/classes/repository";
 import { CurriculumList } from "@/modules/curriculum/components/curriculum-list";
 import { getCurriculum } from "@/modules/curriculum/repository";
@@ -29,6 +31,11 @@ export default async function StudentDashboard() {
         admin.from("experiment_attempts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ])
     : [{ data: [] as { lesson_id: string; score: number }[] }, { count: 0 }];
+  const [assignments, { data: comments }] = await Promise.all([
+    listStudentAssignments(user.id).catch(() => []),
+    admin ? admin.from("student_comments").select("id, content, created_at, profiles!student_comments_teacher_id_fkey(full_name)").eq("student_id", user.id).order("created_at", { ascending: false }).limit(3) : Promise.resolve({ data: [] }),
+  ]);
+  const openAssignments = assignments.filter((a) => !a.isClosed && requestTime() <= new Date(a.dueAt).getTime() && !a.attempts.some((x) => x.status === "submitted"));
   const doneLessons = new Set((attempts ?? []).map((a) => a.lesson_id)).size;
   const avgScore = attempts?.length ? attempts.reduce((s, a) => s + Number(a.score), 0) / attempts.length : null;
   const firstLesson = curriculum.ok ? curriculum.chapters[0]?.lessons[0] : undefined;
@@ -80,6 +87,34 @@ export default async function StudentDashboard() {
         </div>
 
         <div className="flex flex-col gap-6">
+          <Card className={openAssignments.length ? "border-orange-300 bg-orange-50/50" : undefined}>
+            <CardHeader>
+              <CardTitle>Bài được giao</CardTitle>
+              <CardDescription>{openAssignments.length ? `${openAssignments.length} bài cần làm` : "Không có bài cần làm"}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {openAssignments.slice(0, 3).map((a) => (
+                <div key={a.id} className="rounded-lg border bg-white px-3 py-2 text-sm">
+                  <p className="font-medium">{a.title}</p>
+                  <p className="text-xs text-muted-foreground">Hạn: {new Date(a.dueAt).toLocaleString("vi-VN")}</p>
+                </div>
+              ))}
+              <Link href="/student/assignments" className="text-sm font-semibold text-primary hover:underline">Xem tất cả →</Link>
+            </CardContent>
+          </Card>
+          {(comments?.length ?? 0) > 0 && (
+            <Card>
+              <CardHeader><CardTitle>Nhận xét của giáo viên</CardTitle></CardHeader>
+              <CardContent className="flex flex-col gap-2">
+                {comments!.map((c) => (
+                  <div key={c.id} className="rounded-lg bg-amber-50 px-3 py-2 text-sm">
+                    <p className="whitespace-pre-line">{c.content}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{c.profiles?.full_name} · {new Date(c.created_at).toLocaleDateString("vi-VN")}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
           <Card>
             <CardHeader>
               <CardTitle>Tiến độ học tập</CardTitle>

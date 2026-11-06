@@ -18,7 +18,7 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
 |---|---|---|
 | 1 | Nền tảng: dự án, giao diện, đăng nhập, phân quyền, schema + RLS, seed chương trình học, dashboard | ✅ Hoàn thành |
 | 2 | Học liệu, ngân hàng câu hỏi, thí nghiệm ảo, luyện tập – tự đánh giá, quản lý lớp, học sinh vào học không mật khẩu | ✅ Hoàn thành |
-| 3 | Soạn đề, giao bài, làm bài, chấm điểm, giải thích đáp án | ⏳ |
+| 3 | Soạn/sửa câu hỏi, soạn đề (tự soạn, tự động, AI), giao bài theo lớp, làm bài, chấm điểm, báo cáo, nhận xét, xuất Excel/CSV | ✅ Hoàn thành |
 | 4 | AI tạo câu hỏi / đề / ma trận / bản đặc tả, AI phân tích | ⏳ |
 | 5 | Bảng xếp hạng, phân tích học tập, xuất Excel/CSV | ⏳ |
 | 6 | Kiểm thử tổng thể, bảo mật, tối ưu, triển khai | ⏳ |
@@ -48,9 +48,30 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
 - **Kết quả học tập** theo bài và tiến độ trên dashboard (dữ liệu thật).
 - Giao diện **tone cam**, mỗi chương một màu nhận diện.
 
+### Đã hoạt động (Milestone 3)
+
+- **Ngân hàng câu hỏi**: giáo viên thêm, sửa, xoá, duyệt câu hỏi (trắc nghiệm, đúng – sai 4 ý, trả lời ngắn) cho từng bài; lọc câu chờ duyệt.
+- **Đề kiểm tra** với 3 cách tạo: *tự động từ ngân hàng* (theo cấu trúc + tỉ lệ Biết/Hiểu/Vận dụng, rải đều các bài),
+  *giáo viên tự soạn*, *AI soạn câu hỏi mới* (Claude, structured outputs, chỉ dùng nội dung bài học trong hệ thống).
+  Câu AI tạo qua kiểm tra chất lượng tự động và ở trạng thái **nháp** – đề chỉ xuất bản được khi mọi câu đã được giáo viên duyệt.
+  Cấu trúc mặc định 18 + 2 + 6 (26 câu, 32 đơn vị) là cấu hình của ứng dụng, **không phải** quy định bắt buộc của Công văn 7991.
+  Ma trận đề (bài × dạng × mức độ, tỉ lệ điểm) tính tự động.
+- **Giao bài theo lớp**: mã bài giao, thời gian bắt đầu, hạn nộp, số lần làm, thời điểm công bố đáp án; đóng/mở bài giao.
+- **Học sinh làm bài**: đồng hồ đếm ngược, đánh dấu xem lại, tự lưu lên máy chủ mỗi 15 giây + lưu tạm trên máy khi mất mạng,
+  tải lại trang không mất bài, hết giờ tự nộp; chấm điểm ở máy chủ; giải thích từng câu theo cài đặt của giáo viên.
+- **Kết quả học tập**: thống kê lớp (TB, cao/thấp nhất, tỉ lệ hoàn thành, phổ điểm, tỉ lệ đúng theo chương/mức độ/dạng/từng câu),
+  hồ sơ từng học sinh (tiến bộ, điểm mạnh – cần cải thiện), **nhận xét của giáo viên** (có gợi ý từ dữ liệu, học sinh xem được).
+- **Xuất Excel** (BANG_DIEM, CHI_TIET_BAI_LAM, THONG_KE_LOP, PHAN_TICH_HOC_TAP), **CSV** UTF-8, hồ sơ học sinh (Excel).
+
+### Bật AI tạo đề
+
+Thêm biến môi trường trên Vercel (Settings → Environment Variables) rồi Redeploy:
+`ANTHROPIC_API_KEY` = khoá API Anthropic (console.anthropic.com). Tuỳ chọn `AI_MODEL` (mặc định `claude-opus-5-5`).
+Chi phí API do tài khoản Anthropic của bạn chi trả. Ứng dụng bật `fallbacks: "default"`: nếu bộ lọc an toàn của model từ chối, máy chủ Anthropic tự chạy lại trên model dự phòng.
+
 ### Chưa có
 
-Giáo viên soạn/sửa câu hỏi và học liệu trên giao diện, đề kiểm tra & giao bài theo lớp, AI, báo cáo Excel, bảng xếp hạng.
+Giáo viên soạn học liệu (lý thuyết) trên giao diện, bảng xếp hạng, AI nhận xét bằng ngôn ngữ tự nhiên, tự luận.
 
 > **Lưu ý về mục lục:** danh mục chính thức gồm Bài 2 → Bài 17, tức **16 bài** (không phải 17). Ứng dụng giữ nguyên văn danh mục, không tự thêm bài.
 
@@ -100,7 +121,8 @@ npm run dev
    ```
 3. Trong SQL Editor, chạy `supabase/seed/01_curriculum.sql` → `05_experiments.sql` (hoặc dán một lần file `supabase/cloud-setup.sql`).
    **Không** chạy `90_demo_data.sql` trên môi trường thật.
-   - Đã cài Milestone 1 trước đó? Chỉ cần chạy **một lần** `supabase/cloud-update-m2.sql`.
+   - Đã cài Milestone 1? Chạy **một lần** `supabase/cloud-update-m2.sql`, rồi `supabase/cloud-update-m3.sql`.
+   - Đã cài Milestone 2? Chỉ chạy **một lần** `supabase/cloud-update-m3.sql`.
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql
    update public.profiles set role = 'admin' where email = 'email-cua-ban@truong.edu.vn';

@@ -251,5 +251,73 @@ begin
 end $$;
 reset role;
 
+-- 17. Đề kiểm tra, giao bài, bài làm, nhận xét
+-- Giáo viên Demo tạo đề, thêm câu hỏi, giao cho 9A (lớp mình) – không giao được cho 9C
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000001');
+do $$
+declare v_a uuid; v_g uuid;
+begin
+  insert into public.assessments (title, created_by, lesson_ids, status)
+  values ('Kiểm thử RLS', 'b0000000-0000-0000-0000-000000000001', array(select id from public.lessons where number = 11), 'published')
+  returning id into v_a;
+  insert into public.assessment_questions (assessment_id, question_id, points)
+  select v_a, id, 1 from public.question_bank where code in ('B11-01', 'B11-02');
+  insert into public.assessment_assignments (assessment_id, class_id, assigned_by, due_at)
+  values (v_a, '30000000-0000-0000-0000-00000000009a', 'b0000000-0000-0000-0000-000000000001', now() + interval '1 day')
+  returning id into v_g;
+  begin
+    insert into public.assessment_assignments (assessment_id, class_id, assigned_by, due_at)
+    values (v_a, '30000000-0000-0000-0000-00000000009c', 'b0000000-0000-0000-0000-000000000001', now() + interval '1 day');
+    raise exception 'FAIL: giáo viên giao bài cho lớp không phụ trách';
+  exception when insufficient_privilege then null;
+  end;
+  insert into public.student_comments (student_id, teacher_id, content)
+  values ('c0000000-0000-0000-0000-0000000009a1', 'b0000000-0000-0000-0000-000000000001', 'Em học tốt.');
+  begin
+    insert into public.student_comments (student_id, teacher_id, content)
+    values ('c0000000-0000-0000-0000-0000000009c1', 'b0000000-0000-0000-0000-000000000001', 'x');
+    raise exception 'FAIL: giáo viên nhận xét học sinh lớp khác';
+  exception when insufficient_privilege then null;
+  end;
+  perform set_config('test.assignment', v_g::text, true);
+  raise notice 'PASS 17: giáo viên tạo đề, giao bài, nhận xét đúng phạm vi';
+end $$;
+select pg_temp.logout();
+
+-- 18. Học sinh: không đọc được đề/câu hỏi của đề, không tự tạo/sửa bài làm; đọc được nhận xét về mình
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a1');
+do $$
+begin
+  if (select count(*) from public.assessments) <> 0 then raise exception 'FAIL: học sinh đọc được bảng đề'; end if;
+  if (select count(*) from public.assessment_questions) <> 0 then raise exception 'FAIL: học sinh đọc được câu hỏi của đề'; end if;
+  begin
+    insert into public.assessment_attempts (assignment_id, user_id, deadline_at, score)
+    values (current_setting('test.assignment')::uuid, 'c0000000-0000-0000-0000-0000000009a1', now() + interval '1 hour', 10);
+    raise exception 'FAIL: học sinh tự tạo bài làm có điểm';
+  exception when insufficient_privilege then null;
+  end;
+  if (select count(*) from public.student_comments) <> 1 then raise exception 'FAIL: học sinh không đọc được nhận xét về mình'; end if;
+  raise notice 'PASS 18: học sinh không xem đáp án, không tự ghi điểm';
+end $$;
+select pg_temp.logout();
+
+-- 19. Học sinh khác không đọc được nhận xét của bạn; GV lớp khác không thấy đề nháp/bài giao lớp khác
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a2');
+do $$
+begin
+  if (select count(*) from public.student_comments) <> 0 then raise exception 'FAIL: học sinh đọc nhận xét của bạn khác'; end if;
+  raise notice 'PASS 19: nhận xét riêng tư';
+end $$;
+select pg_temp.logout();
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000002');
+do $$
+begin
+  if (select count(*) from public.assessment_assignments) <> 0 then raise exception 'FAIL: GV 9C thấy bài giao lớp 9A'; end if;
+  update public.assessments set title = 'Sửa trộm' where title = 'Kiểm thử RLS';
+  if found then raise exception 'FAIL: GV khác sửa được đề'; end if;
+  raise notice 'PASS 20: giáo viên không sửa đề, không xem bài giao của người khác';
+end $$;
+select pg_temp.logout();
+
 rollback;
 \echo 'TẤT CẢ KIỂM THỬ RLS ĐÃ QUA'

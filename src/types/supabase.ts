@@ -43,6 +43,136 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"ai_generation_jobs": {
+                  Row: {
+                    "assessment_id": string | null,"created_at": string,"created_by": string,"error": string | null,"id": string,"model": string | null,"provider": string,"question_ids": (string)[],"request": NonNullable<Json>,"status": string,"warnings": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assessment_id"?: string | null,"created_at"?: string,"created_by": string,"error"?: string | null,"id"?: string,"model"?: string | null,"provider": string,"question_ids"?: (string)[],"request": NonNullable<Json>,"status": string,"warnings"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "assessment_id"?: string | null,"created_at"?: string,"created_by"?: string,"error"?: string | null,"id"?: string,"model"?: string | null,"provider"?: string,"question_ids"?: (string)[],"request"?: NonNullable<Json>,"status"?: string,"warnings"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_generation_jobs_assessment_id_fkey"
+      columns: ["assessment_id"]
+isOneToOne: false
+      referencedRelation: "assessments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ai_generation_jobs_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assessment_assignments": {
+                  Row: {
+                    "assessment_id": string,"assigned_by": string,"class_id": string,"code": string,"created_at": string,"due_at": string,"id": string,"is_closed": boolean,"max_attempts": number,"show_answers": Database["public"]['Enums']["answer_visibility"],"start_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assessment_id": string,"assigned_by": string,"class_id": string,"code"?: string,"created_at"?: string,"due_at": string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"start_at"?: string
+                  }
+                  Update: {
+                    "assessment_id"?: string,"assigned_by"?: string,"class_id"?: string,"code"?: string,"created_at"?: string,"due_at"?: string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"start_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assessment_assignments_assessment_id_fkey"
+      columns: ["assessment_id"]
+isOneToOne: false
+      referencedRelation: "assessments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessment_assignments_assigned_by_fkey"
+      columns: ["assigned_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessment_assignments_class_id_fkey"
+      columns: ["class_id"]
+isOneToOne: false
+      referencedRelation: "classes"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assessment_attempts": {
+                  Row: {
+                    "answers": NonNullable<Json>,"assignment_id": string,"attempt_no": number,"correct_units": number | null,"deadline_at": string,"details": NonNullable<Json>,"earned_points": number | null,"id": string,"max_points": number | null,"score": number | null,"started_at": string,"status": Database["public"]['Enums']["attempt_status"],"submitted_at": string | null,"total_units": number | null,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answers"?: NonNullable<Json>,"assignment_id": string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at": string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "answers"?: NonNullable<Json>,"assignment_id"?: string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at"?: string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assessment_attempts_assignment_id_fkey"
+      columns: ["assignment_id"]
+isOneToOne: false
+      referencedRelation: "assessment_assignments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessment_attempts_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assessment_questions": {
+                  Row: {
+                    "assessment_id": string,"points": number,"question_id": string,"sort_order": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assessment_id": string,"points"?: number,"question_id": string,"sort_order"?: number
+                  }
+                  Update: {
+                    "assessment_id"?: string,"points"?: number,"question_id"?: string,"sort_order"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assessment_questions_assessment_id_fkey"
+      columns: ["assessment_id"]
+isOneToOne: false
+      referencedRelation: "assessments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "assessment_questions_question_id_fkey"
+      columns: ["question_id"]
+isOneToOne: false
+      referencedRelation: "question_bank"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"assessments": {
+                  Row: {
+                    "created_at": string,"created_by": string,"description": string | null,"duration_minutes": number,"id": string,"lesson_ids": (string)[],"source": Database["public"]['Enums']["assessment_source"],"status": Database["public"]['Enums']["assessment_status"],"structure": NonNullable<Json>,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by": string,"description"?: string | null,"duration_minutes"?: number,"id"?: string,"lesson_ids"?: (string)[],"source"?: Database["public"]['Enums']["assessment_source"],"status"?: Database["public"]['Enums']["assessment_status"],"structure"?: NonNullable<Json>,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string,"description"?: string | null,"duration_minutes"?: number,"id"?: string,"lesson_ids"?: (string)[],"source"?: Database["public"]['Enums']["assessment_source"],"status"?: Database["public"]['Enums']["assessment_status"],"structure"?: NonNullable<Json>,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "assessments_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"audit_logs": {
                   Row: {
                     "action": string,"actor_id": string | null,"created_at": string,"entity": string,"entity_id": string | null,"id": number,"metadata": NonNullable<Json>
@@ -411,6 +541,38 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"student_comments": {
+                  Row: {
+                    "assignment_id": string | null,"content": string,"created_at": string,"id": string,"student_id": string,"teacher_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assignment_id"?: string | null,"content": string,"created_at"?: string,"id"?: string,"student_id": string,"teacher_id": string
+                  }
+                  Update: {
+                    "assignment_id"?: string | null,"content"?: string,"created_at"?: string,"id"?: string,"student_id"?: string,"teacher_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "student_comments_assignment_id_fkey"
+      columns: ["assignment_id"]
+isOneToOne: false
+      referencedRelation: "assessment_assignments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "student_comments_student_id_fkey"
+      columns: ["student_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "student_comments_teacher_id_fkey"
+      columns: ["teacher_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"system_settings": {
                   Row: {
                     "description": string | null,"key": string,"updated_at": string,"updated_by": string | null,"value": NonNullable<Json>
@@ -487,12 +649,15 @@ isOneToOne: false
               "academic_year": string,"id": string,"name": string,"student_count": number
             }[]
                            },
+"owns_assessment":
+{ Args: { "p_assessment_id": string }; Returns: boolean
+                           },
 "teaches_user":
 { Args: { "p_user_id": string }; Returns: boolean
                            }
           }
           Enums: {
-            "class_member_role": "teacher"|"student","cognitive_level": "biet"|"hieu"|"van_dung","lesson_section": "knowledge"|"experiment"|"practice"|"self_assessment","lesson_type": "theory"|"practice","material_kind": "text"|"formula"|"example"|"image"|"video"|"link"|"file","objective_kind": "objective"|"requirement","question_type": "multiple_choice"|"true_false"|"short_answer"|"essay","review_status": "draft"|"reviewed"|"approved"|"published","user_role": "admin"|"teacher"|"student"
+            "answer_visibility": "immediately"|"after_due"|"never","assessment_source": "manual"|"auto"|"ai","assessment_status": "draft"|"published"|"archived","attempt_status": "in_progress"|"submitted","class_member_role": "teacher"|"student","cognitive_level": "biet"|"hieu"|"van_dung","lesson_section": "knowledge"|"experiment"|"practice"|"self_assessment","lesson_type": "theory"|"practice","material_kind": "text"|"formula"|"example"|"image"|"video"|"link"|"file","objective_kind": "objective"|"requirement","question_type": "multiple_choice"|"true_false"|"short_answer"|"essay","review_status": "draft"|"reviewed"|"approved"|"published","user_role": "admin"|"teacher"|"student"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -612,7 +777,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "class_member_role": ["teacher", "student"],"cognitive_level": ["biet", "hieu", "van_dung"],"lesson_section": ["knowledge", "experiment", "practice", "self_assessment"],"lesson_type": ["theory", "practice"],"material_kind": ["text", "formula", "example", "image", "video", "link", "file"],"objective_kind": ["objective", "requirement"],"question_type": ["multiple_choice", "true_false", "short_answer", "essay"],"review_status": ["draft", "reviewed", "approved", "published"],"user_role": ["admin", "teacher", "student"]
+            "answer_visibility": ["immediately", "after_due", "never"],"assessment_source": ["manual", "auto", "ai"],"assessment_status": ["draft", "published", "archived"],"attempt_status": ["in_progress", "submitted"],"class_member_role": ["teacher", "student"],"cognitive_level": ["biet", "hieu", "van_dung"],"lesson_section": ["knowledge", "experiment", "practice", "self_assessment"],"lesson_type": ["theory", "practice"],"material_kind": ["text", "formula", "example", "image", "video", "link", "file"],"objective_kind": ["objective", "requirement"],"question_type": ["multiple_choice", "true_false", "short_answer", "essay"],"review_status": ["draft", "reviewed", "approved", "published"],"user_role": ["admin", "teacher", "student"]
           }
         }
 } as const

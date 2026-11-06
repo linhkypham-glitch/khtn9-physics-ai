@@ -28,28 +28,36 @@ describe("Cấu hình Supabase", () => {
 });
 
 describe("Cấu hình AI", () => {
-  it("báo chưa cấu hình khi thiếu AI_PROVIDER", () => {
+  it("báo chưa cấu hình khi thiếu cả AI_PROVIDER và key", () => {
     vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("ANTHROPIC_API_KEY", "");
     expect(getAiConfigStatus().configured).toBe(false);
   });
 
-  it("báo thiếu API key của nhà cung cấp đã chọn", () => {
-    vi.stubEnv("AI_PROVIDER", "openai");
-    vi.stubEnv("OPENAI_API_KEY", "");
-    const s = getAiConfigStatus();
-    expect(s.configured).toBe(false);
-    if (!s.configured) expect(s.reason).toContain("OPENAI_API_KEY");
+  it("tự nhận Anthropic khi chỉ có ANTHROPIC_API_KEY, model mặc định claude-opus-5-5", () => {
+    vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("AI_MODEL", "");
+    vi.stubEnv("ANTHROPIC_API_KEY", "sk-test");
+    expect(getAiConfigStatus()).toMatchObject({ configured: true, provider: "anthropic", model: "claude-opus-5-5" });
   });
 
-  it("từ chối nhà cung cấp không hỗ trợ", () => {
+  it("báo thiếu API key của nhà cung cấp đã chọn", () => {
+    vi.stubEnv("AI_PROVIDER", "anthropic");
+    vi.stubEnv("ANTHROPIC_API_KEY", "");
+    const s = getAiConfigStatus();
+    expect(s.configured).toBe(false);
+    if (!s.configured) expect(s.reason).toContain("ANTHROPIC_API_KEY");
+  });
+
+  it("từ chối nhà cung cấp chưa hỗ trợ", () => {
     vi.stubEnv("AI_PROVIDER", "unknown");
     expect(getAiConfigStatus().configured).toBe(false);
   });
 
-  it("đã cấu hình khi có provider + key", () => {
+  it("cho phép đổi model bằng AI_MODEL", () => {
     vi.stubEnv("AI_PROVIDER", "Anthropic");
-    vi.stubEnv("ANTHROPIC_API_KEY", "test-key");
-    vi.stubEnv("AI_MODEL", "");
-    expect(getAiConfigStatus()).toEqual({ configured: true, provider: "anthropic", model: null });
+    vi.stubEnv("ANTHROPIC_API_KEY", "sk-test");
+    vi.stubEnv("AI_MODEL", "claude-sonnet-5-5");
+    expect(getAiConfigStatus()).toMatchObject({ configured: true, model: "claude-sonnet-5-5" });
   });
 });
