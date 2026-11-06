@@ -7,7 +7,7 @@ export const QuestionInputSchema = z
   .object({
     id: z.guid().nullable(),
     lessonId: z.guid("Vui lòng chọn bài học."),
-    type: z.enum(["multiple_choice", "true_false", "short_answer"]),
+    type: z.enum(["multiple_choice", "true_false", "short_answer", "essay"]),
     level: z.enum(["biet", "hieu", "van_dung"]),
     content: text(10, 2000, "Nội dung câu hỏi tối thiểu 10 ký tự."),
     options: z.array(z.string().trim().max(500)).length(4),
@@ -19,6 +19,7 @@ export const QuestionInputSchema = z
     explanation: text(5, 3000, "Vui lòng nhập lời giải (tối thiểu 5 ký tự)."),
     formula: z.string().trim().max(500).nullable(),
     remember: z.string().trim().max(1000).nullable(),
+    rubric: z.string().trim().max(3000).nullable(),
     publish: z.boolean(),
   })
   .superRefine((q, ctx) => {
@@ -29,6 +30,9 @@ export const QuestionInputSchema = z
     }
     if (q.type === "true_false" && q.items.some((i) => i.content.length < 3)) {
       ctx.addIssue({ code: "custom", path: ["items"], message: "Nhập đủ nội dung 4 ý a, b, c, d." });
+    }
+    if (q.type === "essay" && (!q.rubric || q.rubric.length < 10)) {
+      ctx.addIssue({ code: "custom", path: ["rubric"], message: "Nhập hướng dẫn chấm / tiêu chí cho câu tự luận (tối thiểu 10 ký tự)." });
     }
     if (q.type === "short_answer" && (q.answerNumber === null || !Number.isFinite(q.answerNumber))) {
       ctx.addIssue({ code: "custom", path: ["answerNumber"], message: "Nhập đáp số dạng số." });
@@ -54,6 +58,7 @@ export function emptyQuestionInput(lessonId: string): QuestionInput {
     explanation: "",
     formula: null,
     remember: null,
+    rubric: null,
     publish: true,
   };
 }

@@ -37,11 +37,13 @@ export type FullQuestion = Omit<PublicQuestion, "options" | "subitems"> & {
 export type StudentAnswer =
   | { type: "multiple_choice"; choice: string | null }
   | { type: "true_false"; items: Record<string, boolean | null> }
-  | { type: "short_answer"; text: string };
+  | { type: "short_answer"; text: string }
+  | { type: "essay"; text: string };
 
 export type QuestionResult = {
   questionId: string;
-  status: "correct" | "partial" | "wrong" | "blank";
+  /** pending: câu tự luận chờ giáo viên chấm */
+  status: "correct" | "partial" | "wrong" | "blank" | "pending";
   earned: number;
   max: number;
   /** số đơn vị trả lời đúng / tổng (TN: 1, Đ-S: 4, TLN: 1) */

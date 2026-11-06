@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   School,
   Settings,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,6 +27,7 @@ export const NAV_BY_ROLE: Record<UserRole, NavGroup[]> = {
         { href: "/student", label: "Tổng quan", icon: LayoutDashboard, exact: true },
         { href: "/student/lessons", label: "Bài học", icon: BookOpen },
         { href: "/student/assignments", label: "Bài được giao", icon: ClipboardCheck },
+        { href: "/student/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
       ],
     },
   ],
@@ -38,6 +40,7 @@ export const NAV_BY_ROLE: Record<UserRole, NavGroup[]> = {
         { href: "/teacher/curriculum", label: "Bài học & thí nghiệm", icon: BookOpen },
         { href: "/teacher/questions", label: "Ngân hàng câu hỏi", icon: ClipboardList },
         { href: "/teacher/assessments", label: "Đề kiểm tra & giao bài", icon: FileQuestion },
+        { href: "/teacher/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
       ],
     },
   ],
@@ -50,6 +53,7 @@ export const NAV_BY_ROLE: Record<UserRole, NavGroup[]> = {
         { href: "/admin/curriculum", label: "Bài học & thí nghiệm", icon: BookOpen },
         { href: "/teacher/questions", label: "Ngân hàng câu hỏi", icon: ClipboardList },
         { href: "/teacher/assessments", label: "Đề kiểm tra & giao bài", icon: FileQuestion },
+        { href: "/teacher/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
         { href: "/admin/settings", label: "Cấu hình hệ thống", icon: Settings },
       ],
     },

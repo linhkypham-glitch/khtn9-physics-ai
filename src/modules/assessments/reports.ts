@@ -71,7 +71,7 @@ export async function getAssignmentReport(assignmentId: string) {
   const { supabase, admin } = await staffClient();
   const { data: asg } = await supabase
     .from("assessment_assignments")
-    .select("id, code, class_id, assessment_id, start_at, due_at, max_attempts, show_answers, is_closed, created_at, classes(name), assessments(title, duration_minutes)")
+    .select("id, code, class_id, assessment_id, start_at, due_at, max_attempts, show_answers, show_leaderboard, is_closed, created_at, classes(name), assessments(title, duration_minutes)")
     .eq("id", assignmentId)
     .maybeSingle();
   if (!asg) throw new ReportError("Không tìm thấy bài giao hoặc bạn không phụ trách lớp này.");
@@ -136,6 +136,7 @@ export async function getAssignmentReport(assignmentId: string) {
       maxAttempts: asg.max_attempts,
       showAnswers: asg.show_answers,
       isClosed: asg.is_closed,
+      showLeaderboard: asg.show_leaderboard,
       assessmentId: asg.assessment_id,
       createdAt: asg.created_at,
     },

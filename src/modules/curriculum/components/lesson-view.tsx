@@ -27,6 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LessonMaterialRow, LessonSection } from "@/types/database";
 import type { LessonDetail } from "../repository";
 import { formatChapterLabel } from "../types";
+import { youtubeEmbedUrl } from "../video";
 
 const SECTIONS: { value: LessonSection | "results"; label: string; icon: typeof BookOpenText }[] = [
   { value: "knowledge", label: "Kiến thức", icon: BookOpenText },
@@ -37,6 +38,7 @@ const SECTIONS: { value: LessonSection | "results"; label: string; icon: typeof 
 ];
 
 function MaterialItem({ m }: { m: LessonMaterialRow }) {
+  const embed = m.kind === "video" && m.url ? youtubeEmbedUrl(m.url) : null;
   return (
     <Card className="gap-2 py-4">
       <CardHeader className="flex flex-row items-center justify-between gap-2">
@@ -54,7 +56,12 @@ function MaterialItem({ m }: { m: LessonMaterialRow }) {
           // eslint-disable-next-line @next/next/no-img-element -- URL do giáo viên nhập, không qua next/image
           <img src={m.url} alt={m.title} className="max-h-96 rounded-lg border" loading="lazy" />
         )}
-        {m.url && m.kind !== "image" && (
+        {embed && (
+          <div className="aspect-video overflow-hidden rounded-lg border">
+            <iframe src={embed} title={m.title} className="size-full" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+          </div>
+        )}
+        {m.url && m.kind !== "image" && !embed && (
           <a href={m.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
             Mở tài liệu <ExternalLink className="size-3.5" />
           </a>
@@ -182,6 +189,11 @@ export function LessonView({
         </div>
         <h1 className="relative mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{lesson.title}.</h1>
         {lesson.summary && <p className="relative mt-2 max-w-3xl text-white/90">{lesson.summary}</p>}
+        {viewer === "staff" && (
+          <Button asChild size="sm" variant="secondary" className="relative mt-4">
+            <Link href={`/teacher/curriculum/${lesson.slug}/edit`}><PencilLine /> Sửa nội dung bài học</Link>
+          </Button>
+        )}
       </div>
 
       <Tabs defaultValue="knowledge">

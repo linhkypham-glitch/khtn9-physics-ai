@@ -168,6 +168,7 @@ export type AttemptView =
       summary: ReturnType<typeof summarize> | null;
       reveal: boolean;
       revealNote: string | null;
+      pendingEssays: boolean;
       questions: PublicQuestion[];
       answers: Record<string, StudentAnswer>;
       results: QuestionResult[];
@@ -194,7 +195,8 @@ export async function getAttemptView(attemptId: string, userId: string): Promise
   const dueReached = Date.now() > new Date(asg.due_at).getTime();
   const reveal = asg.show_answers === "immediately" || (asg.show_answers === "after_due" && dueReached);
   const answers = attempt.answers as Record<string, StudentAnswer>;
-  const results = reveal ? full.map((q) => gradeQuestion(q, answers[q.id])) : [];
+  const { data: essayGrades } = await db.from("essay_grades").select("question_id, score, feedback").eq("attempt_id", attemptId);
+  const results = reveal ? full.map((q) => applyEssayGrade(gradeQuestion(q, answers[q.id]), essayGrades ?? [])) : [];
   return {
     mode: "result",
     attemptId,
@@ -204,11 +206,26 @@ export async function getAttemptView(attemptId: string, userId: string): Promise
     startedAt: attempt.started_at,
     summary: reveal ? summarize(results) : null,
     reveal,
+    pendingEssays: Boolean(attempt.needs_grading),
     revealNote: reveal ? null : asg.show_answers === "after_due" ? "Đáp án và lời giải sẽ được công bố sau hạn nộp bài." : "Giáo viên không công bố đáp án cho bài này.",
     questions: full.map(toPublic),
     answers,
     results,
     assignmentId: asg.id,
+  };
+}
+
+/** Ghép điểm tự luận giáo viên đã chấm vào kết quả câu hỏi. */
+export function applyEssayGrade(r: QuestionResult, grades: { question_id: string; score: number; feedback: string | null }[]): QuestionResult {
+  const g = grades.find((x) => x.question_id === r.questionId);
+  if (!g) return r;
+  const score = Number(g.score);
+  return {
+    ...r,
+    earned: score,
+    correctUnits: score >= r.max ? 1 : 0,
+    status: score >= r.max ? "correct" : score <= 0 ? "wrong" : "partial",
+    explanation: `${g.feedback ? `Nhận xét của giáo viên: ${g.feedback}\n\n` : ""}${r.explanation}`,
   };
 }
 
@@ -231,6 +248,7 @@ export async function finalizeAttempt(db: Admin, attemptId: string, answers: Rec
       max_points: s.max,
       correct_units: s.correctUnits,
       total_units: s.totalUnits,
+      needs_grading: s.pending > 0,
       details: results.map((r) => ({ q: r.questionId, s: r.status, e: r.earned, m: r.max, a: r.studentAnswer, c: r.correctAnswer, cu: r.correctUnits, tu: r.totalUnits })),
     })
     .eq("id", attemptId)

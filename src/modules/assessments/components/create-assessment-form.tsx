@@ -38,13 +38,15 @@ export function CreateAssessmentForm({ lessons, aiConfigured }: { lessons: Lesso
   }, [lessons]);
 
   const available = lessons.filter((l) => selected.includes(l.id)).reduce((sum, l) => sum + l.published, 0);
-  const total = s.multiple_choice.count + s.true_false.count + s.short_answer.count;
-  const units = s.multiple_choice.count + s.true_false.count * 4 + s.short_answer.count;
-  const rawPoints = s.multiple_choice.count * s.multiple_choice.points + s.true_false.count * s.true_false.points + s.short_answer.count * s.short_answer.points;
+  const essay = s.essay ?? { count: 0, points: 1 };
+  const total = s.multiple_choice.count + s.true_false.count + s.short_answer.count + essay.count;
+  const units = s.multiple_choice.count + s.true_false.count * 4 + s.short_answer.count + essay.count;
+  const rawPoints = s.multiple_choice.count * s.multiple_choice.points + s.true_false.count * s.true_false.points + s.short_answer.count * s.short_answer.points + essay.count * essay.points;
   const levelSum = s.levels.biet + s.levels.hieu + s.levels.van_dung;
 
   const toggleLesson = (id: string) => setSelected(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
-  const part = (k: "multiple_choice" | "true_false" | "short_answer", f: "count" | "points", v: number) => setS({ ...s, [k]: { ...s[k], [f]: v } });
+  const part = (k: "multiple_choice" | "true_false" | "short_answer" | "essay", f: "count" | "points", v: number) =>
+    setS({ ...s, [k]: { ...(s[k] ?? { count: 0, points: 1 }), [f]: v } });
 
   const submit = () =>
     start(async () => {
@@ -125,11 +127,12 @@ export function CreateAssessmentForm({ lessons, aiConfigured }: { lessons: Lesso
                   ["multiple_choice", "Trắc nghiệm 4 lựa chọn"],
                   ["true_false", "Đúng – sai (4 ý)"],
                   ["short_answer", "Trả lời ngắn"],
+                  ["essay", "Tự luận (giáo viên chấm)"],
                 ] as const).map(([k, label]) => (
                   <tr key={k} className="border-t">
                     <td className="py-2 font-medium">{label}</td>
-                    <td className="py-2"><Input type="number" min={0} max={60} className="w-24" value={s[k].count} onChange={(e) => part(k, "count", Math.max(0, Number(e.target.value)))} /></td>
-                    <td className="py-2"><Input type="number" min={0.05} max={10} step={0.05} className="w-24" value={s[k].points} onChange={(e) => part(k, "points", Number(e.target.value))} /></td>
+                    <td className="py-2"><Input type="number" min={0} max={60} className="w-24" value={(s[k] ?? essay).count} onChange={(e) => part(k, "count", Math.max(0, Number(e.target.value)))} /></td>
+                    <td className="py-2"><Input type="number" min={0.05} max={10} step={0.05} className="w-24" value={(s[k] ?? essay).points} onChange={(e) => part(k, "points", Number(e.target.value))} /></td>
                   </tr>
                 ))}
               </tbody>

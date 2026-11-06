@@ -58,7 +58,21 @@ export async function setSelfJoinAction(classId: string, allow: boolean): Promis
     const res = await requireAdminClient().from("classes").update({ allow_self_join: allow }).eq("id", classId);
     if (res.error) throw new ServiceError("Không cập nhật được cài đặt lớp.");
     revalidatePath(`/teacher/classes/${classId}`);
+    revalidatePath("/teacher/leaderboard");
     return { ok: true, message: allow ? "Học sinh mới có thể tự vào lớp." : "Đã khoá: chỉ học sinh có trong danh sách mới vào được." };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function setClassLeaderboardAction(classId: string, show: boolean): Promise<ActionState> {
+  try {
+    await authorizeClassManager(classId);
+    const res = await requireAdminClient().from("classes").update({ show_leaderboard: show }).eq("id", classId);
+    if (res.error) throw new ServiceError("Không cập nhật được cài đặt lớp.");
+    revalidatePath(`/teacher/classes/${classId}`);
+    revalidatePath("/teacher/leaderboard");
+    return { ok: true, message: show ? "Học sinh lớp xem được bảng xếp hạng lớp (theo tháng, học kỳ)." : "Đã ẩn bảng xếp hạng lớp." };
   } catch (e) {
     return fail(e);
   }
@@ -82,6 +96,7 @@ export async function addStudentAction(_prev: ActionState, formData: FormData): 
       schoolId: cls.school_id,
     });
     revalidatePath(`/teacher/classes/${classId}`);
+    revalidatePath("/teacher/leaderboard");
     return { ok: true, message: `Đã thêm ${s.fullName} vào lớp ${cls.name}.` };
   } catch (e) {
     return fail(e);
@@ -99,6 +114,7 @@ export async function removeStudentAction(classId: string, studentId: string): P
       .eq("member_role", "student");
     if (res.error) throw new ServiceError("Không xoá được học sinh khỏi lớp.");
     revalidatePath(`/teacher/classes/${classId}`);
+    revalidatePath("/teacher/leaderboard");
     return { ok: true, message: "Đã xoá học sinh khỏi lớp (kết quả học tập vẫn được lưu)." };
   } catch (e) {
     return fail(e);

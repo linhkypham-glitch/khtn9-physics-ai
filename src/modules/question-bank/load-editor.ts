@@ -15,10 +15,10 @@ export async function loadQuestionForEdit(id: string): Promise<QuestionInput | n
   if (!supabase) return null;
   const { data: q } = await supabase
     .from("question_bank")
-    .select("id, lesson_id, type, level, content, answer_number, tolerance, unit, explanation, formula, remember, status, question_options(label, content, is_correct), question_subitems(label, content, is_true, explanation)")
+    .select("id, lesson_id, type, level, content, answer_number, tolerance, unit, explanation, formula, remember, rubric, status, question_options(label, content, is_correct), question_subitems(label, content, is_true, explanation)")
     .eq("id", id)
     .maybeSingle();
-  if (!q || q.type === "essay") return null;
+  if (!q) return null;
   const opts = [...q.question_options].sort((a, b) => a.label.localeCompare(b.label));
   const items = [...q.question_subitems].sort((a, b) => a.label.localeCompare(b.label));
   return {
@@ -36,6 +36,7 @@ export async function loadQuestionForEdit(id: string): Promise<QuestionInput | n
     explanation: q.explanation,
     formula: q.formula,
     remember: q.remember,
+    rubric: q.rubric,
     publish: q.status === "published" || q.status === "approved",
   };
 }

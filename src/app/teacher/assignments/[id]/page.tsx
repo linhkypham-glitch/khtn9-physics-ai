@@ -11,7 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
-import { CloseAssignmentButton } from "@/modules/assessments/components/builder-widgets";
+import { CloseAssignmentButton, LeaderboardToggle } from "@/modules/assessments/components/builder-widgets";
+import { EssayGradingPanel } from "@/modules/assessments/components/essay-grading-panel";
+import { listEssaysForAssignment } from "@/modules/assessments/essay-grading";
+import { getAiConfigStatus } from "@/lib/ai/config";
 import { AccuracyBars, DistributionChart } from "@/modules/assessments/components/report-widgets";
 import { getAssignmentReport, ReportError } from "@/modules/assessments/reports";
 import { LEVEL_LABELS, TYPE_LABELS } from "@/modules/question-bank/types";
@@ -35,6 +38,8 @@ export default async function Page({ params }: PageProps<"/teacher/assignments/[
     throw e;
   }
   const a = r.assignment;
+  const essays = await listEssaysForAssignment(id);
+  const pendingEssays = essays.filter((e) => !e.grade).length;
   const hard = [...r.questionStats].filter((q) => q.correctRate !== null).sort((x, y) => x.correctRate! - y.correctRate!).slice(0, 5);
 
   return (
@@ -45,6 +50,7 @@ export default async function Page({ params }: PageProps<"/teacher/assignments/[
         actions={
           <>
             <Button asChild variant="outline"><Link href={`/teacher/assessments/${a.assessmentId}`}><ChevronLeft /> Đề</Link></Button>
+            <LeaderboardToggle assignmentId={a.id} enabled={a.showLeaderboard} />
             <CloseAssignmentButton assignmentId={a.id} closed={a.isClosed} />
           </>
         }
@@ -67,6 +73,16 @@ export default async function Page({ params }: PageProps<"/teacher/assignments/[
         <Card className="gap-2"><CardHeader><CardTitle className="text-base">Theo mức độ nhận thức</CardTitle></CardHeader><CardContent><AccuracyBars items={r.groups.byLevel} /></CardContent></Card>
         <Card className="gap-2"><CardHeader><CardTitle className="text-base">Theo dạng câu hỏi</CardTitle></CardHeader><CardContent><AccuracyBars items={r.groups.byType} /></CardContent></Card>
       </div>
+
+      {essays.length > 0 && (
+        <Card className="mb-6 gap-3">
+          <CardHeader>
+            <CardTitle className="text-base">Chấm tự luận {pendingEssays ? <Badge variant="amber" className="ml-2">{pendingEssays} bài chờ chấm</Badge> : <Badge variant="teal" className="ml-2">Đã chấm xong</Badge>}</CardTitle>
+            <CardDescription>Điểm tự luận do giáo viên quyết định. AI (nếu bật) chỉ gợi ý điểm theo hướng dẫn chấm.</CardDescription>
+          </CardHeader>
+          <CardContent><EssayGradingPanel assignmentId={a.id} items={essays} aiConfigured={getAiConfigStatus().configured} /></CardContent>
+        </Card>
+      )}
 
       <h2 className="mb-3 text-lg font-semibold">Kết quả từng học sinh</h2>
       <div className="mb-6 overflow-hidden rounded-xl border bg-card">

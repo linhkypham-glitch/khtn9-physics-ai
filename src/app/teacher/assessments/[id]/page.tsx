@@ -72,7 +72,7 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
       <div className="mb-5 flex flex-wrap items-center gap-2">
         <Badge variant={a.status === "published" ? "teal" : "amber"}>{a.status === "published" ? "Đã xuất bản" : "Nháp"}</Badge>
         <span className="text-sm text-muted-foreground">
-          Cấu trúc mục tiêu: {structure.multiple_choice.count} TN · {structure.true_false.count} Đ-S · {structure.short_answer.count} TLN — hiện có {counts.multiple_choice} · {counts.true_false} · {counts.short_answer}
+          Cấu trúc mục tiêu: {structure.multiple_choice.count} TN · {structure.true_false.count} Đ-S · {structure.short_answer.count} TLN · {structure.essay?.count ?? 0} TL — hiện có {counts.multiple_choice} · {counts.true_false} · {counts.short_answer} · {counts.essay}
         </span>
         {drafts > 0 && <Badge variant="destructive">{drafts} câu chờ duyệt</Badge>}
       </div>
@@ -88,13 +88,13 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
             <thead>
               <tr className="bg-orange-50">
                 <th rowSpan={2} className="border px-2 py-1 text-left">Bài học</th>
-                {(["multiple_choice", "true_false", "short_answer"] as const).map((t) => (
+                {(["multiple_choice", "true_false", "short_answer", "essay"] as const).map((t) => (
                   <th key={t} colSpan={3} className="border px-2 py-1">{TYPE_LABELS[t]}</th>
                 ))}
                 <th rowSpan={2} className="border px-2 py-1">Điểm</th>
               </tr>
               <tr className="bg-orange-50/60">
-                {(["multiple_choice", "true_false", "short_answer"] as const).flatMap((t) =>
+                {(["multiple_choice", "true_false", "short_answer", "essay"] as const).flatMap((t) =>
                   (["biet", "hieu", "van_dung"] as const).map((l) => <th key={t + l} className="border px-1 py-1 font-medium">{LEVEL_LABELS[l]}</th>),
                 )}
               </tr>
@@ -103,7 +103,7 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
               {matrix.rows.map((r) => (
                 <tr key={r.lesson}>
                   <td className="border px-2 py-1">Bài {r.lesson}. {r.title}</td>
-                  {(["multiple_choice", "true_false", "short_answer"] as const).flatMap((t) =>
+                  {(["multiple_choice", "true_false", "short_answer", "essay"] as const).flatMap((t) =>
                     (["biet", "hieu", "van_dung"] as const).map((l) => <td key={t + l} className="border px-1 py-1 text-center tabular-nums">{r.cells[`${t}:${l}`] ?? ""}</td>),
                   )}
                   <td className="border px-2 py-1 text-center tabular-nums">{r.points.toLocaleString("vi-VN")}</td>
@@ -111,7 +111,7 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
               ))}
               <tr className="font-semibold">
                 <td className="border px-2 py-1">Tỉ lệ điểm theo mức độ</td>
-                <td colSpan={9} className="border px-2 py-1">
+                <td colSpan={12} className="border px-2 py-1">
                   {matrix.byLevel.map((l) => `${LEVEL_LABELS[l.level]}: ${Math.round(l.percent)}% (${l.count} câu)`).join(" · ")}
                 </td>
                 <td className="border px-2 py-1 text-center">{matrix.totalPoints.toLocaleString("vi-VN")}</td>
@@ -154,6 +154,7 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
                 </p>
               )}
               {q.type === "short_answer" && <p className="text-xs text-green-700">Đáp số: {Number(q.answer_number).toLocaleString("vi-VN")} {q.unit}</p>}
+              {q.type === "essay" && <p className="text-xs text-sky-700">Tự luận – giáo viên chấm theo hướng dẫn chấm.</p>}
             </CardContent>
           </Card>
         ))}
@@ -179,7 +180,7 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
                       <p className="text-xs text-muted-foreground">Bài {q.lessons.number} · {TYPE_LABELS[q.type]} · {LEVEL_LABELS[q.level]}</p>
                       <p className="line-clamp-2">{q.content}</p>
                     </div>
-                    <AddFromBankButton assessmentId={id} questionId={q.id} points={structure[q.type === "essay" ? "short_answer" : q.type].points} />
+                    <AddFromBankButton assessmentId={id} questionId={q.id} points={(structure[q.type] ?? { points: 1 }).points} />
                   </li>
                 ))}
               </ul>

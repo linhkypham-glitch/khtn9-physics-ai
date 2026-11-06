@@ -13,6 +13,7 @@ const answerSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("multiple_choice"), choice: z.enum(["A", "B", "C", "D"]).nullable() }),
   z.object({ type: z.literal("true_false"), items: z.record(z.enum(["a", "b", "c", "d"]), z.boolean().nullable()) }),
   z.object({ type: z.literal("short_answer"), text: z.string().max(200) }),
+  z.object({ type: z.literal("essay"), text: z.string().max(5000) }),
 ]);
 const answersSchema = z.record(z.guid(), answerSchema);
 

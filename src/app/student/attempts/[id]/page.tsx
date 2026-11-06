@@ -52,6 +52,7 @@ export default async function Page({ params }: PageProps<"/student/attempts/[id]
           ))}
         </CardContent>
       </Card>
+      {view.pendingEssays && <p className="rounded-xl bg-sky-50 px-4 py-3 text-sm text-sky-900">Bài có câu tự luận đang chờ giáo viên chấm – điểm hiện tại là điểm tạm (chưa gồm phần tự luận).</p>}
       {view.revealNote && <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">{view.revealNote}</p>}
       {view.reveal &&
         view.questions.map((q, i) => {

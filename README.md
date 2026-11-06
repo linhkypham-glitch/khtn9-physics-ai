@@ -63,6 +63,17 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
   hồ sơ từng học sinh (tiến bộ, điểm mạnh – cần cải thiện), **nhận xét của giáo viên** (có gợi ý từ dữ liệu, học sinh xem được).
 - **Xuất Excel** (BANG_DIEM, CHI_TIET_BAI_LAM, THONG_KE_LOP, PHAN_TICH_HOC_TAP), **CSV** UTF-8, hồ sơ học sinh (Excel).
 
+### Đã hoạt động (Milestone 4)
+
+- **Giáo viên soạn nội dung bài học** trên giao diện (`/teacher/curriculum/<bài>/edit`): mục tiêu, yêu cầu cần đạt,
+  học liệu theo khu vực Kiến thức / Thí nghiệm / Luyện tập / Tự đánh giá (văn bản, công thức, ví dụ, hình ảnh, video, liên kết),
+  sắp xếp, xuất bản hoặc để nháp. Video YouTube được nhúng trực tiếp (youtube-nocookie).
+- **Câu tự luận**: giáo viên soạn kèm hướng dẫn chấm; học sinh làm bài, điểm ở trạng thái *chờ chấm*;
+  giáo viên chấm trong trang kết quả bài giao. AI (nếu đã cấu hình) **chỉ gợi ý** điểm và nhận xét – điểm chính thức do giáo viên lưu.
+- **Bảng xếp hạng**: theo từng bài giao và theo lớp (cả năm, tháng, học kỳ I, học kỳ II). Mặc định ẩn; giáo viên bật cho từng lớp/bài,
+  quản trị viên có công tắc tắt toàn hệ thống. Chỉ hiển thị họ tên, lớp, điểm, thời gian, số ý đúng.
+- **AI viết bản nháp nhận xét** quá trình học tập từ số liệu thật (không suy đoán phẩm chất, hoàn cảnh); giáo viên đọc, sửa rồi mới lưu.
+
 ### Bật AI tạo đề
 
 Thêm biến môi trường trên Vercel (Settings → Environment Variables) rồi Redeploy:
@@ -71,7 +82,7 @@ Chi phí API do tài khoản Anthropic của bạn chi trả. Ứng dụng bật
 
 ### Chưa có
 
-Giáo viên soạn học liệu (lý thuyết) trên giao diện, bảng xếp hạng, AI nhận xét bằng ngôn ngữ tự nhiên, tự luận.
+Tải tệp (ảnh, PDF) lên kho lưu trữ cho học liệu – hiện dùng đường dẫn URL; thông báo đẩy cho học sinh.
 
 > **Lưu ý về mục lục:** danh mục chính thức gồm Bài 2 → Bài 17, tức **16 bài** (không phải 17). Ứng dụng giữ nguyên văn danh mục, không tự thêm bài.
 
@@ -121,8 +132,9 @@ npm run dev
    ```
 3. Trong SQL Editor, chạy `supabase/seed/01_curriculum.sql` → `05_experiments.sql` (hoặc dán một lần file `supabase/cloud-setup.sql`).
    **Không** chạy `90_demo_data.sql` trên môi trường thật.
-   - Đã cài Milestone 1? Chạy **một lần** `supabase/cloud-update-m2.sql`, rồi `supabase/cloud-update-m3.sql`.
-   - Đã cài Milestone 2? Chỉ chạy **một lần** `supabase/cloud-update-m3.sql`.
+   - Đã cài Milestone 1? Chạy **một lần** lần lượt `cloud-update-m2.sql` → `cloud-update-m3.sql` → `cloud-update-m4.sql`.
+   - Đã cài Milestone 2? Chạy **một lần** `cloud-update-m3.sql` rồi `cloud-update-m4.sql`.
+   - Đã cài Milestone 3? Chỉ chạy **một lần** `supabase/cloud-update-m4.sql`.
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql
    update public.profiles set role = 'admin' where email = 'email-cua-ban@truong.edu.vn';

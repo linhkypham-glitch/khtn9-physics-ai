@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth/session";
-import { AddStudentForm, RemoveStudentButton, SelfJoinToggle } from "@/modules/classes/components/class-forms";
+import { AddStudentForm, ClassLeaderboardToggle, RemoveStudentButton, SelfJoinToggle } from "@/modules/classes/components/class-forms";
 import { authorizeClassManager, listClassStudents, requireAdminClient, ServiceError } from "@/modules/classes/service";
 
 export const metadata: Metadata = { title: "Chi tiết lớp" };
@@ -32,7 +32,7 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
   const admin = requireAdminClient();
   const students = await listClassStudents(admin, id);
   const [{ data: info }, { data: attempts }, { data: assignments }] = await Promise.all([
-    admin.from("classes").select("name, allow_self_join, academic_years(name)").eq("id", id).single(),
+    admin.from("classes").select("name, allow_self_join, show_leaderboard, academic_years(name)").eq("id", id).single(),
     admin.from("practice_attempts").select("user_id, score").eq("mode", "self_assessment").in("user_id", students.map((s) => s.id)),
     admin.from("assessment_assignments").select("id, code, due_at, is_closed, assessments(title)").eq("class_id", id).order("due_at", { ascending: false }),
   ]);
@@ -69,7 +69,11 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
             <CardTitle className="text-base">Cài đặt lớp</CardTitle>
           </CardHeader>
           <CardContent>
-            <SelfJoinToggle classId={id} allow={info?.allow_self_join ?? true} />
+            <div className="flex flex-col gap-4">
+              <SelfJoinToggle classId={id} allow={info?.allow_self_join ?? true} />
+              <ClassLeaderboardToggle classId={id} show={info?.show_leaderboard ?? false} />
+              <Link href={`/teacher/leaderboard?lop=${id}`} className="text-sm font-semibold text-primary hover:underline">Xem bảng xếp hạng lớp →</Link>
+            </div>
           </CardContent>
         </Card>
       </div>

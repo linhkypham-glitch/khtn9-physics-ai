@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Bot, CheckCircle2, Loader2, Lock, Plus, Send, Trash2, Unlock, Wand2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Bot, CheckCircle2, EyeOff, Loader2, Lock, Plus, Send, Trash2, Trophy, Unlock, Wand2, X } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   removeQuestionFromAssessment,
   setAssessmentStatus,
   setAssignmentClosed,
+  setAssignmentLeaderboard,
   updateQuestionInAssessment,
   type ActionResult,
 } from "../actions";
@@ -201,6 +202,15 @@ export function CloseAssignmentButton({ assignmentId, closed }: { assignmentId: 
   return (
     <Button variant="outline" disabled={pending} onClick={() => start(async () => { const r = await setAssignmentClosed(assignmentId, !closed); if (!r.ok) window.alert(r.message); })}>
       {pending ? <Loader2 className="animate-spin" /> : closed ? <Unlock /> : <Lock />} {closed ? "Mở lại bài giao" : "Đóng bài giao"}
+    </Button>
+  );
+}
+
+export function LeaderboardToggle({ assignmentId, enabled }: { assignmentId: string; enabled: boolean }) {
+  const [pending, start] = useTransition();
+  return (
+    <Button variant="outline" disabled={pending} onClick={() => start(async () => { const r = await setAssignmentLeaderboard(assignmentId, !enabled); if (!r.ok) window.alert(r.message); })}>
+      {pending ? <Loader2 className="animate-spin" /> : enabled ? <EyeOff /> : <Trophy />} {enabled ? "Ẩn bảng xếp hạng" : "Công bố bảng xếp hạng"}
     </Button>
   );
 }

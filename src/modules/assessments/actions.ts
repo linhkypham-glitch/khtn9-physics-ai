@@ -25,6 +25,7 @@ const structureSchema = z.object({
   multiple_choice: partSchema,
   true_false: partSchema,
   short_answer: partSchema,
+  essay: partSchema.optional(),
   levels: z.object({ biet: z.number().min(0).max(100), hieu: z.number().min(0).max(100), van_dung: z.number().min(0).max(100) }),
 });
 
@@ -57,8 +58,7 @@ async function loadBank(lessonIds: string[]): Promise<BankItem[]> {
     .from("question_bank")
     .select("id, type, level, lessons!inner(number)")
     .in("lesson_id", lessonIds)
-    .in("status", ["approved", "published"])
-    .neq("type", "essay");
+    .in("status", ["approved", "published"]);
   return (data ?? []).map((q) => ({ id: q.id, type: q.type, level: q.level, lessonNumber: q.lessons.number }));
 }
 
@@ -211,12 +211,14 @@ export async function autoFillAssessment(assessmentId: string): Promise<ActionRe
   const structure = { ...DEFAULT_STRUCTURE, ...(c.assessment.structure as Partial<AssessmentStructure>) } as AssessmentStructure;
   const { data: current } = await c.supabase.from("assessment_questions").select("question_id, question_bank(type)").eq("assessment_id", assessmentId);
   const have = { multiple_choice: 0, true_false: 0, short_answer: 0, essay: 0 };
+  const essayPart = structure.essay ?? { count: 0, points: 1 };
   (current ?? []).forEach((q) => q.question_bank && have[q.question_bank.type]++);
   const remaining: AssessmentStructure = {
     ...structure,
     multiple_choice: { ...structure.multiple_choice, count: Math.max(0, structure.multiple_choice.count - have.multiple_choice) },
     true_false: { ...structure.true_false, count: Math.max(0, structure.true_false.count - have.true_false) },
     short_answer: { ...structure.short_answer, count: Math.max(0, structure.short_answer.count - have.short_answer) },
+    essay: { ...essayPart, count: Math.max(0, essayPart.count - have.essay) },
   };
   const { picked, warnings } = pickQuestions(await loadBank(c.assessment.lesson_ids), remaining, new Set((current ?? []).map((q) => q.question_id)));
   await appendQuestions(assessmentId, picked);
@@ -337,4 +339,13 @@ export async function setAssignmentClosed(assignmentId: string, closed: boolean)
   if (error || !count) return { ok: false, message: "Không cập nhật được bài giao." };
   revalidatePath(`/teacher/assignments/${assignmentId}`);
   return { ok: true, message: closed ? "Đã đóng bài giao." : "Đã mở lại bài giao." };
+}
+
+export async function setAssignmentLeaderboard(assignmentId: string, show: boolean): Promise<ActionResult> {
+  const ctx = await staffCtx();
+  if (!ctx || !z.guid().safeParse(assignmentId).success) return { ok: false, message: "Không có quyền." };
+  const { error, count } = await ctx.supabase.from("assessment_assignments").update({ show_leaderboard: show }, { count: "exact" }).eq("id", assignmentId);
+  if (error || !count) return { ok: false, message: "Không cập nhật được." };
+  revalidatePath(`/teacher/assignments/${assignmentId}`);
+  return { ok: true, message: show ? "Học sinh đã xem được bảng xếp hạng của bài này." : "Đã ẩn bảng xếp hạng với học sinh." };
 }

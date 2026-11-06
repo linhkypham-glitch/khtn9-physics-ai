@@ -71,14 +71,14 @@ isOneToOne: false
                   ]
                 },"assessment_assignments": {
                   Row: {
-                    "assessment_id": string,"assigned_by": string,"class_id": string,"code": string,"created_at": string,"due_at": string,"id": string,"is_closed": boolean,"max_attempts": number,"show_answers": Database["public"]['Enums']["answer_visibility"],"start_at": string
+                    "assessment_id": string,"assigned_by": string,"class_id": string,"code": string,"created_at": string,"due_at": string,"id": string,"is_closed": boolean,"max_attempts": number,"show_answers": Database["public"]['Enums']["answer_visibility"],"show_leaderboard": boolean,"start_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "assessment_id": string,"assigned_by": string,"class_id": string,"code"?: string,"created_at"?: string,"due_at": string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"start_at"?: string
+                    "assessment_id": string,"assigned_by": string,"class_id": string,"code"?: string,"created_at"?: string,"due_at": string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"show_leaderboard"?: boolean,"start_at"?: string
                   }
                   Update: {
-                    "assessment_id"?: string,"assigned_by"?: string,"class_id"?: string,"code"?: string,"created_at"?: string,"due_at"?: string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"start_at"?: string
+                    "assessment_id"?: string,"assigned_by"?: string,"class_id"?: string,"code"?: string,"created_at"?: string,"due_at"?: string,"id"?: string,"is_closed"?: boolean,"max_attempts"?: number,"show_answers"?: Database["public"]['Enums']["answer_visibility"],"show_leaderboard"?: boolean,"start_at"?: string
                   }
                   Relationships: [
                     {
@@ -103,14 +103,14 @@ isOneToOne: false
                   ]
                 },"assessment_attempts": {
                   Row: {
-                    "answers": NonNullable<Json>,"assignment_id": string,"attempt_no": number,"correct_units": number | null,"deadline_at": string,"details": NonNullable<Json>,"earned_points": number | null,"id": string,"max_points": number | null,"score": number | null,"started_at": string,"status": Database["public"]['Enums']["attempt_status"],"submitted_at": string | null,"total_units": number | null,"updated_at": string,"user_id": string
+                    "answers": NonNullable<Json>,"assignment_id": string,"attempt_no": number,"correct_units": number | null,"deadline_at": string,"details": NonNullable<Json>,"earned_points": number | null,"id": string,"max_points": number | null,"needs_grading": boolean,"score": number | null,"started_at": string,"status": Database["public"]['Enums']["attempt_status"],"submitted_at": string | null,"total_units": number | null,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "answers"?: NonNullable<Json>,"assignment_id": string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at": string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id": string
+                    "answers"?: NonNullable<Json>,"assignment_id": string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at": string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"needs_grading"?: boolean,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "answers"?: NonNullable<Json>,"assignment_id"?: string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at"?: string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id"?: string
+                    "answers"?: NonNullable<Json>,"assignment_id"?: string,"attempt_no"?: number,"correct_units"?: number | null,"deadline_at"?: string,"details"?: NonNullable<Json>,"earned_points"?: number | null,"id"?: string,"max_points"?: number | null,"needs_grading"?: boolean,"score"?: number | null,"started_at"?: string,"status"?: Database["public"]['Enums']["attempt_status"],"submitted_at"?: string | null,"total_units"?: number | null,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -241,14 +241,14 @@ isOneToOne: false
                   ]
                 },"classes": {
                   Row: {
-                    "academic_year_id": string,"allow_self_join": boolean,"created_at": string,"created_by": string | null,"grade": number,"id": string,"is_active": boolean,"join_code": string,"name": string,"school_id": string,"updated_at": string
+                    "academic_year_id": string,"allow_self_join": boolean,"created_at": string,"created_by": string | null,"grade": number,"id": string,"is_active": boolean,"join_code": string,"name": string,"school_id": string,"show_leaderboard": boolean,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "academic_year_id": string,"allow_self_join"?: boolean,"created_at"?: string,"created_by"?: string | null,"grade"?: number,"id"?: string,"is_active"?: boolean,"join_code"?: string,"name": string,"school_id": string,"updated_at"?: string
+                    "academic_year_id": string,"allow_self_join"?: boolean,"created_at"?: string,"created_by"?: string | null,"grade"?: number,"id"?: string,"is_active"?: boolean,"join_code"?: string,"name": string,"school_id": string,"show_leaderboard"?: boolean,"updated_at"?: string
                   }
                   Update: {
-                    "academic_year_id"?: string,"allow_self_join"?: boolean,"created_at"?: string,"created_by"?: string | null,"grade"?: number,"id"?: string,"is_active"?: boolean,"join_code"?: string,"name"?: string,"school_id"?: string,"updated_at"?: string
+                    "academic_year_id"?: string,"allow_self_join"?: boolean,"created_at"?: string,"created_by"?: string | null,"grade"?: number,"id"?: string,"is_active"?: boolean,"join_code"?: string,"name"?: string,"school_id"?: string,"show_leaderboard"?: boolean,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -268,6 +268,38 @@ isOneToOne: false
       columns: ["school_id"]
 isOneToOne: false
       referencedRelation: "schools"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"essay_grades": {
+                  Row: {
+                    "ai_suggested_score": number | null,"attempt_id": string,"feedback": string | null,"graded_at": string,"graded_by": string,"question_id": string,"score": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_suggested_score"?: number | null,"attempt_id": string,"feedback"?: string | null,"graded_at"?: string,"graded_by": string,"question_id": string,"score": number
+                  }
+                  Update: {
+                    "ai_suggested_score"?: number | null,"attempt_id"?: string,"feedback"?: string | null,"graded_at"?: string,"graded_by"?: string,"question_id"?: string,"score"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "essay_grades_attempt_id_fkey"
+      columns: ["attempt_id"]
+isOneToOne: false
+      referencedRelation: "assessment_attempts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "essay_grades_graded_by_fkey"
+      columns: ["graded_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "essay_grades_question_id_fkey"
+      columns: ["question_id"]
+isOneToOne: false
+      referencedRelation: "question_bank"
       referencedColumns: ["id"]
     }
                   ]
@@ -463,14 +495,14 @@ isOneToOne: false
                   ]
                 },"question_bank": {
                   Row: {
-                    "answer_number": number | null,"answer_text": string | null,"code": string | null,"content": string,"created_at": string,"created_by": string | null,"explanation": string,"formula": string | null,"id": string,"lesson_id": string,"level": Database["public"]['Enums']["cognitive_level"],"points": number,"remember": string | null,"requirement": string | null,"sort_order": number,"source": string,"status": Database["public"]['Enums']["review_status"],"tolerance": number,"type": Database["public"]['Enums']["question_type"],"unit": string | null,"updated_at": string
+                    "answer_number": number | null,"answer_text": string | null,"code": string | null,"content": string,"created_at": string,"created_by": string | null,"explanation": string,"formula": string | null,"id": string,"lesson_id": string,"level": Database["public"]['Enums']["cognitive_level"],"points": number,"remember": string | null,"requirement": string | null,"rubric": string | null,"sort_order": number,"source": string,"status": Database["public"]['Enums']["review_status"],"tolerance": number,"type": Database["public"]['Enums']["question_type"],"unit": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "answer_number"?: number | null,"answer_text"?: string | null,"code"?: string | null,"content": string,"created_at"?: string,"created_by"?: string | null,"explanation"?: string,"formula"?: string | null,"id"?: string,"lesson_id": string,"level": Database["public"]['Enums']["cognitive_level"],"points"?: number,"remember"?: string | null,"requirement"?: string | null,"sort_order"?: number,"source"?: string,"status"?: Database["public"]['Enums']["review_status"],"tolerance"?: number,"type": Database["public"]['Enums']["question_type"],"unit"?: string | null,"updated_at"?: string
+                    "answer_number"?: number | null,"answer_text"?: string | null,"code"?: string | null,"content": string,"created_at"?: string,"created_by"?: string | null,"explanation"?: string,"formula"?: string | null,"id"?: string,"lesson_id": string,"level": Database["public"]['Enums']["cognitive_level"],"points"?: number,"remember"?: string | null,"requirement"?: string | null,"rubric"?: string | null,"sort_order"?: number,"source"?: string,"status"?: Database["public"]['Enums']["review_status"],"tolerance"?: number,"type": Database["public"]['Enums']["question_type"],"unit"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "answer_number"?: number | null,"answer_text"?: string | null,"code"?: string | null,"content"?: string,"created_at"?: string,"created_by"?: string | null,"explanation"?: string,"formula"?: string | null,"id"?: string,"lesson_id"?: string,"level"?: Database["public"]['Enums']["cognitive_level"],"points"?: number,"remember"?: string | null,"requirement"?: string | null,"sort_order"?: number,"source"?: string,"status"?: Database["public"]['Enums']["review_status"],"tolerance"?: number,"type"?: Database["public"]['Enums']["question_type"],"unit"?: string | null,"updated_at"?: string
+                    "answer_number"?: number | null,"answer_text"?: string | null,"code"?: string | null,"content"?: string,"created_at"?: string,"created_by"?: string | null,"explanation"?: string,"formula"?: string | null,"id"?: string,"lesson_id"?: string,"level"?: Database["public"]['Enums']["cognitive_level"],"points"?: number,"remember"?: string | null,"requirement"?: string | null,"rubric"?: string | null,"sort_order"?: number,"source"?: string,"status"?: Database["public"]['Enums']["review_status"],"tolerance"?: number,"type"?: Database["public"]['Enums']["question_type"],"unit"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {

@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Loader2, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
+import { Bot, Loader2, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { addCommentAction, deleteCommentAction } from "../comment-actions";
+import { aiCommentDraftAction } from "../grading-actions";
 
 /** Biểu đồ phổ điểm (một chuỗi – một màu). */
 export function DistributionChart({ distribution }: { distribution: number[] }) {
@@ -49,9 +50,10 @@ export function AccuracyBars({ items }: { items: { label: string; correct: numbe
   );
 }
 
-export function CommentForm({ studentId, assignmentId, suggestion }: { studentId: string; assignmentId: string | null; suggestion?: string }) {
+export function CommentForm({ studentId, assignmentId, suggestion, aiEnabled = false }: { studentId: string; assignmentId: string | null; suggestion?: string; aiEnabled?: boolean }) {
   const [text, setText] = useState("");
   const [pending, start] = useTransition();
+  const [aiPending, startAi] = useTransition();
   const [msg, setMsg] = useState<{ ok: boolean; message: string } | null>(null);
   return (
     <div className="flex flex-col gap-2">
@@ -79,6 +81,24 @@ export function CommentForm({ studentId, assignmentId, suggestion }: { studentId
         {suggestion && (
           <Button variant="outline" type="button" onClick={() => setText(suggestion)}>
             <Sparkles /> Dùng gợi ý từ dữ liệu
+          </Button>
+        )}
+        {aiEnabled && (
+          <Button
+            variant="outline"
+            type="button"
+            disabled={aiPending}
+            onClick={() =>
+              startAi(async () => {
+                const r = await aiCommentDraftAction(studentId);
+                if (r.ok) {
+                  setText(r.comment);
+                  setMsg({ ok: true, message: "AI đã viết bản nháp – thầy/cô đọc, chỉnh sửa rồi bấm “Lưu nhận xét”." });
+                } else setMsg({ ok: false, message: r.error });
+              })
+            }
+          >
+            {aiPending ? <Loader2 className="animate-spin" /> : <Bot />} {aiPending ? "AI đang viết…" : "AI viết bản nháp"}
           </Button>
         )}
       </div>

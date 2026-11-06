@@ -9,6 +9,7 @@ export type AssessmentStructure = {
   multiple_choice: StructurePart;
   true_false: StructurePart;
   short_answer: StructurePart;
+  essay?: StructurePart;
   levels: Record<CognitiveLevel, number>; // tỉ lệ %
 };
 
@@ -21,6 +22,7 @@ export const DEFAULT_STRUCTURE: AssessmentStructure = {
   multiple_choice: { count: 18, points: 0.25 },
   true_false: { count: 2, points: 1 },
   short_answer: { count: 6, points: 0.5 },
+  essay: { count: 0, points: 1 },
   levels: { biet: 40, hieu: 30, van_dung: 30 },
 };
 
@@ -59,11 +61,12 @@ export function shuffle<T>(arr: T[], random: () => number = Math.random): T[] {
 export function pickQuestions(bank: BankItem[], structure: AssessmentStructure, exclude: Set<string> = new Set(), random: () => number = Math.random) {
   const picked: { id: string; type: QuestionType; points: number }[] = [];
   const warnings: string[] = [];
-  const types: ("multiple_choice" | "true_false" | "short_answer")[] = ["multiple_choice", "true_false", "short_answer"];
-  const labels = { multiple_choice: "trắc nghiệm", true_false: "đúng – sai", short_answer: "trả lời ngắn" };
+  const types: ("multiple_choice" | "true_false" | "short_answer" | "essay")[] = ["multiple_choice", "true_false", "short_answer", "essay"];
+  const labels = { multiple_choice: "trắc nghiệm", true_false: "đúng – sai", short_answer: "trả lời ngắn", essay: "tự luận" };
 
   for (const type of types) {
-    const need = structure[type].count;
+    const part = structure[type] ?? { count: 0, points: 1 };
+    const need = part.count;
     if (need <= 0) continue;
     const pool = shuffle(bank.filter((b) => b.type === type && !exclude.has(b.id)), random);
     const perLevel = splitByPercent(need, structure.levels);
@@ -96,7 +99,7 @@ export function pickQuestions(bank: BankItem[], structure: AssessmentStructure, 
       if (got < shortage) warnings.push(`Ngân hàng chỉ có ${chosen.length}/${need} câu ${labels[type]} phù hợp – hãy thêm câu hỏi hoặc dùng AI tạo thêm.`);
       else warnings.push(`Không đủ câu ${labels[type]} đúng tỉ lệ mức độ – đã lấy bù từ mức độ khác.`);
     }
-    chosen.forEach((c) => picked.push({ id: c.id, type, points: structure[type].points }));
+    chosen.forEach((c) => picked.push({ id: c.id, type, points: part.points }));
   }
   return { picked, warnings };
 }

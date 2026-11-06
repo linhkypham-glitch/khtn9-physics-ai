@@ -319,5 +319,64 @@ begin
 end $$;
 select pg_temp.logout();
 
+-- 21. Điểm tự luận: chỉ học sinh chủ bài, giáo viên dạy học sinh, admin đọc; không ai ghi trực tiếp
+do $$
+declare v_t uuid;
+begin
+  insert into public.assessment_attempts (assignment_id, user_id, deadline_at, status, submitted_at)
+  values (current_setting('test.assignment')::uuid, 'c0000000-0000-0000-0000-0000000009a1', now() + interval '1 hour', 'submitted', now())
+  returning id into v_t;
+  insert into public.essay_grades (attempt_id, question_id, score, graded_by)
+  select v_t, id, 1, 'b0000000-0000-0000-0000-000000000001' from public.question_bank where code = 'B11-01';
+  perform set_config('test.attempt', v_t::text, true);
+end $$;
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a1');
+do $$
+begin
+  if (select count(*) from public.essay_grades) <> 1 then raise exception 'FAIL: học sinh không đọc được điểm tự luận của mình'; end if;
+  begin
+    update public.essay_grades set score = 10;
+    if found then raise exception 'FAIL: học sinh sửa được điểm tự luận'; end if;
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+select pg_temp.logout();
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a2');
+do $$ begin
+  if (select count(*) from public.essay_grades) <> 0 then raise exception 'FAIL: học sinh đọc điểm tự luận của bạn'; end if;
+end $$;
+select pg_temp.logout();
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000002');
+do $$ begin
+  if (select count(*) from public.essay_grades) <> 0 then raise exception 'FAIL: GV lớp khác đọc điểm tự luận'; end if;
+end $$;
+select pg_temp.logout();
+select pg_temp.login_as('b0000000-0000-0000-0000-000000000001');
+do $$
+begin
+  if (select count(*) from public.essay_grades) <> 1 then raise exception 'FAIL: GV của lớp không đọc được điểm tự luận'; end if;
+  begin
+    insert into public.essay_grades (attempt_id, question_id, score)
+    select current_setting('test.attempt')::uuid, id, 1 from public.question_bank where code = 'B11-02';
+    raise exception 'FAIL: ghi trực tiếp điểm tự luận qua client';
+  exception when insufficient_privilege then null;
+  end;
+  raise notice 'PASS 21: điểm tự luận đúng phạm vi, chỉ ghi qua máy chủ';
+end $$;
+
+-- 22. Cài đặt bảng xếp hạng: GV không đổi được cài đặt hệ thống, không bật BXH cho lớp không phụ trách
+do $$
+begin
+  begin
+    insert into public.system_settings (key, value) values ('leaderboard.enabled', 'false'::jsonb);
+    raise exception 'FAIL: giáo viên ghi cài đặt hệ thống';
+  exception when insufficient_privilege then null;
+  end;
+  update public.classes set show_leaderboard = true where id = '30000000-0000-0000-0000-00000000009c';
+  if found then raise exception 'FAIL: GV bật BXH lớp không phụ trách'; end if;
+  raise notice 'PASS 22: quyền cài đặt bảng xếp hạng đúng';
+end $$;
+select pg_temp.logout();
+
 rollback;
 \echo 'TẤT CẢ KIỂM THỬ RLS ĐÃ QUA'

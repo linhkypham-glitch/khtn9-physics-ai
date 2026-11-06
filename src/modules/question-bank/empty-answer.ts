@@ -4,5 +4,6 @@ import type { PublicQuestion, StudentAnswer } from "./types";
 export function emptyAnswerServer(q: PublicQuestion): StudentAnswer {
   if (q.type === "multiple_choice") return { type: "multiple_choice", choice: null };
   if (q.type === "true_false") return { type: "true_false", items: Object.fromEntries(q.subitems.map((s) => [s.label, null])) };
+  if (q.type === "essay") return { type: "essay", text: "" };
   return { type: "short_answer", text: "" };
 }

@@ -3,7 +3,7 @@ import ExcelJS from "exceljs";
 import type { AssignmentReport, StudentReport } from "@/modules/assessments/reports";
 
 const STATUS: Record<string, string> = { submitted: "Đã nộp", in_progress: "Đang làm", not_started: "Chưa làm" };
-const RESULT: Record<string, string> = { correct: "Đúng", partial: "Đúng một phần", wrong: "Sai", blank: "Bỏ trống" };
+const RESULT: Record<string, string> = { correct: "Đúng", partial: "Đúng một phần", wrong: "Sai", blank: "Bỏ trống", pending: "Chờ chấm" };
 const dt = (s: string | null) => (s ? new Date(s).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }) : "");
 const dur = (s: number | null) => (s === null ? "" : `${Math.floor(s / 60)} phút ${s % 60} giây`);
 const pct = (c: number, t: number) => (t ? Math.round((c / t) * 1000) / 10 : null);

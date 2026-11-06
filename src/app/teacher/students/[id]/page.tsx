@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { requireRole } from "@/lib/auth/session";
 import { AccuracyBars, CommentForm, DeleteCommentButton } from "@/modules/assessments/components/report-widgets";
 import { getStudentReport, ReportError } from "@/modules/assessments/reports";
+import { getAiConfigStatus } from "@/lib/ai/config";
 
 export const metadata: Metadata = { title: "Hồ sơ học tập" };
 
@@ -77,7 +78,7 @@ export default async function Page({ params }: PageProps<"/teacher/students/[id]
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <p className="rounded-lg bg-orange-50 px-3 py-2 text-sm text-orange-900"><b>Gợi ý:</b> {r.suggestion}</p>
-            <CommentForm studentId={r.student.id} assignmentId={null} suggestion={r.suggestion} />
+            <CommentForm studentId={r.student.id} assignmentId={null} suggestion={r.suggestion} aiEnabled={getAiConfigStatus().configured} />
             <ul className="flex flex-col gap-2">
               {r.comments.map((c) => (
                 <li key={c.id} className="rounded-lg border px-3 py-2 text-sm">

@@ -11,6 +11,7 @@ import {
   claimClassAction,
   createClassAction,
   removeStudentAction,
+  setClassLeaderboardAction,
   setSelfJoinAction,
   type ActionState,
 } from "../actions";
@@ -92,6 +93,23 @@ export function SelfJoinToggle({ classId, allow }: { classId: string; allow: boo
           <span className="block text-muted-foreground">
             Tắt để chỉ những học sinh có tên trong danh sách mới vào được.
           </span>
+        </span>
+      </label>
+      <Message state={state} />
+    </div>
+  );
+}
+
+export function ClassLeaderboardToggle({ classId, show }: { classId: string; show: boolean }) {
+  const [pending, start] = useTransition();
+  const [state, setState] = useState<ActionState>(initial);
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input type="checkbox" className="mt-1 size-4 accent-primary" defaultChecked={show} disabled={pending} onChange={(e) => { const c = e.target.checked; start(async () => setState(await setClassLeaderboardAction(classId, c))); }} />
+        <span className="text-sm">
+          <span className="font-medium">Công khai bảng xếp hạng lớp với học sinh</span>
+          <span className="block text-muted-foreground">Theo tháng và học kỳ. Chỉ hiện họ tên, lớp, điểm, thời gian, số ý đúng.</span>
         </span>
       </label>
       <Message state={state} />

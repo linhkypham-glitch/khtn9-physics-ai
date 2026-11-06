@@ -80,7 +80,7 @@ export function QuestionEditor({
           <Label>Dạng câu hỏi</Label>
           <Choice
             value={q.type}
-            options={(["multiple_choice", "true_false", "short_answer"] as const).map((k) => ({ value: k, label: TYPE_LABELS[k] }))}
+            options={(["multiple_choice", "true_false", "short_answer", "essay"] as const).map((k) => ({ value: k, label: TYPE_LABELS[k] }))}
             onChange={(v) => set("type", v)}
           />
         </div>
@@ -153,8 +153,15 @@ export function QuestionEditor({
           </div>
         )}
 
+        {q.type === "essay" && (
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="rubric">Hướng dẫn chấm / tiêu chí (giáo viên dùng khi chấm)</Label>
+            <textarea id="rubric" className={cn(TEXTAREA, "min-h-24")} value={q.rubric ?? ""} maxLength={3000} onChange={(e) => set("rubric", e.target.value || null)} placeholder={"Ví dụ:\n- Viết đúng công thức I = U/R: 0,25 điểm\n- Thay số đúng: 0,25 điểm\n- Kết quả và đơn vị đúng: 0,5 điểm"} />
+          </div>
+        )}
+
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="exp">Lời giải / giải thích</Label>
+          <Label htmlFor="exp">{q.type === "essay" ? "Đáp án mẫu / lời giải" : "Lời giải / giải thích"}</Label>
           <textarea id="exp" className={cn(TEXTAREA, "min-h-24")} value={q.explanation} maxLength={3000} onChange={(e) => set("explanation", e.target.value)} />
         </div>
         <div className="grid gap-4 md:grid-cols-2">

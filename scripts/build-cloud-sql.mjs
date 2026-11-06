@@ -1,6 +1,7 @@
 // Sinh file SQL để dán vào Supabase Cloud (SQL Editor). KHÔNG chứa dữ liệu demo.
 //   supabase/cloud-setup.sql      – cài mới toàn bộ (dự án Supabase trống)
 //   supabase/cloud-update-m2.sql  – cập nhật dự án đã cài Milestone 1 lên Milestone 2
+//   supabase/cloud-update-m3.sql, cloud-update-m4.sql – các bản cập nhật tiếp theo
 // Chạy: npm run db:cloud-sql
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -21,9 +22,14 @@ writeFileSync(
   join(root, "cloud-update-m2.sql"),
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 2 cho dự án đã chạy cloud-setup.sql của Milestone 1.\n-- Chạy MỘT lần trong SQL Editor. Không chứa dữ liệu demo.\n\n${[...m2, "seed/03_lesson_content.sql", "seed/04_question_bank.sql", "seed/05_experiments.sql"].map(read).join("\n\n")}`,
 );
-const m3 = migrations.filter((m) => m.split("/").pop() >= "20261108");
+const m3 = migrations.filter((m) => m.split("/").pop() >= "20261108" && m.split("/").pop() < "20261109");
 writeFileSync(
   join(root, "cloud-update-m3.sql"),
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 3 (đề kiểm tra, giao bài, nhận xét, AI) cho dự án đã chạy cloud-update-m2.sql.\n-- Chạy MỘT lần trong SQL Editor.\n\n${m3.map(read).join("\n\n")}`,
 );
-console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql");
+const m4 = migrations.filter((m) => m.split("/").pop() >= "20261109");
+writeFileSync(
+  join(root, "cloud-update-m4.sql"),
+  `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 4 (câu tự luận do giáo viên chấm, bảng xếp hạng) cho dự án đã chạy cloud-update-m3.sql.\n-- Chạy MỘT lần trong SQL Editor.\n\n${m4.map(read).join("\n\n")}`,
+);
+console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql, cloud-update-m4.sql");

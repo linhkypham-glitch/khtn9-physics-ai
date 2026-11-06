@@ -91,16 +91,16 @@ export function gradeQuestion(q: FullQuestion, answer: StudentAnswer | undefined
     };
   }
 
-  // Tự luận: không tự chấm – chờ giáo viên
+  // Tự luận: KHÔNG tự chấm – chờ giáo viên chấm (AI chỉ được gợi ý)
+  const text = answer?.type === "essay" || answer?.type === "short_answer" ? answer.text.trim() : "";
   return {
     ...base,
-    status: "blank",
+    status: text ? "pending" : "blank",
     earned: 0,
-    max: 0,
     correctUnits: 0,
-    totalUnits: 0,
-    correctAnswer: "Giáo viên chấm",
-    studentAnswer: answer?.type === "short_answer" ? answer.text : "",
+    totalUnits: 1,
+    correctAnswer: "Giáo viên chấm theo hướng dẫn",
+    studentAnswer: text,
   };
 }
 
@@ -117,5 +117,6 @@ export function summarize(results: QuestionResult[]) {
     partial: results.filter((r) => r.status === "partial").length,
     wrong: results.filter((r) => r.status === "wrong").length,
     blank: results.filter((r) => r.status === "blank").length,
+    pending: results.filter((r) => r.status === "pending").length,
   };
 }

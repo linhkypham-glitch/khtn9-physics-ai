@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleCheck, CircleX, Lightbulb, Sigma, X } from "lucide-react";
+import { Check, CircleCheck, CircleX, Clock, Lightbulb, Sigma, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { LEVEL_LABELS, TYPE_LABELS, type PublicQuestion, type QuestionResult, ty
 export function emptyAnswer(q: PublicQuestion): StudentAnswer {
   if (q.type === "multiple_choice") return { type: "multiple_choice", choice: null };
   if (q.type === "true_false") return { type: "true_false", items: Object.fromEntries(q.subitems.map((s) => [s.label, null])) };
+  if (q.type === "essay") return { type: "essay", text: "" };
   return { type: "short_answer", text: "" };
 }
 
@@ -130,6 +131,18 @@ export function QuestionBody({
         </div>
       )}
 
+      {q.type === "essay" && value.type === "essay" && (
+        <textarea
+          value={value.text}
+          disabled={locked}
+          maxLength={5000}
+          onChange={(e) => onChange?.({ type: "essay", text: e.target.value })}
+          placeholder="Trình bày bài làm của em (lời giải, công thức, kết luận)…"
+          className="min-h-40 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:opacity-80"
+          aria-label="Bài làm tự luận"
+        />
+      )}
+
       {q.type === "short_answer" && value.type === "short_answer" && (
         <div className="flex items-center gap-2">
           <Input
@@ -154,6 +167,7 @@ const STATUS = {
   partial: { label: "Đúng một phần", cls: "border-amber-200 bg-amber-50 text-amber-900", icon: CircleCheck },
   wrong: { label: "Sai", cls: "border-red-200 bg-red-50 text-red-800", icon: CircleX },
   blank: { label: "Chưa trả lời", cls: "border-slate-200 bg-slate-50 text-slate-700", icon: CircleX },
+  pending: { label: "Chờ giáo viên chấm", cls: "border-sky-200 bg-sky-50 text-sky-900", icon: Clock },
 } as const;
 
 /** Khối giải thích sau mỗi câu: kết quả, đáp án đúng, lời giải, công thức, kiến thức cần nhớ. */

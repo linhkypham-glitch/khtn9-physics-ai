@@ -36,6 +36,7 @@ export async function saveQuestionAction(input: QuestionInput): Promise<SaveResu
     explanation: q.explanation,
     formula: q.formula || null,
     remember: q.remember || null,
+    rubric: q.type === "essay" ? q.rubric || null : null,
     status: q.publish ? ("published" as const) : ("draft" as const),
   };
 
