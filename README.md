@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KHTN 9 – PHYSICS AI
 
-## Getting Started
+Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra đánh giá và phân tích quá trình học tập cho
+**KHTN 9 – phân môn Vật lý** (bộ sách *Kết nối tri thức với cuộc sống*). Phục vụ 3 vai trò: Quản trị viên, Giáo viên, Học sinh.
 
-First, run the development server:
+## Công nghệ
+
+| Lớp | Công nghệ |
+|---|---|
+| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui (Radix), Lucide, Recharts |
+| Backend | Supabase: PostgreSQL, Auth, Storage, Row Level Security |
+| Kiểm thử | Vitest (đơn vị), SQL test RLS trên Postgres thật, Playwright (end-to-end, thủ công) |
+| Triển khai | Vercel + Supabase Cloud |
+
+## Trạng thái phát triển
+
+| Milestone | Nội dung | Trạng thái |
+|---|---|---|
+| 1 | Nền tảng: dự án, giao diện, đăng nhập, phân quyền, schema + RLS, seed chương trình học, dashboard | ✅ Hoàn thành |
+| 2 | Học liệu, ngân hàng bài tập, thí nghiệm ảo | ⏳ |
+| 3 | Soạn đề, giao bài, làm bài, chấm điểm, giải thích đáp án | ⏳ |
+| 4 | AI tạo câu hỏi / đề / ma trận / bản đặc tả, AI phân tích | ⏳ |
+| 5 | Bảng xếp hạng, phân tích học tập, xuất Excel/CSV | ⏳ |
+| 6 | Kiểm thử tổng thể, bảo mật, tối ưu, triển khai | ⏳ |
+
+### Đã hoạt động (Milestone 1)
+
+- Đăng nhập / đăng xuất bằng Supabase Auth (email + mật khẩu), làm mới phiên qua `src/proxy.ts`.
+- Phân quyền 3 lớp: proxy chặn khu vực cần đăng nhập → layout kiểm tra vai trò ở máy chủ → RLS trong database.
+- Dashboard **học sinh** (lớp, giáo viên, lộ trình bài học), **giáo viên** (lớp phụ trách, sĩ số, biểu đồ chương trình), **quản trị** (thống kê tài khoản, lớp, cấu hình) – toàn bộ số liệu đọc từ database.
+- Danh sách 5 chương / 16 bài; trang bài học với 5 khu vực (Kiến thức, Thí nghiệm, Luyện tập, Tự đánh giá, Kết quả học tập) đọc mục tiêu, yêu cầu cần đạt, học liệu từ database (hiển thị trạng thái trống khi chưa có nội dung).
+- Trang `/setup` và `/admin/settings` kiểm tra cấu hình thực tế (Supabase, dữ liệu, service-role, AI) – không lộ bí mật.
+- `GET /api/health` cho giám sát.
+- Ứng dụng vẫn chạy khi chưa cấu hình Supabase hoặc AI, kèm thông báo rõ ràng.
+
+### Chưa có
+
+Quản lý tài khoản/lớp qua giao diện (hiện thao tác bằng SQL/Supabase Dashboard), soạn học liệu, thí nghiệm ảo,
+ngân hàng câu hỏi, đề kiểm tra, AI, báo cáo, bảng xếp hạng – theo các milestone tiếp theo.
+
+> **Lưu ý về mục lục:** danh mục chính thức gồm Bài 2 → Bài 17, tức **16 bài** (không phải 17). Ứng dụng giữ nguyên văn danh mục, không tự thêm bài.
+
+## Cài đặt & chạy
+
+Yêu cầu: Node.js ≥ 20.9, npm. Chạy Supabase cục bộ cần Docker.
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+### Cách A – Supabase cục bộ (khuyến nghị khi phát triển)
+
+```bash
+npx supabase start
+```
+
+Lấy `API_URL`, `PUBLISHABLE_KEY`, `SECRET_KEY` từ kết quả (hoặc `npx supabase status`) điền vào `.env.local`, rồi:
+
+```bash
+npx supabase db reset
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`db reset` chạy migration + seed (chương trình học, cấu hình, **dữ liệu demo**). Tài khoản demo (mật khẩu `Demo@12345`, toàn bộ là dữ liệu giả lập):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Vai trò | Email |
+|---|---|
+| Quản trị viên | `admin@example.com` |
+| Giáo viên (9A, 9B) | `giaovien@example.com` |
+| Giáo viên (9C) | `giaovien2@example.com` |
+| Học sinh | `hs9a.01@example.com` … `hs9c.03@example.com` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Cách B – Supabase Cloud
 
-## Learn More
+1. Tạo dự án tại supabase.com; lấy Project URL, khóa Publishable và Secret (Project Settings → API Keys) điền vào `.env.local`.
+2. Đẩy migration:
+   ```bash
+   npx supabase link --project-ref <project-ref>
+   ```
+   ```bash
+   npx supabase db push
+   ```
+3. Trong SQL Editor, chạy `supabase/seed/01_curriculum.sql` và `supabase/seed/02_system_settings.sql`.
+   **Không** chạy `90_demo_data.sql` trên môi trường thật.
+4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
+   ```sql
+   update public.profiles set role = 'admin' where email = 'email-cua-ban@truong.edu.vn';
+   ```
+5. Mở `/setup` để kiểm tra kết nối.
 
-To learn more about Next.js, take a look at the following resources:
+### Triển khai Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Import repository vào Vercel, khai báo các biến trong `.env.example` (Production/Preview). Trong Supabase → Authentication → URL Configuration, đặt Site URL là tên miền Vercel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Biến môi trường
 
-## Deploy on Vercel
+| Biến | Phạm vi | Bắt buộc | Ghi chú |
+|---|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | trình duyệt + máy chủ | ✔ | |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | trình duyệt + máy chủ | ✔ | hoặc `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| `SUPABASE_SECRET_KEY` | **chỉ máy chủ** | các chức năng quản trị sau này | bỏ qua RLS – không bao giờ thêm `NEXT_PUBLIC_` |
+| `AI_PROVIDER` | chỉ máy chủ | không | `anthropic` \| `openai` \| `gemini` |
+| `AI_MODEL`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY` | chỉ máy chủ | không | |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Lệnh
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Lệnh | Mô tả |
+|---|---|
+| `npm run dev` / `build` / `start` | Phát triển / build / chạy production |
+| `npm run lint` · `npm run typecheck` | ESLint · TypeScript |
+| `npm test` | Kiểm thử đơn vị (Vitest) |
+| `npm run test:db` | Kiểm thử RLS trên Supabase cục bộ |
+| `npm run db:reset` | Chạy lại migration + seed cục bộ |
+| `npm run db:types` | Sinh lại kiểu TypeScript từ database |
+| `npm run seed:generate` | Sinh lại `01_curriculum.sql` từ `src/modules/curriculum/catalog.ts` |
+
+## Cấu trúc thư mục
+
+```
+src/
+  app/                  # Routes (App Router)
+    login/ setup/ student/ teacher/ admin/ api/health/
+  components/
+    ui/                 # shadcn/ui
+    layout/             # AppShell, sidebar, menu
+    dashboard/ charts/ questions/ experiments/ forms/
+  modules/              # Nghiệp vụ theo module
+    curriculum/         # catalog chuẩn, repository, trang chương/bài
+    classes/            # lớp học
+    virtual-lab/ question-bank/ assessments/ ai-generator/ grading/ analytics/ reports/
+  lib/
+    supabase/           # client trình duyệt / máy chủ / service-role / proxy
+    auth/               # phiên đăng nhập, vai trò
+    ai/                 # cấu hình nhà cung cấp AI (server-only)
+    validation/ excel/
+  types/                # supabase.ts (sinh tự động), database.ts
+  styles/globals.css
+  proxy.ts              # (thay cho middleware trong Next.js 16)
+supabase/
+  migrations/           # schema, hàm, RLS
+  seed/                 # 01 chương trình · 02 cấu hình · 90 demo (chỉ cục bộ)
+  policies/README.md    # ma trận quyền
+tests/
+  unit/                 # Vitest
+  db/                   # kiểm thử RLS (SQL)
+```
+
+## Cơ sở dữ liệu (Milestone 1)
+
+- **Tài khoản & lớp:** `profiles`, `schools`, `academic_years`, `classes`, `class_members`
+- **Chương trình học:** `textbooks`, `chapters`, `lessons`, `learning_objectives`, `lesson_materials`
+- **Hệ thống:** `notifications`, `audit_logs`, `system_settings`
+
+Các nhóm bảng thí nghiệm, ngân hàng câu hỏi, kiểm tra, AI, phân tích sẽ được thêm bằng migration ở milestone tương ứng.
+
+Nguyên tắc bảo mật chính:
+- RLS bật cho mọi bảng; hàm phân quyền `SECURITY DEFINER` với `search_path` rỗng.
+- Vai trò chỉ lấy từ `app_metadata` (do quản trị đặt), không bao giờ từ `user_metadata`; tài khoản tự đăng ký luôn là học sinh.
+- Trigger chặn người dùng thường tự đổi vai trò, mã học sinh, trạng thái.
+- Học sinh không xem được danh sách/hồ sơ bạn cùng lớp.
+
+## Quyết định kỹ thuật
+
+- **Next.js 16 – Cache Components tắt**: gần như mọi trang phụ thuộc phiên đăng nhập + RLS, nên dùng render động truyền thống.
+- **shadcn/ui** được viết trực tiếp vào `src/components/ui` (theo đúng mẫu shadcn, có `components.json` để thêm component bằng CLI sau này).
+- **Danh mục chương trình** có một nguồn chuẩn (`catalog.ts`); file seed SQL được sinh tự động và kiểm thử đối chiếu với mục lục chính thức.
