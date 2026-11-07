@@ -24,21 +24,33 @@ function ScopeChart({ data, label, color = "#ea580c", range = 1 }: { data: numbe
 /* Bài 14 – Cảm ứng điện từ                                                 */
 /* ======================================================================== */
 
+type InductionMode = "magnet" | "electromagnet" | "squeeze" | "generator";
+const INDUCTION_MODES: { value: InductionMode; label: string }[] = [
+  { value: "magnet", label: "TN 1: Nam châm vĩnh cửu & cuộn dây" },
+  { value: "electromagnet", label: "TN 2: Nam châm điện (đóng/mở khoá)" },
+  { value: "squeeze", label: "TN 4: Bóp / kéo giãn cuộn dây" },
+  { value: "generator", label: "TN 3 & mô hình máy phát: 2 đèn LED" },
+];
+
 export function InductionLab() {
   const { running, addRecord } = useLab();
-  const [mode, setMode] = useState<"magnet" | "generator">("magnet");
+  const [mode, setMode] = useState<InductionMode>("magnet");
   const [rps, setRps] = useState(1); // vòng/giây
-  const INIT = { pos: 0, lastPos: 0, current: 0, phase: 0, t: 0, trace: [] as number[], autoDir: 1 };
+  const [kClosed, setKClosed] = useState(false); // khoá K của nam châm điện (TN 2)
+  const INIT = { pos: 0, lastPos: 0, current: 0, phase: 0, t: 0, trace: [] as number[], autoDir: 1, coilI: 0, area: 100, lastArea: 100 };
   const [sim, setSim] = useState(INIT);
   const pos = sim.pos; // vị trí nam châm 0 (xa) … 100 (trong lòng cuộn dây)
   const setPos = (p: number) => setSim({ ...sim, pos: p });
-  useSnapshot({ che_do: mode, vong_moi_giay: rps });
+  const setArea = (a: number) => setSim({ ...sim, area: a });
+  useSnapshot({ che_do: mode, vong_moi_giay: rps, khoa_K: kClosed, tiet_dien: sim.area });
 
   // Số đường sức từ qua cuộn dây (tỉ đối) theo vị trí nam châm
   const flux = (p: number) => Math.exp(-((p - 100) ** 2) / (2 * 28 ** 2));
+  const clamp1 = (x: number) => Math.max(-1, Math.min(1, x));
 
   useAnimationLoop(true, (dt) => {
     const st = { ...sim, t: sim.t + dt };
+    const d = Math.max(dt, 1e-3);
     if (mode === "magnet") {
       if (running) {
         // tự động đưa nam châm vào – ra
@@ -46,9 +58,19 @@ export function InductionLab() {
         if (st.pos >= 100) { st.pos = 100; st.autoDir = -1; }
         if (st.pos <= 0) { st.pos = 0; st.autoDir = 1; }
       }
-      const dphi = (flux(st.pos) - flux(sim.lastPos)) / Math.max(dt, 1e-3);
+      const dphi = (flux(st.pos) - flux(sim.lastPos)) / d;
       st.lastPos = st.pos;
       st.current = sim.current * 0.75 + -dphi * 0.6 * 0.25;
+    } else if (mode === "electromagnet") {
+      // dòng điện trong nam châm điện tăng/giảm nhanh khi đóng/mở khoá K → từ trường biến thiên
+      st.coilI = sim.coilI + ((kClosed ? 1 : 0) - sim.coilI) * Math.min(1, dt * 6);
+      const dphi = (st.coilI - sim.coilI) / d;
+      st.current = clamp1(sim.current * 0.75 + -dphi * 0.35 * 0.25);
+    } else if (mode === "squeeze") {
+      // số đường sức qua tiết diện cuộn dây ∝ diện tích tiết diện
+      const dphi = (sim.area - sim.lastArea) / 100 / d;
+      st.lastArea = sim.area;
+      st.current = clamp1(sim.current * 0.75 + dphi * 0.6 * 0.25);
     } else {
       if (running) st.phase = sim.phase + 2 * Math.PI * rps * dt;
       st.current = running ? Math.sin(st.phase) * Math.min(1, rps / 3) : sim.current * 0.9;
@@ -56,20 +78,23 @@ export function InductionLab() {
     st.trace = [...sim.trace.slice(-239), st.current];
     setSim(st);
   });
-  useOnReset(() => setSim(INIT));
+  useOnReset(() => { setSim(INIT); setKClosed(false); });
 
   const cur = sim.current;
   const needle = Math.max(-60, Math.min(60, cur * 70));
   const ledA = cur > 0.06;
   const ledB = cur < -0.06;
   const coilAngle = sim.phase;
+  const none = Math.abs(cur) < 0.03;
+  const areaRy = 14 + (sim.area / 100) * 38; // bán kính dọc của vòng dây khi bóp / kéo giãn
+  const modeLabel = INDUCTION_MODES.find((m) => m.value === mode)!.label;
 
   return (
     <LabLayout
       stage={
         <Stage>
           <svg viewBox="0 0 600 260" className="w-full" role="img" aria-label="Thí nghiệm cảm ứng điện từ">
-            {mode === "magnet" ? (
+            {mode === "magnet" && (
               <>
                 {/* cuộn dây */}
                 {Array.from({ length: 9 }).map((_, i) => (
@@ -84,7 +109,44 @@ export function InductionLab() {
                   <text x={84} y={24} fill="white" fontWeight={800}>N</text>
                 </g>
               </>
-            ) : (
+            )}
+            {mode === "electromagnet" && (
+              <>
+                {/* lõi sắt + cuộn dây sơ cấp (nam châm điện) + cuộn dây thứ cấp nối điện kế */}
+                <rect x={300} y={118} width={220} height={24} fill="#a8a29e" rx={3} />
+                <rect x={300} y={118} width={220} height={24} fill="#f97316" opacity={sim.coilI * 0.5} rx={3} />
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <ellipse key={`a${i}`} cx={318 + i * 10} cy={130} rx={8} ry={34} fill="none" stroke="#b45309" strokeWidth={4} />
+                ))}
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <ellipse key={`b${i}`} cx={445 + i * 10} cy={130} rx={8} ry={34} fill="none" stroke="#2563eb" strokeWidth={4} />
+                ))}
+                {/* mạch nam châm điện: nguồn – khoá K – cuộn dây */}
+                <path d="M318,96 L318,76 M318,66 L318,44 L335,44 M360,44 L368,44 L368,96" fill="none" stroke="#57534e" strokeWidth={2.5} />
+                <line x1={310} x2={326} y1={66} y2={66} stroke="#1c1917" strokeWidth={3} />
+                <line x1={314} x2={322} y1={76} y2={76} stroke="#1c1917" strokeWidth={6} />
+                <line x1={335} y1={44} x2={kClosed ? 360 : 356} y2={kClosed ? 44 : 28} stroke="#57534e" strokeWidth={3} strokeLinecap="round" />
+                <text x={338} y={22} fontSize={12} fontWeight={700}>K</text>
+                <text x={250} y={70} fontSize={11} fill="#44403c">Nam châm điện</text>
+                {/* cuộn dây thứ cấp nối với điện kế */}
+                <path d="M445,164 L445,236 L230,236 L230,176 M495,164 L495,248 L170,248 L170,176" fill="none" stroke="#57534e" strokeWidth={2.5} />
+              </>
+            )}
+            {mode === "squeeze" && (
+              <>
+                {/* nam châm chữ U: hai cực N – S, cuộn dây mềm đặt giữa */}
+                <rect x={270} y={40} width={60} height={180} fill="#dc2626" rx={4} />
+                <rect x={470} y={40} width={60} height={180} fill="#2563eb" rx={4} />
+                <text x={292} y={136} fill="white" fontWeight={800} fontSize={20}>N</text>
+                <text x={492} y={136} fill="white" fontWeight={800} fontSize={20}>S</text>
+                {[0, 1, 2].map((i) => (
+                  <line key={i} x1={332} x2={468} y1={88 + i * 42} y2={88 + i * 42} stroke="#a8a29e" strokeDasharray="4 5" />
+                ))}
+                <ellipse cx={400} cy={130} rx={46} ry={areaRy} fill="rgba(180,83,9,0.12)" stroke="#b45309" strokeWidth={6} />
+                <path d="M356,130 L356,236 L120,236 L120,180 M444,130 L444,246 L100,246 L100,180" fill="none" stroke="#57534e" strokeWidth={2.5} />
+              </>
+            )}
+            {mode === "generator" && (
               <>
                 <rect x={300} y={60} width={50} height={140} fill="#dc2626" rx={4} />
                 <rect x={470} y={60} width={50} height={140} fill="#2563eb" rx={4} />
@@ -118,34 +180,52 @@ export function InductionLab() {
       }
       readouts={
         <>
-          <Readout label="Dòng điện cảm ứng" value={Math.abs(cur) < 0.03 ? "Không có" : cur > 0 ? "Chiều (+)" : "Chiều (−)"} tone={Math.abs(cur) < 0.03 ? "default" : "orange"} />
+          <Readout label="Dòng điện cảm ứng" value={none ? "Không có" : cur > 0 ? "Chiều (+)" : "Chiều (−)"} tone={none ? "default" : "orange"} />
           {mode === "generator" && <Readout label="Tần số f" value={fmt(rps, 1)} unit="Hz" tone="blue" />}
           {mode === "generator" && <Readout label="Đổi chiều mỗi giây" value={fmt(2 * rps, 0)} unit="lần" tone="green" />}
           {mode === "magnet" && <Readout label="Đường sức qua cuộn dây" value={fmt(flux(pos) * 100, 0)} unit="%" tone="blue" />}
+          {mode === "electromagnet" && <Readout label="Từ trường nam châm điện" value={fmt(sim.coilI * 100, 0)} unit="%" tone="blue" />}
+          {mode === "squeeze" && <Readout label="Đường sức qua tiết diện" value={fmt(sim.area, 0)} unit="%" tone="blue" />}
         </>
       }
       controls={
         <>
-          <Segmented label="Thí nghiệm" value={mode} options={[{ value: "magnet", label: "Nam châm & cuộn dây" }, { value: "generator", label: "Máy phát xoay chiều" }]} onChange={(v) => { setMode(v); setSim({ ...sim, trace: [] }); }} />
-          {mode === "magnet" ? (
-            <Slider label="Vị trí nam châm (kéo để di chuyển)" value={Math.round(pos)} min={0} max={100} step={1} unit="%" digits={0} onChange={setPos} />
-          ) : (
-            <Slider label="Tốc độ quay cuộn dây" value={rps} min={0.25} max={3} step={0.25} unit="vòng/s" onChange={setRps} />
+          <Segmented label="Thí nghiệm trong SGK (Hình 14.1 – 14.8)" value={mode} options={INDUCTION_MODES} onChange={(v) => { setMode(v as InductionMode); setSim({ ...INIT, pos: sim.pos, area: sim.area, lastArea: sim.area, lastPos: sim.pos }); setKClosed(false); }} />
+          {mode === "magnet" && <Slider label="Vị trí nam châm (kéo để di chuyển)" value={Math.round(pos)} min={0} max={100} step={1} unit="%" digits={0} onChange={setPos} />}
+          {mode === "electromagnet" && (
+            <Segmented label="Khoá K của nam châm điện" value={kClosed ? "on" : "off"} options={[{ value: "off", label: "Mở" }, { value: "on", label: "Đóng" }]} onChange={(v) => setKClosed(v === "on")} />
           )}
+          {mode === "squeeze" && <Slider label="Tiết diện cuộn dây (bóp ← → kéo giãn)" value={Math.round(sim.area)} min={20} max={100} step={1} unit="%" digits={0} onChange={setArea} />}
+          {mode === "generator" && <Slider label="Tốc độ quay cuộn dây" value={rps} min={0.25} max={3} step={0.25} unit="vòng/s" onChange={setRps} />}
           <RunControls
+            hideRun={mode === "electromagnet" || mode === "squeeze"}
             startLabel={mode === "magnet" ? "Tự động đưa vào – ra" : "Quay cuộn dây"}
-            onRecord={() => addRecord({ "Thí nghiệm": mode === "magnet" ? "Nam châm – cuộn dây" : "Máy phát", "Trạng thái": mode === "magnet" ? `Vị trí ${Math.round(pos)}%` : `${rps} vòng/s`, "Dòng cảm ứng": Math.abs(cur) < 0.03 ? "Không" : "Có", "Chiều": Math.abs(cur) < 0.03 ? "—" : cur > 0 ? "+" : "−" })}
+            onRecord={() => addRecord({
+              "Thí nghiệm": modeLabel,
+              "Trạng thái": mode === "magnet" ? `Vị trí ${Math.round(pos)}%` : mode === "electromagnet" ? (kClosed ? "Khoá K đóng" : "Khoá K mở") : mode === "squeeze" ? `Tiết diện ${Math.round(sim.area)}%` : `${rps} vòng/s`,
+              "Dòng cảm ứng": none ? "Không" : "Có",
+              "Chiều": none ? "—" : cur > 0 ? "+" : "−",
+            })}
           />
         </>
       }
-      formula={<Formula>Có dòng điện cảm ứng khi số đường sức từ qua cuộn dây kín biến thiên.<br />Mỗi vòng quay: dòng điện đổi chiều 2 lần.</Formula>}
+      formula={<Formula>Có dòng điện cảm ứng khi số đường sức từ qua tiết diện cuộn dây kín biến thiên.<br />Mỗi vòng quay: dòng điện đổi chiều 2 lần.</Formula>}
       below={
-        <Observation tone={Math.abs(cur) < 0.03 ? "info" : "success"}>
-          {mode === "magnet"
-            ? Math.abs(cur) < 0.03
+        <Observation tone={none ? "info" : "success"}>
+          {mode === "magnet" &&
+            (none
               ? "Nam châm đứng yên → số đường sức không đổi → kim điện kế chỉ số 0."
-              : "Nam châm chuyển động → số đường sức thay đổi → xuất hiện dòng điện cảm ứng. Đưa vào và kéo ra cho dòng điện ngược chiều nhau."
-            : "Cuộn dây quay: số đường sức luân phiên tăng, giảm nên dòng điện luân phiên đổi chiều – dòng điện xoay chiều. Hai đèn LED sáng luân phiên."}
+              : "Nam châm chuyển động → số đường sức thay đổi → xuất hiện dòng điện cảm ứng. Đưa vào và kéo ra cho dòng điện ngược chiều nhau.")}
+          {mode === "electromagnet" &&
+            (none
+              ? "Khoá K giữ nguyên (đóng hoặc mở) → từ trường không đổi → kim điện kế chỉ số 0. Hãy đóng rồi mở khoá K."
+              : "Đóng hoặc mở khoá K làm cường độ dòng điện, nên từ trường của nam châm điện, thay đổi → số đường sức qua cuộn dây biến thiên → có dòng điện cảm ứng. Đóng và mở cho kim lệch ngược chiều nhau.")}
+          {mode === "squeeze" &&
+            (none
+              ? "Tiết diện cuộn dây không đổi → số đường sức xuyên qua không đổi → kim điện kế chỉ số 0. Hãy bóp hoặc kéo giãn cuộn dây."
+              : "Tiết diện cuộn dây thay đổi → số đường sức từ xuyên qua biến thiên → xuất hiện dòng điện cảm ứng (bóp và kéo giãn cho kim lệch ngược chiều nhau).")}
+          {mode === "generator" &&
+            "Cuộn dây quay trong từ trường: số đường sức luân phiên tăng, giảm nên dòng điện luân phiên đổi chiều – dòng điện xoay chiều. Quay chậm thấy hai đèn LED sáng luân phiên; quay nhanh thấy cả hai cùng sáng. (SGK quay nam châm trước cuộn dây – hiệu quả tương đương.)"}
         </Observation>
       }
     />
@@ -182,7 +262,7 @@ export function AcEffectsLab() {
     <LabLayout
       stage={
         <Stage>
-          <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2">
             <div className="flex flex-col items-center gap-2 rounded-xl bg-white p-3">
               <p className="text-sm font-semibold">Tác dụng phát sáng</p>
               <svg viewBox="0 0 100 120" className="h-28" role="img" aria-label="Bóng đèn">
@@ -199,7 +279,24 @@ export function AcEffectsLab() {
               <p className="font-mono text-sm tabular-nums">{fmt(st.temp, 0)} °C</p>
             </div>
             <div className="flex flex-col items-center gap-2 rounded-xl bg-white p-3">
-              <p className="text-sm font-semibold">Tác dụng từ</p>
+              <p className="text-sm font-semibold">Tác dụng từ – cuộn dây hút đinh sắt (SGK Hình 15.4)</p>
+              <svg viewBox="0 0 160 120" className="h-28" role="img" aria-label="Cuộn dây có lõi sắt hút đinh sắt">
+                <rect x={60} y={6} width={40} height={52} fill="#a8a29e" rx={3} />
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <ellipse key={i} cx={80} cy={14 + i * 8} rx={26} ry={4} fill="none" stroke="#b45309" strokeWidth={3} />
+                ))}
+                <rect x={60} y={6} width={40} height={52} fill="#f97316" opacity={Math.min(1, glow) * 0.35} rx={3} />
+                <g transform={`translate(0 ${(1 - Math.min(1, glow)) * 36})`}>
+                  <rect x={77} y={62} width={6} height={34} fill="#57534e" rx={2} />
+                  <rect x={72} y={60} width={16} height={4} fill="#44403c" rx={1} />
+                </g>
+                <line x1={10} x2={55} y1={20} y2={20} stroke="#57534e" strokeWidth={3} />
+                <line x1={105} x2={150} y1={20} y2={20} stroke="#57534e" strokeWidth={3} />
+              </svg>
+              <p className="text-xs text-muted-foreground">{!running ? "Chưa có dòng điện: đinh sắt rơi xuống" : source === "dc" ? "Đinh sắt bị hút lên (dòng một chiều)" : fastAc ? "Đinh sắt bị hút lên (dòng xoay chiều)" : "Tần số thấp: đinh sắt bị hút – nhả luân phiên"}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2 rounded-xl bg-white p-3">
+              <p className="text-sm font-semibold">Tác dụng từ – kim nam châm (mở rộng)</p>
               <svg viewBox="0 0 120 120" className="h-28" role="img" aria-label="Kim nam châm gần dây dẫn">
                 <line x1={10} x2={110} y1={20} y2={20} stroke="#57534e" strokeWidth={4} />
                 <circle cx={60} cy={75} r={34} fill="#f5f5f4" stroke="#a8a29e" />
@@ -229,7 +326,7 @@ export function AcEffectsLab() {
           <Segmented label="Nguồn điện" value={source} options={[{ value: "ac", label: "Xoay chiều (AC)" }, { value: "dc", label: "Một chiều (DC)" }]} onChange={setSource} />
           {source === "ac" && <Slider label="Tần số (quay chậm để quan sát)" value={freq} min={0.5} max={50} step={0.5} unit="Hz" digits={1} onChange={setFreq} />}
           <Slider label="Hiệu điện thế (hiệu dụng)" value={U} min={3} max={12} step={1} unit="V" digits={0} onChange={setU} />
-          <RunControls startLabel="Bật nguồn" onRecord={() => running && addRecord({ "Nguồn": source === "dc" ? "DC" : `AC ${freq} Hz`, "U (V)": U, "Đèn": brightness > 0.05 || glow > 0.05 ? "Sáng" : "Tắt", "Nhiệt độ (°C)": Math.round(st.temp), "Kim nam châm": source === "dc" ? "Lệch, đứng yên" : "Dao động" })} />
+          <RunControls startLabel="Bật nguồn" onRecord={() => running && addRecord({ "Nguồn": source === "dc" ? "DC" : `AC ${freq} Hz`, "U (V)": U, "Đèn": brightness > 0.05 || glow > 0.05 ? "Sáng" : "Tắt", "Nhiệt độ (°C)": Math.round(st.temp), "Đinh sắt": glow > 0.3 ? "Bị hút" : "Rơi", "Kim nam châm": source === "dc" ? "Lệch, đứng yên" : "Dao động" })} />
         </>
       }
       formula={<Formula>Dòng điện xoay chiều có tác dụng: nhiệt, phát sáng, từ, sinh lí.<br />Lực từ đổi chiều khi dòng điện đổi chiều.</Formula>}

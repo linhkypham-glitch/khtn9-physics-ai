@@ -10,6 +10,8 @@ export type ExperimentDef = {
   summary: string;
   guide: string[];
   questions: string[];
+  /** book: bám thí nghiệm trong SGK (đã đối chiếu); support: mô phỏng bổ trợ vì SGK bài này không có thí nghiệm thực hành. */
+  basis?: "book" | "support";
 };
 
 export const EXPERIMENTS: ExperimentDef[] = [
@@ -84,42 +86,42 @@ export const EXPERIMENTS: ExperimentDef[] = [
     questions: ["Đồ thị I – U có dạng gì?", "Từ bảng số liệu, tính U/I. Nhận xét kết quả."],
   },
   {
-    key: "series-parallel", lessonNumber: 12,
+    key: "series-parallel", lessonNumber: 12, basis: "book",
     title: "Đoạn mạch nối tiếp và song song",
-    summary: "Mắc hai điện trở nối tiếp hoặc song song, đo cường độ dòng điện và hiệu điện thế.",
-    guide: ["Chọn cách mắc: nối tiếp hoặc song song.", "Điều chỉnh R₁, R₂ và hiệu điện thế U.", "Đóng khoá K, đọc số chỉ các ampe kế, vôn kế.", "Kiểm chứng các hệ thức của đoạn mạch."],
+    summary: "Tái hiện hai thí nghiệm SGK: nối tiếp (nguồn 12 V, R₁ = 6 Ω, R₂ = 10 Ω, R₃ = 16 Ω) và song song (nguồn 6 V, R₁ = 10 Ω, R₂ = 6 Ω).",
+    guide: ["Chọn một phép đo trong SGK (Bảng 12.1 hoặc Bảng 12.2), hoặc tự chọn R₁, R₂, U.", "Đóng khoá K, đọc số chỉ các ampe kế, vôn kế.", "So sánh với số liệu trong SGK.", "Kiểm chứng I = I₁ = I₂ (nối tiếp) và I = I₁ + I₂ (song song)."],
     questions: ["Trong đoạn mạch nối tiếp, cường độ dòng điện qua các điện trở có bằng nhau không?", "Điện trở tương đương của đoạn mạch song song lớn hơn hay nhỏ hơn mỗi điện trở thành phần?"],
   },
   {
-    key: "electric-power", lessonNumber: 13,
+    key: "electric-power", lessonNumber: 13, basis: "support",
     title: "Công suất điện và điện năng tiêu thụ",
     summary: "Bật các thiết bị trong gia đình, quan sát công suất, điện năng tiêu thụ và tiền điện.",
     guide: ["Bật/tắt các thiết bị điện.", "Chọn số giờ sử dụng mỗi ngày cho từng thiết bị.", "Bấm Bắt đầu để công tơ chạy; đọc tổng công suất và điện năng.", "Đề xuất cách giảm điện năng tiêu thụ."],
     questions: ["Thiết bị nào tiêu thụ nhiều điện năng nhất trong tháng?", "Nêu hai cách tiết kiệm điện trong gia đình em."],
   },
   {
-    key: "induction", lessonNumber: 14,
+    key: "induction", lessonNumber: 14, basis: "book",
     title: "Cảm ứng điện từ – Máy phát điện xoay chiều",
-    summary: "Di chuyển nam châm qua cuộn dây hoặc quay cuộn dây trong từ trường, quan sát điện kế và đồ thị dòng điện.",
-    guide: ["Chế độ 1: kéo thanh trượt để đưa nam châm vào/ra cuộn dây, quan sát kim điện kế.", "Chế độ 2: bấm Bắt đầu để quay cuộn dây (máy phát điện), thay đổi tốc độ quay.", "Quan sát đồ thị dòng điện theo thời gian."],
-    questions: ["Khi nào kim điện kế không lệch?", "Vì sao dòng điện do máy phát tạo ra là dòng điện xoay chiều?"],
+    summary: "Các thí nghiệm SGK về cảm ứng điện từ: nam châm vĩnh cửu, nam châm điện, thay đổi tiết diện cuộn dây và mô hình máy phát điện xoay chiều.",
+    guide: ["TN 1: kéo thanh trượt đưa nam châm lại gần, ra xa cuộn dây; quan sát kim điện kế.", "TN 2: đóng, mở khoá K của nam châm điện; quan sát kim điện kế.", "TN 4: bóp, kéo giãn cuộn dây trong từ trường; quan sát kim điện kế.", "TN 3 và mô hình máy phát: quay chậm, quay nhanh; quan sát hai đèn LED và đồ thị dòng điện."],
+    questions: ["Khi nào kim điện kế lệch, khi nào không lệch?", "Điều kiện chung để xuất hiện dòng điện cảm ứng trong cuộn dây kín là gì?", "Vì sao dòng điện do máy phát tạo ra là dòng điện xoay chiều?"],
   },
   {
-    key: "ac-effects", lessonNumber: 15,
+    key: "ac-effects", lessonNumber: 15, basis: "book",
     title: "Các tác dụng của dòng điện xoay chiều",
-    summary: "So sánh tác dụng nhiệt, phát sáng, từ của dòng điện một chiều và xoay chiều.",
-    guide: ["Chọn nguồn: một chiều (DC) hoặc xoay chiều (AC).", "Bấm Bắt đầu, quan sát bóng đèn, dây nung và kim nam châm.", "Thay đổi tần số dòng xoay chiều để quan sát kim nam châm."],
-    questions: ["Kim nam châm đặt gần dây dẫn có dòng điện xoay chiều chuyển động thế nào?", "Kể tên các tác dụng của dòng điện xoay chiều."],
+    summary: "So sánh tác dụng nhiệt, phát sáng, từ (cuộn dây hút đinh sắt – SGK Hình 15.4) của dòng điện một chiều và xoay chiều.",
+    guide: ["Chọn nguồn: một chiều (DC) hoặc xoay chiều (AC).", "Bấm Bắt đầu, quan sát bóng đèn, dây nung và cuộn dây hút đinh sắt.", "Thay đổi tần số dòng xoay chiều để quan sát; đổi sang dòng một chiều và so sánh."],
+    questions: ["Khi đóng công tắc K cho dòng điện xoay chiều chạy qua cuộn dây, đinh sắt bị hút lên chứng tỏ dòng điện có tác dụng gì?", "Hiện tượng có gì khác nếu thay dòng điện xoay chiều bằng dòng điện một chiều?", "Kể tên các tác dụng của dòng điện xoay chiều."],
   },
   {
-    key: "fossil-energy", lessonNumber: 16,
+    key: "fossil-energy", lessonNumber: 16, basis: "support",
     title: "Vòng năng lượng và đốt nhiên liệu hoá thạch",
     summary: "Đốt các loại nhiên liệu, tính nhiệt lượng toả ra và lượng khí CO₂ ước tính phát thải.",
     guide: ["Chọn loại nhiên liệu và khối lượng đốt.", "Bấm Bắt đầu để đốt nhiên liệu.", "Đọc nhiệt lượng toả ra Q = q·m và lượng CO₂ ước tính.", "So sánh các loại nhiên liệu."],
     questions: ["Nhiên liệu nào toả nhiều nhiệt nhất trên 1 kg?", "Vì sao cần hạn chế sử dụng nhiên liệu hoá thạch?"],
   },
   {
-    key: "renewable", lessonNumber: 17,
+    key: "renewable", lessonNumber: 17, basis: "support",
     title: "Nhà máy điện năng lượng tái tạo",
     summary: "Mô phỏng pin Mặt Trời, tua-bin gió và thuỷ điện; thay đổi điều kiện tự nhiên và quan sát công suất.",
     guide: ["Chọn loại nguồn: Mặt Trời, gió hoặc thuỷ điện.", "Điều chỉnh các thông số (cường độ nắng, tốc độ gió, lưu lượng nước…).", "Bấm Bắt đầu, đọc công suất điện tạo ra.", "So sánh ưu, nhược điểm các nguồn."],

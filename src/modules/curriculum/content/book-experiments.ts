@@ -1,6 +1,6 @@
 /**
  * MÔ TẢ THÍ NGHIỆM TRONG SÁCH GIÁO KHOA (KHTN 9 – Kết nối tri thức)
- * Đối chiếu với kế hoạch bài dạy KHTN 9 KNTT (Bài 2 – Bài 11); Bài 12 – 17 theo chương trình.
+ * Đối chiếu với kế hoạch bài dạy KHTN 9 KNTT (Bài 2 – Bài 11) và với các trang SGK (Bài 12 – Bài 17).
  * Được nạp vào khu vực "Thí nghiệm" của từng bài (seed 03), hiển thị cạnh thí nghiệm ảo.
  */
 import type { ContentBlock } from "./lessons";
@@ -112,58 +112,116 @@ export const BOOK_EXPERIMENTS: Record<number, ContentBlock[]> = {
   12: [
     {
       kind: "text",
-      title: "Thí nghiệm SGK: Đoạn mạch nối tiếp và song song",
+      title: "Thí nghiệm SGK 12.1: Đặc điểm của đoạn mạch nối tiếp (Hình 12.2, Bảng 12.1)",
       body:
-        "Dụng cụ: nguồn điện, hai điện trở, ampe kế, vôn kế, công tắc, dây nối.\n" +
-        "Nối tiếp: mắc ampe kế ở các vị trí khác nhau trong mạch → số chỉ như nhau; đo U₁, U₂, U → U = U₁ + U₂.\n" +
-        "Song song: đo cường độ dòng điện trong các nhánh và mạch chính → I = I₁ + I₂; hiệu điện thế hai đầu mỗi nhánh bằng nhau.",
+        "Chuẩn bị: nguồn điện một chiều 12 V; ba điện trở R₁ = 6 Ω, R₂ = 10 Ω, R₃ = 16 Ω; hai ampe kế có giới hạn đo 3 A, độ chia nhỏ nhất 0,01 A; công tắc, dây nối.\n" +
+        "Tiến hành: mắc hai điện trở R₁ và R₂ cùng hai ampe kế vào mạch theo sơ đồ Hình 12.2; đóng công tắc, đọc số chỉ của các ampe kế và ghi vào vở theo mẫu Bảng 12.1. Lặp lại thí nghiệm với R₁ và R₃, rồi R₂ và R₃.\n" +
+        "Số liệu mẫu trong SGK: R₁ và R₂: A₁ = A₂ = 0,75 A; R₁ và R₃: 0,54 A; R₂ và R₃: 0,46 A.\n" +
+        "Kết luận: cường độ dòng điện tại mọi điểm trong đoạn mạch nối tiếp bằng nhau: I = I₁ = I₂ (với n điện trở: I = I₁ = I₂ = … = Iₙ).",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK 12.2: Đặc điểm của đoạn mạch song song (Hình 12.4, Bảng 12.2)",
+      body:
+        "Chuẩn bị: nguồn điện một chiều 6 V; hai điện trở R₁ = 10 Ω, R₂ = 6 Ω; ba ampe kế có giới hạn đo 3 A, độ chia nhỏ nhất 0,01 A; công tắc, dây nối.\n" +
+        "Tiến hành: mắc hai điện trở và ba ampe kế theo sơ đồ Hình 12.4; đóng công tắc, đọc cường độ dòng điện trong mạch chính (ampe kế A) và trong các mạch nhánh (A₁, A₂), ghi vào vở theo mẫu Bảng 12.2.\n" +
+        "Số liệu mẫu trong SGK: I = 1,60 A; I₁ = 0,60 A; I₂ = 1,00 A.\n" +
+        "Yêu cầu: so sánh cường độ dòng điện trong mạch chính với tổng cường độ dòng điện trong các mạch nhánh.\n" +
+        "Kết luận: I = I₁ + I₂ (với n điện trở: I = I₁ + I₂ + … + Iₙ).",
     },
   ],
   13: [
     {
       kind: "text",
-      title: "Hoạt động SGK: Năng lượng điện và công suất điện",
+      title: "Hoạt động SGK 13: Năng lượng điện, công suất điện (bài này không có thí nghiệm thực hành)",
       body:
-        "Quan sát các dụng cụ điện trong gia đình và số ghi trên chúng (ví dụ 220 V – 1000 W). Tìm hiểu sự chuyển hoá năng lượng điện thành nhiệt năng, cơ năng, quang năng.\n" +
-        "Đọc công tơ điện: số chỉ của công tơ tính bằng kWh. Tính năng lượng điện tiêu thụ W = P·t và tiền điện của gia đình trong một tháng.",
+        "SGK Bài 13 gồm các hoạt động và câu hỏi, không có thí nghiệm thực hành. Ứng dụng cung cấp mô phỏng bổ trợ để minh hoạ.\n" +
+        "• Năng lượng điện: W = UIt (W – J; U – V; I – A; t – s). Ví dụ: động cơ một chiều 12 V, 0,5 A trong 30 phút; dây tóc bóng đèn 3,5 V, 12 Ω trong 4 phút.\n" +
+        "• Công suất điện: 𝒫 = UI. Ví dụ: bóng đèn 220 V, cường độ 0,3 A trong 3 h.\n" +
+        "• Công suất điện định mức: số ghi trên thiết bị, chẳng hạn bóng đèn 220 V – 60 W. Giải thích các số ghi: đèn pin 2,5 V – 2,5 W; bàn là 220 V – 1 000 W; bóng đèn sợi đốt 110 V – 100 W.\n" +
+        "• Em có thể: tính năng lượng điện tiêu thụ hằng tháng của gia đình và tiền điện phải trả; tìm hiểu công tơ điện (1 kWh = 3,6·10⁶ J).",
     },
   ],
   14: [
     {
       kind: "text",
-      title: "Thí nghiệm SGK: Cảm ứng điện từ",
+      title: "Thí nghiệm SGK 14.1: Cảm ứng điện từ với thanh nam châm vĩnh cửu (Hình 14.1)",
       body:
-        "Dụng cụ: cuộn dây dẫn có mắc đèn LED (hoặc điện kế), nam châm vĩnh cửu.\n" +
-        "Tiến hành: đưa nam châm lại gần, ra xa, giữ yên trong lòng cuộn dây; quay nam châm trước cuộn dây.\n" +
-        "Quan sát: đèn sáng (kim điện kế lệch) chỉ khi nam châm chuyển động so với cuộn dây – tức là khi số đường sức từ qua cuộn dây biến thiên. Dùng hai đèn LED mắc song song ngược chiều để thấy dòng điện cảm ứng đổi chiều khi nam châm quay.",
+        "Chuẩn bị: thanh nam châm vĩnh cửu, cuộn dây dẫn, điện kế và các dây nối.\n" +
+        "Tiến hành: nối hai đầu cuộn dây với điện kế; quan sát kim điện kế khi đưa cực Bắc của thanh nam châm lại gần hoặc ra xa cuộn dây.\n" +
+        "Nhận xét: kim điện kế lệch khi nam châm chuyển động so với cuộn dây → xuất hiện dòng điện cảm ứng.",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK 14.2: Cảm ứng điện từ với nam châm điện (Hình 14.3)",
+      body:
+        "Chuẩn bị: cuộn dây (1), nam châm điện (2), nguồn điện (3), điện kế (4), công tắc (5) và dây nối.\n" +
+        "Tiến hành: lắp mạch như Hình 14.3; quan sát kim điện kế khi đóng, khi mở công tắc.\n" +
+        "Yêu cầu: nêu sự biến thiên số đường sức từ xuyên qua tiết diện cuộn dây khi đóng, mở công tắc; đề xuất giả thuyết về nguyên nhân xuất hiện dòng điện cảm ứng.",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK 14.3: Cảm ứng điện từ khi quay nam châm (Hình 14.4)",
+      body:
+        "Chuẩn bị: cuộn dây dẫn có mắc hai đèn LED (đỏ và vàng) ngược cực nhau, thanh nam châm vĩnh cửu có trục quay ở giữa.\n" +
+        "Tiến hành: bố trí như Hình 14.4; quan sát sự sáng của hai đèn LED khi quay nam châm.\n" +
+        "Nhận xét: khi nam châm quay, số đường sức từ xuyên qua tiết diện cuộn dây biến thiên; trong cuộn dây xuất hiện dòng điện cảm ứng có chiều luân phiên thay đổi (hai đèn LED sáng luân phiên).",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK 14.4: Thay đổi tiết diện cuộn dây (Hình 14.6)",
+      body:
+        "Chuẩn bị: cuộn dây dẫn mềm có hai đầu nối với điện kế, nam châm vĩnh cửu.\n" +
+        "Tiến hành: bố trí như Hình 14.6; bóp cuộn dây để làm giảm tiết diện, quan sát kim điện kế; kéo giãn lại và quan sát tiếp.\n" +
+        "Kết luận chung: khi số đường sức từ xuyên qua tiết diện của cuộn dây dẫn kín biến thiên thì trong cuộn dây xuất hiện dòng điện cảm ứng – hiện tượng cảm ứng điện từ.",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK: Tạo dòng điện xoay chiều bằng mô hình máy phát điện (Hình 14.8)",
+      body:
+        "Chuẩn bị: bộ thí nghiệm mô hình máy phát điện xoay chiều (nam châm, cuộn dây quay, hai đèn LED ngược cực).\n" +
+        "Tiến hành: quay chậm rồi quay nhanh cuộn dây (hoặc nam châm); quan sát độ sáng, tối luân phiên của hai đèn LED.\n" +
+        "Kết luận: nguyên tắc tạo dòng điện xoay chiều – khi số đường sức từ xuyên qua tiết diện cuộn dây kín biến thiên luân phiên (tăng, giảm) theo thời gian thì trong cuộn dây xuất hiện dòng điện xoay chiều. Dòng điện xoay chiều có cường độ và chiều thay đổi luân phiên theo thời gian (dòng điện gia đình 50 Hz đổi chiều 100 lần trong 1 giây).",
     },
   ],
   15: [
     {
       kind: "text",
-      title: "Thí nghiệm SGK: Tác dụng của dòng điện xoay chiều",
+      title: "Quan sát SGK 15: Tác dụng nhiệt và tác dụng phát sáng (Hình 15.1 – 15.3)",
       body:
-        "Tác dụng nhiệt, phát sáng: mắc bóng đèn vào nguồn xoay chiều → đèn nóng lên và sáng.\n" +
-        "Tác dụng từ: đặt kim nam châm gần cuộn dây có dòng điện xoay chiều → kim nam châm dao động; nam châm điện dùng dòng xoay chiều vẫn hút được đinh sắt.\n" +
-        "Đo: dùng vôn kế, ampe kế xoay chiều (kí hiệu AC hoặc ~).",
+        "Tác dụng nhiệt: quan sát máy sấy tóc đang hoạt động (Hình 15.1) – vỏ nhựa và dây điện trở nóng lên; năng lượng điện chuyển hoá thành nhiệt năng. Dòng điện xoay chiều chạy qua vật dẫn làm vật nóng lên.\n" +
+        "Tác dụng phát sáng: quan sát đèn huỳnh quang và đèn sợi đốt khi có dòng điện xoay chiều chạy qua (Hình 15.2, 15.3).",
+    },
+    {
+      kind: "text",
+      title: "Thí nghiệm SGK 15: Tác dụng từ của dòng điện xoay chiều (Hình 15.4)",
+      body:
+        "Bố trí: nguồn điện xoay chiều, công tắc K, cuộn dây có lõi sắt và đinh sắt (Hình 15.4a, sơ đồ Hình 15.4b).\n" +
+        "Tiến hành: đóng công tắc K cho dòng điện xoay chiều chạy qua cuộn dây; quan sát đinh sắt.\n" +
+        "Yêu cầu: cho biết dòng điện xoay chiều có tác dụng gì; hiện tượng có khác không nếu thay dòng điện xoay chiều bằng dòng điện một chiều?\n" +
+        "Tác dụng sinh lí: dòng điện đi qua cơ thể có thể làm co cơ; máy khử rung tim dùng tác dụng này để chữa bệnh (Hình 15.6).",
     },
   ],
   16: [
     {
       kind: "text",
-      title: "Hoạt động SGK: Sơ đồ vòng năng lượng",
+      title: "Hoạt động SGK 16: Quan sát sơ đồ vòng năng lượng (bài này không có thí nghiệm thực hành)",
       body:
-        "Dựa vào sơ đồ, mô tả đường đi của năng lượng Mặt Trời: chiếu tới Trái Đất → làm nóng không khí, đất, nước (gió, mưa, dòng chảy) → thực vật quang hợp → động vật → nhiên liệu hoá thạch; cuối cùng năng lượng toả ra môi trường dưới dạng nhiệt.\n" +
-        "Thảo luận: ảnh hưởng của việc khai thác, sử dụng than đá, dầu mỏ, khí tự nhiên đến môi trường.",
+        "SGK Bài 16 gồm các hoạt động quan sát hình và thảo luận, không có thí nghiệm thực hành. Ứng dụng cung cấp mô phỏng bổ trợ để minh hoạ.\n" +
+        "• Hình 16.1 – Vòng năng lượng trên Trái Đất: mô tả sự chuyển hoá năng lượng giữa các vật sống (quang hợp, chuỗi thức ăn); chỉ ra năng lượng từ Mặt Trời.\n" +
+        "• Hình 16.2 – Vòng năng lượng theo vòng tuần hoàn của nước: mô tả sự chuyển hoá giữa các dạng năng lượng.\n" +
+        "• Năng lượng hoá thạch (than, dầu mỏ, khí tự nhiên – Hình 16.3 quá trình hình thành dầu mỏ): vì sao nhiên liệu hoá thạch bổ sung chậm và sẽ dần cạn kiệt; ảnh hưởng đến môi trường.",
     },
   ],
   17: [
     {
       kind: "text",
-      title: "Hoạt động SGK: Tìm hiểu năng lượng tái tạo",
+      title: "Hoạt động SGK 17: Năng lượng tái tạo (bài này không có thí nghiệm thực hành)",
       body:
-        "Tìm hiểu nguyên tắc hoạt động của pin Mặt Trời, tua-bin gió, nhà máy thuỷ điện; so sánh ưu, nhược điểm.\n" +
-        "Liên hệ Việt Nam: các nhà máy điện Mặt Trời, điện gió ở Ninh Thuận, Bình Thuận; thuỷ điện Hoà Bình, Sơn La.",
+        "SGK Bài 17 gồm các hoạt động quan sát hình, tìm hiểu thông tin và thảo luận, không có thí nghiệm thực hành. Ứng dụng cung cấp mô phỏng bổ trợ để minh hoạ.\n" +
+        "• Hình 17.1: các dạng năng lượng trên Trái Đất – dạng nào là năng lượng tái tạo.\n" +
+        "• Ưu, nhược điểm của năng lượng Mặt Trời (Hình 17.2), năng lượng gió (Hình 17.3), năng lượng sóng biển (Hình 17.4) và năng lượng dòng sông – thuỷ điện (Hình 17.5).\n" +
+        "• Một số biện pháp sử dụng hiệu quả năng lượng và bảo vệ môi trường.",
     },
   ],
 };

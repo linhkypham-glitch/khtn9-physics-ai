@@ -322,6 +322,8 @@ export function ExperimentShell({ def, canSave, children }: { def: ExperimentDef
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
               <Badge className="bg-gradient-to-r from-orange-500 to-amber-500">Thí nghiệm ảo</Badge>
+              {def.basis === "book" && <Badge variant="teal">Theo thí nghiệm trong SGK</Badge>}
+              {def.basis === "support" && <Badge variant="secondary">Mô phỏng minh hoạ bổ trợ (SGK bài này không có thí nghiệm thực hành)</Badge>}
               {running && <Badge variant="teal" className="animate-pulse">● Đang chạy</Badge>}
             </div>
             <h2 className="text-xl font-bold">{def.title}</h2>

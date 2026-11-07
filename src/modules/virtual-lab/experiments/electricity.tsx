@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { Formula, fmt, LabLayout, Observation, Readout, RunControls, Segmented, Slider, Stage, useAnimationLoop, useLab, useOnReset, useSnapshot } from "@/components/experiments/lab-kit";
+import { SGK_PRESETS, type PresetKey } from "./sgk-presets";
 import { cn } from "@/lib/utils";
 
 /** Đường dây dẫn có dòng điện chạy (hoạt ảnh nét đứt chạy theo chiều dòng điện). */
@@ -161,11 +162,19 @@ export function OhmLawLab() {
 
 export function SeriesParallelLab() {
   const { running: closed, addRecord } = useLab();
-  const [mode, setMode] = useState<"series" | "parallel">("series");
-  const [R1, setR1] = useState(6);
-  const [R2, setR2] = useState(3);
-  const [U, setU] = useState(12);
-  useSnapshot({ cach_mac: mode, R1, R2, U });
+  const [mode, setModeRaw] = useState<"series" | "parallel">("series");
+  const [R1, setR1Raw] = useState(6);
+  const [R2, setR2Raw] = useState(10);
+  const [U, setURaw] = useState(12);
+  const [preset, setPreset] = useState<PresetKey>("s12");
+  const free = <T,>(set: (v: T) => void) => (v: T) => { set(v); setPreset("free"); };
+  const setMode = free(setModeRaw), setR1 = free(setR1Raw), setR2 = free(setR2Raw), setU = free(setURaw);
+  const pickPreset = (k: PresetKey) => {
+    setPreset(k);
+    const p = SGK_PRESETS[k];
+    if ("mode" in p) { setModeRaw(p.mode); setR1Raw(p.R1); setR2Raw(p.R2); setURaw(p.U); }
+  };
+  useSnapshot({ cach_mac: mode, R1, R2, U, phep_do_sgk: preset });
 
   const Rtd = mode === "series" ? R1 + R2 : (R1 * R2) / (R1 + R2);
   const I = closed ? U / Rtd : 0;
@@ -222,13 +231,14 @@ export function SeriesParallelLab() {
       }
       controls={
         <>
+          <Segmented label="Phép đo trong SGK (Hình 12.2 – 12.4)" value={preset} options={(Object.keys(SGK_PRESETS) as PresetKey[]).map((k) => ({ value: k, label: SGK_PRESETS[k].label }))} onChange={(v) => pickPreset(v as PresetKey)} />
           <Segmented label="Cách mắc" value={mode} options={[{ value: "series", label: "Nối tiếp" }, { value: "parallel", label: "Song song" }]} onChange={setMode} />
           <Slider label="Điện trở R₁" value={R1} min={1} max={60} step={1} unit="Ω" digits={0} onChange={setR1} />
           <Slider label="Điện trở R₂" value={R2} min={1} max={60} step={1} unit="Ω" digits={0} onChange={setR2} />
           <Slider label="Hiệu điện thế U" value={U} min={0} max={12} step={0.5} unit="V" digits={1} onChange={setU} />
           <RunControls
             startLabel="Đóng khoá K"
-            onRecord={() => closed && addRecord({ "Cách mắc": mode === "series" ? "Nối tiếp" : "Song song", "R₁ (Ω)": R1, "R₂ (Ω)": R2, "R_tđ (Ω)": Number(Rtd.toFixed(2)), "U (V)": U, "I (A)": Number(I.toFixed(3)), "I₁ (A)": Number(I1.toFixed(3)), "I₂ (A)": Number(I2.toFixed(3)), "U₁ (V)": Number(U1.toFixed(2)), "U₂ (V)": Number(U2.toFixed(2)) })}
+            onRecord={() => closed && addRecord({ "Phép đo": SGK_PRESETS[preset].label, "Cách mắc": mode === "series" ? "Nối tiếp" : "Song song", "R₁ (Ω)": R1, "R₂ (Ω)": R2, "R_tđ (Ω)": Number(Rtd.toFixed(2)), "U (V)": U, "I (A)": Number(I.toFixed(3)), "I₁ (A)": Number(I1.toFixed(3)), "I₂ (A)": Number(I2.toFixed(3)), "U₁ (V)": Number(U1.toFixed(2)), "U₂ (V)": Number(U2.toFixed(2)) })}
           />
         </>
       }
@@ -245,6 +255,7 @@ export function SeriesParallelLab() {
             {mode === "series"
               ? `Số chỉ ampe kế như nhau ở mọi điểm. U₁ + U₂ = ${fmt(U1 + U2, 2)} V = U.`
               : `I₁ + I₂ = ${fmt(I1 + I2, 3)} A = I mạch chính. R_tđ = ${fmt(Rtd, 2)} Ω nhỏ hơn mỗi điện trở thành phần.`}
+            {"book" in SGK_PRESETS[preset] && ` Số liệu đo trong SGK: ${SGK_PRESETS[preset].book} (có thể lệch rất nhỏ do sai số dụng cụ).`}
           </Observation>
         ) : (
           <Observation>Bấm <b>Đóng khoá K</b> để đo.</Observation>

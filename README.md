@@ -74,6 +74,19 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
   quản trị viên có công tắc tắt toàn hệ thống. Chỉ hiển thị họ tên, lớp, điểm, thời gian, số ý đúng.
 - **AI viết bản nháp nhận xét** quá trình học tập từ số liệu thật (không suy đoán phẩm chất, hoàn cảnh); giáo viên đọc, sửa rồi mới lưu.
 
+### Đối chiếu thí nghiệm với SGK (Milestone 5)
+
+Mỗi bài 2 – 17 có đúng một thí nghiệm ảo. Mức đối chiếu với sách giáo khoa:
+
+| Bài | Đối chiếu | Ghi chú |
+|---|---|---|
+| 2 – 11 | Theo kế hoạch bài dạy KHTN 9 KNTT | |
+| 12 | Theo trang SGK | Có sẵn đúng các phép đo của Bảng 12.1 (nguồn 12 V; R₁ = 6, R₂ = 10, R₃ = 16 Ω) và Bảng 12.2 (nguồn 6 V; R₁ = 10, R₂ = 6 Ω) |
+| 13 | SGK **không có thí nghiệm thực hành** | Mô phỏng bổ trợ, có nhãn trên giao diện |
+| 14 | Theo trang SGK | Đủ 4 thí nghiệm cảm ứng điện từ và mô hình máy phát điện xoay chiều (2 đèn LED) |
+| 15 | Theo trang SGK | Tác dụng nhiệt, phát sáng, từ (cuộn dây hút đinh sắt – Hình 15.4) |
+| 16, 17 | SGK **không có thí nghiệm thực hành** | Mô phỏng bổ trợ, có nhãn trên giao diện |
+
 ### Bật AI (tạo đề, gợi ý chấm tự luận, nháp nhận xét)
 
 Chọn **một** trong hai nhà cung cấp, thêm biến môi trường trên Vercel (Settings → Environment Variables) rồi Redeploy:
@@ -141,6 +154,7 @@ npm run dev
    - Đã cài Milestone 1? Chạy **một lần** lần lượt `cloud-update-m2.sql` → `cloud-update-m3.sql` → `cloud-update-m4.sql`.
    - Đã cài Milestone 2? Chạy **một lần** `cloud-update-m3.sql` rồi `cloud-update-m4.sql`.
    - Đã cài Milestone 3? Chỉ chạy **một lần** `supabase/cloud-update-m4.sql`.
+   - Sau đó, với mọi bản đã cài đến Milestone 4: chạy thêm **một lần** `supabase/cloud-update-m5.sql` (đối chiếu thí nghiệm Bài 12 – 17 với SGK, chạy lại nhiều lần vẫn an toàn).
    - Bị lỗi *already exists* / *does not exist* do chạy dở? Chạy `supabase/cloud-repair-m3-m4.sql` (chạy lại nhiều lần vẫn an toàn).
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql
