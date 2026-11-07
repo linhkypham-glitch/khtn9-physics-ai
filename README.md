@@ -74,6 +74,18 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
   quản trị viên có công tắc tắt toàn hệ thống. Chỉ hiển thị họ tên, lớp, điểm, thời gian, số ý đúng.
 - **AI viết bản nháp nhận xét** quá trình học tập từ số liệu thật (không suy đoán phẩm chất, hoàn cảnh); giáo viên đọc, sửa rồi mới lưu.
 
+### Hoá học 9 (Milestone 7)
+
+Thêm môn **Hoá học** cùng bộ sách KHTN 9 – Kết nối tri thức: 5 chương (VI – X), **18 bài (Bài 18 – 35)**, mục lục chép từ SGK.
+Chọn môn bằng nút **Vật lý / Hoá học** ở trang Bài học (học sinh), Chương trình học (giáo viên, quản trị viên).
+
+- **Nội dung từng bài** (mục tiêu, yêu cầu cần đạt, kiến thức) biên soạn theo các trang SGK; phần vượt SGK đánh dấu **"Mở rộng"**.
+- **Thí nghiệm** trong sách được mô tả ở khu vực "Thí nghiệm"; **11 thí nghiệm ảo** cho các bài có thí nghiệm: Bài 18 (kim loại tác dụng với oxygen, chlorine, lưu huỳnh, nước, HCl, CuSO₄), 19 (xây dựng và dùng dãy hoạt động hoá học), 20 (phương pháp tách kim loại), 21 (hấp phụ của than gỗ), 23 (cháy alkane), 24 (ethylene), 26 (ethylic alcohol), 27 (acetic acid), 29 (glucose, saccharose), 30 (tinh bột, cellulose), 31 (protein).
+  Các bài SGK không có thí nghiệm thực hành (22, 25, 28, 32, 33, 34, 35) ghi rõ điều đó, kèm các hoạt động của sách.
+- **Ngân hàng câu hỏi**: 88 câu (mỗi bài 3 trắc nghiệm + 1 đúng – sai, thêm trả lời ngắn ở các bài có tính toán).
+- Toàn bộ **phương trình hoá học trong thí nghiệm được kiểm tra cân bằng tự động** (`tests/unit/chem-lab.test.ts`).
+- Đề kiểm tra, giao bài, chấm điểm, xếp hạng, nhận xét, xuất Excel dùng chung cho cả hai môn. AI soạn đề nhận biết môn học của các bài đã chọn.
+
 ### Đối chiếu kiến thức và thí nghiệm với SGK (Milestone 5 – 6)
 
 Đã đối chiếu **toàn bộ Bài 2 – 17** với các trang SGK KHTN 9 Kết nối tri thức. Mỗi bài có đúng một thí nghiệm ảo; giao diện ghi rõ mức đối chiếu:
@@ -163,6 +175,7 @@ npm run dev
    - Đã cài Milestone 2? Chạy **một lần** `cloud-update-m3.sql` rồi `cloud-update-m4.sql`.
    - Đã cài Milestone 3? Chỉ chạy **một lần** `supabase/cloud-update-m4.sql`.
    - Sau đó, với mọi bản đã cài đến Milestone 4: chạy thêm lần lượt `cloud-update-m5.sql` rồi `cloud-update-m6.sql` (đối chiếu kiến thức và thí nghiệm Bài 2 – 17 với SGK; chạy lại nhiều lần vẫn an toàn, nội dung giáo viên tự thêm hoặc đã sửa được giữ nguyên).
+   - Thêm môn Hoá học 9 (Milestone 7): chạy **một lần** `supabase/cloud-update-m7.sql` (chỉ thêm dữ liệu, chạy lại an toàn).
    - Bị lỗi *already exists* / *does not exist* do chạy dở? Chạy `supabase/cloud-repair-m3-m4.sql` (chạy lại nhiều lần vẫn an toàn).
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql

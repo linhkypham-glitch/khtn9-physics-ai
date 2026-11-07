@@ -25,7 +25,7 @@ describe("Bài 12 – số liệu thí nghiệm trong SGK", () => {
 
 describe("Danh mục thí nghiệm và mô tả theo SGK", () => {
   it("mỗi bài 2 – 17 có đúng một thí nghiệm ảo", () => {
-    expect(EXPERIMENTS.map((e) => e.lessonNumber)).toEqual(Array.from({ length: 16 }, (_, i) => i + 2));
+    expect(EXPERIMENTS.filter((e) => e.lessonNumber <= 17).map((e) => e.lessonNumber)).toEqual(Array.from({ length: 16 }, (_, i) => i + 2));
   });
   it("Bài 2, 4, 13, 16, 17 (SGK không có thí nghiệm) gắn nhãn bổ trợ; các bài có thí nghiệm bám SGK", () => {
     const basis = (n: number) => EXPERIMENTS.find((e) => e.lessonNumber === n)?.basis;

@@ -3,7 +3,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { buildCurriculumSeedSql } from "../src/modules/curriculum/seed-sql.ts";
+import { buildAllCurriculumSeedSql } from "../src/modules/curriculum/seed-sql.ts";
 import {
   buildExperimentsSql,
   buildLessonContentSql,
@@ -12,7 +12,7 @@ import {
 
 const dir = resolve(import.meta.dirname, "../supabase/seed");
 const files: Record<string, string> = {
-  "01_curriculum.sql": buildCurriculumSeedSql(),
+  "01_curriculum.sql": buildAllCurriculumSeedSql(),
   "03_lesson_content.sql": buildLessonContentSql(),
   "04_question_bank.sql": buildQuestionBankSql(),
   "05_experiments.sql": buildExperimentsSql(),

@@ -1,11 +1,14 @@
 import { EXPERIMENTS } from "../virtual-lab/catalog.ts";
 import { QUESTIONS_CH1_CH2 } from "../question-bank/seed/chapter1-2.ts";
 import { QUESTIONS_CH3_CH5 } from "../question-bank/seed/chapter3-5.ts";
+import { QUESTIONS_HOA } from "../question-bank/seed/chemistry.ts";
 import type { SeedQuestion } from "../question-bank/seed/types.ts";
 import { BOOK_EXPERIMENTS } from "./content/book-experiments.ts";
 import { LESSON_CONTENT } from "./content/lessons.ts";
+import { BOOK_EXPERIMENTS_HOA, LESSON_CONTENT_HOA } from "./content/lessons-hoa.ts";
+import { textbookCodeOfLesson } from "./catalog.ts";
 
-export const ALL_SEED_QUESTIONS = [...QUESTIONS_CH1_CH2, ...QUESTIONS_CH3_CH5];
+export const ALL_SEED_QUESTIONS = [...QUESTIONS_CH1_CH2, ...QUESTIONS_CH3_CH5, ...QUESTIONS_HOA];
 
 /** Escape SQL literal; null → NULL. */
 function q(value: string | null | undefined): string {
@@ -27,12 +30,12 @@ const HEADER = (title: string) =>
   ].join("\n");
 
 const lessonIdByNumber = (n: number) =>
-  `(select l.id from public.lessons l join public.chapters c on c.id = l.chapter_id join public.textbooks t on t.id = c.textbook_id where t.code = 'KHTN9-KNTT-VL' and l.number = ${n})`;
+  `(select l.id from public.lessons l join public.chapters c on c.id = l.chapter_id join public.textbooks t on t.id = c.textbook_id where t.code = '${textbookCodeOfLesson(n)}' and l.number = ${n})`;
 
 /** 03 – Nội dung kiến thức: tóm tắt, mục tiêu, yêu cầu cần đạt, học liệu. */
 export function buildLessonContentSql(): string {
-  const out: string[] = [HEADER("NỘI DUNG KIẾN THỨC MẪU CHO 16 BÀI HỌC")];
-  for (const lc of LESSON_CONTENT) {
+  const out: string[] = [HEADER("NỘI DUNG KIẾN THỨC CHO CÁC BÀI HỌC (VẬT LÝ BÀI 2 – 17, HOÁ HỌC BÀI 18 – 35)")];
+  for (const lc of [...LESSON_CONTENT, ...LESSON_CONTENT_HOA]) {
     const lid = lessonIdByNumber(lc.lessonNumber);
     out.push(`-- Bài ${lc.lessonNumber}`);
     out.push(`update public.lessons set summary = ${q(lc.summary)} where id = ${lid} and summary is null;`);
@@ -53,7 +56,7 @@ export function buildLessonContentSql(): string {
           `where not exists (select 1 from public.lesson_materials x where x.lesson_id = ${lid} and x.section = 'knowledge' and x.title = ${q(m.title)});`,
       );
     });
-    (BOOK_EXPERIMENTS[lc.lessonNumber] ?? []).forEach((m, i) => {
+    ({ ...BOOK_EXPERIMENTS, ...BOOK_EXPERIMENTS_HOA }[lc.lessonNumber] ?? []).forEach((m, i) => {
       out.push(
         `insert into public.lesson_materials (lesson_id, section, kind, title, body, sort_order, is_published) ` +
           `select ${lid}, 'experiment', '${m.kind}', ${q(m.title)}, ${q(m.body)}, ${i + 1}, true ` +
@@ -77,7 +80,7 @@ function questionSql(lessonNumber: number, question: SeedQuestion, order: number
         isShort ? q(question.unit) : "null",
         q(question.explanation), q(question.formula), q(question.remember),
         question.type === "true_false" ? "1" : "1",
-        "'PHYSICS AI – câu hỏi mẫu'", "'published'", String(order),
+        "'KHTN 9 – câu hỏi mẫu'", "'published'", String(order),
       ].join(", ") +
       `) on conflict (code) do update set lesson_id = excluded.lesson_id, type = excluded.type, level = excluded.level, content = excluded.content, ` +
       `answer_number = excluded.answer_number, tolerance = excluded.tolerance, unit = excluded.unit, explanation = excluded.explanation, ` +
@@ -107,7 +110,7 @@ function questionSql(lessonNumber: number, question: SeedQuestion, order: number
 
 /** 04 – Ngân hàng câu hỏi mẫu (đã duyệt, trạng thái published). */
 export function buildQuestionBankSql(): string {
-  const out: string[] = [HEADER("NGÂN HÀNG CÂU HỎI MẪU – 7 CÂU MỖI BÀI")];
+  const out: string[] = [HEADER("NGÂN HÀNG CÂU HỎI MẪU")];
   for (const lq of ALL_SEED_QUESTIONS) {
     out.push(`-- Bài ${lq.lessonNumber}`);
     lq.questions.forEach((qq, i) => out.push(...questionSql(lq.lessonNumber, qq, i + 1)));
@@ -118,7 +121,7 @@ export function buildQuestionBankSql(): string {
 
 /** 05 – Danh mục thí nghiệm ảo. */
 export function buildExperimentsSql(): string {
-  const out: string[] = [HEADER("DANH MỤC THÍ NGHIỆM ẢO – 16 MÔ PHỎNG")];
+  const out: string[] = [HEADER("DANH MỤC THÍ NGHIỆM ẢO")];
   for (const e of EXPERIMENTS) {
     out.push(
       `insert into public.experiments (key, lesson_id, title, summary, sort_order) values (${q(e.key)}, ${lessonIdByNumber(e.lessonNumber)}, ${q(e.title)}, ${q(e.summary)}, 1) ` +

@@ -16,18 +16,16 @@ export type GenerateRequest = {
   levels: { biet: number; hieu: number; van_dung: number }; // tỉ lệ %
   existingQuestions: string[];
   note?: string;
+  /** Môn học của các bài đã chọn, ví dụ "Vật lý", "Hoá học" hoặc "Vật lý và Hoá học". */
+  subject?: string;
 };
 
 export type GenerateResult =
   | { ok: true; questions: AiQuestion[]; model: string }
   | { ok: false; error: string };
 
-const SYSTEM_PROMPT = `Bạn là giáo viên Vật lý giàu kinh nghiệm, soạn câu hỏi kiểm tra môn Khoa học tự nhiên 9 – phân môn Vật lý, bộ sách "Kết nối tri thức với cuộc sống" (Việt Nam).
-
-Yêu cầu bắt buộc:
-- Chỉ dùng kiến thức trong nội dung bài học được cung cấp; không ra ngoài phạm vi các bài đã chọn; không dùng kiến thức lớp trên.
-- Quy ước như SGK: trọng lượng P = 10·m (g ≈ 10 m/s²); dùng đơn vị SI và kí hiệu như SGK; dấu phẩy thập phân kiểu Việt Nam trong nội dung câu hỏi.
-- Không bịa số liệu, hằng số hay công thức. Chỉ dùng công thức có trong nội dung bài.
+const COMMON_RULES = `- Chỉ dùng kiến thức trong nội dung bài học được cung cấp; không ra ngoài phạm vi các bài đã chọn; không dùng kiến thức lớp trên.
+- Không bịa số liệu, hằng số, công thức hay phương trình. Chỉ dùng những gì có trong nội dung bài.
 - Tự giải lại từng câu để chắc chắn đáp án, lời giải và đề bài nhất quán; số liệu cho ra đáp số gọn.
 - Trắc nghiệm: đúng 4 phương án, chỉ 1 phương án đúng, các phương án nhiễu hợp lí, không dùng "Tất cả đều đúng".
 - Đúng – sai: đúng 4 ý a, b, c, d về cùng một tình huống; mỗi ý có giải thích riêng; có cả ý đúng và ý sai.
@@ -36,6 +34,22 @@ Yêu cầu bắt buộc:
 - Không lặp lại câu hỏi đã có trong danh sách được cung cấp, không tạo hai câu giống nhau.
 - Phân bố mức độ nhận thức: Biết (biet), Hiểu (hieu), Vận dụng (van_dung) theo tỉ lệ được yêu cầu.
 - Trường không dùng cho dạng câu hỏi thì để null.`;
+
+const PHYSICS_RULES = `- Quy ước như SGK: trọng lượng P = 10·m (g ≈ 10 m/s²); dùng đơn vị SI và kí hiệu như SGK; dấu phẩy thập phân kiểu Việt Nam trong nội dung câu hỏi.`;
+const CHEMISTRY_RULES = `- Dùng tên chất và kí hiệu như SGK (ví dụ ethylic alcohol, acetic acid, hydrochloric acid, iron(III) oxide); viết công thức hoá học đúng; phương trình hoá học phải cân bằng và đúng điều kiện phản ứng.
+- Khối lượng nguyên tử làm tròn như SGK (H = 1; C = 12; O = 16; Na = 23; Ca = 40; Fe = 56; Zn = 65; Ag = 108); thể tích mol khí ở điều kiện chuẩn là 24,79 L/mol; dấu phẩy thập phân kiểu Việt Nam trong nội dung câu hỏi.
+- Hiện tượng thí nghiệm nêu trong câu hỏi phải đúng với mô tả trong nội dung bài.`;
+
+export function buildSystemPrompt(subject = "Vật lý"): string {
+  const hasPhysics = /vật/i.test(subject);
+  const hasChem = /hoá|hóa/i.test(subject);
+  const teacher = hasPhysics && hasChem ? "Vật lý và Hoá học" : hasChem ? "Hoá học" : "Vật lý";
+  return `Bạn là giáo viên ${teacher} giàu kinh nghiệm, soạn câu hỏi kiểm tra môn Khoa học tự nhiên 9 – phân môn ${teacher}, bộ sách "Kết nối tri thức với cuộc sống" (Việt Nam).
+
+Yêu cầu bắt buộc:
+${COMMON_RULES}
+${hasPhysics ? PHYSICS_RULES + "\n" : ""}${hasChem ? CHEMISTRY_RULES + "\n" : ""}`.trimEnd();
+}
 
 function buildUserPrompt(req: GenerateRequest) {
   const lessons = req.lessons
@@ -62,7 +76,7 @@ ${existing || "(chưa có)"}`;
 export async function generateQuestionsWithAi(req: GenerateRequest): Promise<GenerateResult> {
   const res = await generateStructured({
     schema: AiResponseSchema,
-    system: SYSTEM_PROMPT,
+    system: buildSystemPrompt(req.subject),
     user: buildUserPrompt(req),
     maxTokens: 16000,
     effort: "high",

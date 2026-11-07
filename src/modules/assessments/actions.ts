@@ -79,7 +79,7 @@ async function runAiGeneration(
 
   const { data: lessons } = await admin
     .from("lessons")
-    .select("id, number, title, learning_objectives(content), lesson_materials(title, body, section, is_published)")
+    .select("id, number, title, chapters(textbooks(subject)), learning_objectives(content), lesson_materials(title, body, section, is_published)")
     .in("id", lessonIds)
     .order("number");
   const { data: existing } = await admin.from("question_bank").select("content").in("lesson_id", lessonIds);
@@ -94,7 +94,8 @@ async function runAiGeneration(
       .slice(0, 8000),
   }));
 
-  const res = await generateQuestionsWithAi({ lessons: ctx, counts, levels: structure.levels, existingQuestions: (existing ?? []).map((e) => e.content), note });
+  const subject = [...new Set((lessons ?? []).map((l) => l.chapters?.textbooks?.subject).filter((x): x is string => Boolean(x)))].join(" và ") || "Vật lý";
+  const res = await generateQuestionsWithAi({ lessons: ctx, counts, levels: structure.levels, existingQuestions: (existing ?? []).map((e) => e.content), note, subject });
   if (!res.ok) {
     await admin.from("ai_generation_jobs").insert({ created_by: userId, assessment_id: assessmentId, provider: "anthropic", request: { counts, lessonIds }, status: "failed", error: res.error });
     return { ok: false, message: res.error };

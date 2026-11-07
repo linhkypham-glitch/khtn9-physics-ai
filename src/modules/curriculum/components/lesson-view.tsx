@@ -239,7 +239,7 @@ export function LessonView({
           {experiment ? (
             <ExperimentPanel def={experiment} canSave={canSave} />
           ) : (
-            <EmptyState title="Chưa có thí nghiệm ảo cho bài học này" />
+            <EmptyState title="Bài này chưa có thí nghiệm ảo" description="SGK bài này không có thí nghiệm thực hành hoặc chỉ có hoạt động quan sát, thảo luận. Xem các hoạt động trong sách ở bên dưới." />
           )}
           {bySection("experiment").length > 0 && (
             <div className="flex flex-col gap-3">

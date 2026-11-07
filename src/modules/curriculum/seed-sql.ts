@@ -1,4 +1,4 @@
-import { CURRICULUM, TEXTBOOK, type CatalogChapter } from "./catalog.ts";
+import { CURRICULUM, CURRICULUM_HOA, TEXTBOOK, TEXTBOOK_HOA, type CatalogChapter } from "./catalog.ts";
 
 /** Escape chuỗi cho SQL literal. */
 function q(value: string): string {
@@ -9,18 +9,18 @@ function q(value: string): string {
  * Sinh nội dung file seed chương trình học từ danh mục chuẩn.
  * Seed có tính idempotent (chạy lại nhiều lần không tạo bản ghi trùng).
  */
-export function buildCurriculumSeedSql(curriculum: CatalogChapter[] = CURRICULUM): string {
+export function buildCurriculumSeedSql(curriculum: CatalogChapter[] = CURRICULUM, textbook: typeof TEXTBOOK | typeof TEXTBOOK_HOA = TEXTBOOK): string {
   const lines: string[] = [];
   lines.push(
     "-- =====================================================================",
-    "-- SEED CHƯƠNG TRÌNH HỌC KHTN 9 – VẬT LÝ (5 chương, 17 bài)",
+    `-- SEED CHƯƠNG TRÌNH HỌC KHTN 9 – ${textbook.subject.toUpperCase()}`,
     "-- File được sinh tự động từ src/modules/curriculum/catalog.ts",
     "--   npm run seed:generate",
     "-- KHÔNG sửa tay. Có thể chạy trên Supabase Cloud (SQL Editor) – idempotent.",
     "-- =====================================================================",
     "",
     "insert into public.textbooks (code, name, series, subject, grade)",
-    `values (${q(TEXTBOOK.code)}, ${q(TEXTBOOK.name)}, ${q(TEXTBOOK.series)}, ${q(TEXTBOOK.subject)}, ${TEXTBOOK.grade})`,
+    `values (${q(textbook.code)}, ${q(textbook.name)}, ${q(textbook.series)}, ${q(textbook.subject)}, ${textbook.grade})`,
     "on conflict (code) do update set",
     "  name = excluded.name, series = excluded.series, subject = excluded.subject, grade = excluded.grade;",
     "",
@@ -36,7 +36,7 @@ export function buildCurriculumSeedSql(curriculum: CatalogChapter[] = CURRICULUM
       .join(",\n"),
   );
   lines.push(") as v(number, roman, title)");
-  lines.push(`where t.code = ${q(TEXTBOOK.code)}`);
+  lines.push(`where t.code = ${q(textbook.code)}`);
   lines.push("on conflict (textbook_id, number) do update set");
   lines.push("  roman = excluded.roman, title = excluded.title, sort_order = excluded.sort_order;");
   lines.push("");
@@ -55,10 +55,15 @@ export function buildCurriculumSeedSql(curriculum: CatalogChapter[] = CURRICULUM
   lines.push(lessonRows.join(",\n"));
   lines.push(") as v(chapter_number, number, title, slug, lesson_type)");
   lines.push("join public.chapters c on c.number = v.chapter_number");
-  lines.push(`join public.textbooks t on t.id = c.textbook_id and t.code = ${q(TEXTBOOK.code)}`);
+  lines.push(`join public.textbooks t on t.id = c.textbook_id and t.code = ${q(textbook.code)}`);
   lines.push("on conflict (slug) do update set");
   lines.push("  chapter_id = excluded.chapter_id, number = excluded.number, title = excluded.title,");
   lines.push("  lesson_type = excluded.lesson_type, sort_order = excluded.sort_order;");
   lines.push("");
   return lines.join("\n");
+}
+
+/** Seed cho tất cả các môn (Vật lý rồi Hoá học). */
+export function buildAllCurriculumSeedSql(): string {
+  return buildCurriculumSeedSql(CURRICULUM, TEXTBOOK) + "\n" + buildCurriculumSeedSql(CURRICULUM_HOA, TEXTBOOK_HOA);
 }

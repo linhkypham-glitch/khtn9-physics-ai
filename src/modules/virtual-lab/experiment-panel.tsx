@@ -27,6 +27,17 @@ const LABS: Record<string, ComponentType> = {
   "ac-effects": dynamic(() => import("./experiments/electromagnetism-energy").then((m) => m.AcEffectsLab), { ssr: false, loading }),
   "fossil-energy": dynamic(() => import("./experiments/electromagnetism-energy").then((m) => m.FossilEnergyLab), { ssr: false, loading }),
   renewable: dynamic(() => import("./experiments/electromagnetism-energy").then((m) => m.RenewableLab), { ssr: false, loading }),
+  "metal-reactions": dynamic(() => import("./experiments/chemistry").then((m) => m.MetalReactionsLab), { ssr: false, loading }),
+  "activity-series": dynamic(() => import("./experiments/chemistry").then((m) => m.ActivitySeriesLab), { ssr: false, loading }),
+  "metal-extraction": dynamic(() => import("./experiments/chemistry").then((m) => m.MetalExtractionLab), { ssr: false, loading }),
+  "charcoal-adsorption": dynamic(() => import("./experiments/chemistry").then((m) => m.CharcoalAdsorptionLab), { ssr: false, loading }),
+  "alkane-combustion": dynamic(() => import("./experiments/chemistry").then((m) => m.AlkaneCombustionLab), { ssr: false, loading }),
+  ethylene: dynamic(() => import("./experiments/chemistry").then((m) => m.EthyleneLab), { ssr: false, loading }),
+  ethanol: dynamic(() => import("./experiments/chemistry").then((m) => m.EthanolLab), { ssr: false, loading }),
+  "acetic-acid": dynamic(() => import("./experiments/chemistry").then((m) => m.AceticAcidLab), { ssr: false, loading }),
+  "glucose-saccharose": dynamic(() => import("./experiments/chemistry").then((m) => m.SugarLab), { ssr: false, loading }),
+  "starch-cellulose": dynamic(() => import("./experiments/chemistry").then((m) => m.StarchLab), { ssr: false, loading }),
+  protein: dynamic(() => import("./experiments/chemistry").then((m) => m.ProteinLab), { ssr: false, loading }),
 };
 
 export const LAB_KEYS = Object.keys(LABS);

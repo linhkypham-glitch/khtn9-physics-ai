@@ -1,5 +1,5 @@
 -- =====================================================================
--- SEED CHƯƠNG TRÌNH HỌC KHTN 9 – VẬT LÝ (5 chương, 17 bài)
+-- SEED CHƯƠNG TRÌNH HỌC KHTN 9 – VẬT LÝ
 -- File được sinh tự động từ src/modules/curriculum/catalog.ts
 --   npm run seed:generate
 -- KHÔNG sửa tay. Có thể chạy trên Supabase Cloud (SQL Editor) – idempotent.
@@ -46,6 +46,60 @@ from (values
 ) as v(chapter_number, number, title, slug, lesson_type)
 join public.chapters c on c.number = v.chapter_number
 join public.textbooks t on t.id = c.textbook_id and t.code = 'KHTN9-KNTT-VL'
+on conflict (slug) do update set
+  chapter_id = excluded.chapter_id, number = excluded.number, title = excluded.title,
+  lesson_type = excluded.lesson_type, sort_order = excluded.sort_order;
+
+-- =====================================================================
+-- SEED CHƯƠNG TRÌNH HỌC KHTN 9 – HOÁ HỌC
+-- File được sinh tự động từ src/modules/curriculum/catalog.ts
+--   npm run seed:generate
+-- KHÔNG sửa tay. Có thể chạy trên Supabase Cloud (SQL Editor) – idempotent.
+-- =====================================================================
+
+insert into public.textbooks (code, name, series, subject, grade)
+values ('KHTN9-KNTT-HH', 'Khoa học tự nhiên 9', 'Kết nối tri thức với cuộc sống', 'Hoá học', 9)
+on conflict (code) do update set
+  name = excluded.name, series = excluded.series, subject = excluded.subject, grade = excluded.grade;
+
+insert into public.chapters (textbook_id, number, roman, title, sort_order)
+select t.id, v.number, v.roman, v.title, v.number
+from public.textbooks t
+cross join (values
+  (6, 'VI', 'Kim loại. Sự khác nhau cơ bản giữa phi kim và kim loại'),
+  (7, 'VII', 'Giới thiệu về chất hữu cơ. Hydrocarbon và nguồn nhiên liệu'),
+  (8, 'VIII', 'Ethylic alcohol và acetic acid'),
+  (9, 'IX', 'Lipid. Carbohydrate. Protein. Polymer'),
+  (10, 'X', 'Khai thác tài nguyên từ vỏ Trái Đất')
+) as v(number, roman, title)
+where t.code = 'KHTN9-KNTT-HH'
+on conflict (textbook_id, number) do update set
+  roman = excluded.roman, title = excluded.title, sort_order = excluded.sort_order;
+
+insert into public.lessons (chapter_id, number, title, slug, lesson_type, sort_order)
+select c.id, v.number, v.title, v.slug, v.lesson_type::public.lesson_type, v.number
+from (values
+  (6, 18, 'Tính chất chung của kim loại', 'bai-18-tinh-chat-chung-cua-kim-loai', 'theory'),
+  (6, 19, 'Dãy hoạt động hoá học', 'bai-19-day-hoat-dong-hoa-hoc', 'theory'),
+  (6, 20, 'Tách kim loại và việc sử dụng hợp kim', 'bai-20-tach-kim-loai-va-su-dung-hop-kim', 'theory'),
+  (6, 21, 'Sự khác nhau cơ bản giữa phi kim và kim loại', 'bai-21-su-khac-nhau-co-ban-giua-phi-kim-va-kim-loai', 'theory'),
+  (7, 22, 'Giới thiệu về hợp chất hữu cơ', 'bai-22-gioi-thieu-ve-hop-chat-huu-co', 'theory'),
+  (7, 23, 'Alkane', 'bai-23-alkane', 'theory'),
+  (7, 24, 'Alkene', 'bai-24-alkene', 'theory'),
+  (7, 25, 'Nguồn nhiên liệu', 'bai-25-nguon-nhien-lieu', 'theory'),
+  (8, 26, 'Ethylic alcohol', 'bai-26-ethylic-alcohol', 'theory'),
+  (8, 27, 'Acetic acid', 'bai-27-acetic-acid', 'theory'),
+  (9, 28, 'Lipid', 'bai-28-lipid', 'theory'),
+  (9, 29, 'Carbohydrate. Glucose và saccharose', 'bai-29-carbohydrate-glucose-va-saccharose', 'theory'),
+  (9, 30, 'Tinh bột và cellulose', 'bai-30-tinh-bot-va-cellulose', 'theory'),
+  (9, 31, 'Protein', 'bai-31-protein', 'theory'),
+  (9, 32, 'Polymer', 'bai-32-polymer', 'theory'),
+  (10, 33, 'Sơ lược về hoá học vỏ Trái Đất và khai thác tài nguyên từ vỏ Trái Đất', 'bai-33-so-luoc-ve-hoa-hoc-vo-trai-dat-va-khai-thac-tai-nguyen', 'theory'),
+  (10, 34, 'Khai thác đá vôi. Công nghiệp silicate', 'bai-34-khai-thac-da-voi-cong-nghiep-silicate', 'theory'),
+  (10, 35, 'Khai thác nhiên liệu hoá thạch. Nguồn carbon. Chu trình carbon và sự ấm lên toàn cầu', 'bai-35-khai-thac-nhien-lieu-hoa-thach-nguon-carbon', 'theory')
+) as v(chapter_number, number, title, slug, lesson_type)
+join public.chapters c on c.number = v.chapter_number
+join public.textbooks t on t.id = c.textbook_id and t.code = 'KHTN9-KNTT-HH'
 on conflict (slug) do update set
   chapter_id = excluded.chapter_id, number = excluded.number, title = excluded.title,
   lesson_type = excluded.lesson_type, sort_order = excluded.sort_order;

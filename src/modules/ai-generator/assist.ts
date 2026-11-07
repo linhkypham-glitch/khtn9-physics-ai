@@ -26,7 +26,7 @@ export async function suggestEssayScore(input: { question: string; rubric: strin
   if (!input.answer.trim()) return { ok: true, data: { score: 0, reasoning: "Học sinh không làm bài.", feedback_for_student: "Em chưa làm câu này." }, model: "rule" };
   const res = await callStructured(
     EssaySuggestion,
-    `Bạn là giáo viên Vật lý lớp 9 (KHTN 9 – Kết nối tri thức) đang chấm câu tự luận.
+    `Bạn là giáo viên Khoa học tự nhiên lớp 9 (KHTN 9 – Kết nối tri thức, phân môn Vật lý hoặc Hoá học) đang chấm câu tự luận.
 Chấm CHẶT CHẼ theo hướng dẫn chấm được cung cấp; chỉ cho điểm phần học sinh thực sự trình bày đúng.
 Không suy đoán năng lực, phẩm chất hay hoàn cảnh của học sinh. Không bịa thêm tiêu chí.
 Điểm là số trong khoảng 0 đến điểm tối đa, bội số của 0,25. "reasoning" giải thích ngắn theo từng tiêu chí (dành cho giáo viên).
@@ -74,7 +74,7 @@ export async function writeStudentComment(input: {
   ].join("\n");
   const res = await callStructured(
     CommentOut,
-    `Bạn là giáo viên Vật lý lớp 9 viết nhận xét quá trình học tập cho học sinh.
+    `Bạn là giáo viên Khoa học tự nhiên lớp 9 (Vật lý, Hoá học) viết nhận xét quá trình học tập cho học sinh.
 Chỉ dựa trên số liệu được cung cấp. TUYỆT ĐỐI không suy đoán phẩm chất, tính cách, năng lực chung, gia đình hay hoàn cảnh của học sinh.
 Nhận xét bằng tiếng Việt, 3–5 câu, giọng khích lệ, cụ thể: kết quả chung, tiến bộ (nếu có dữ liệu), nội dung nắm vững, nội dung cần ôn tập, gợi ý luyện tập (bài học, thí nghiệm ảo, dạng câu).
 Không lặp lại toàn bộ số liệu; không dùng ký hiệu markdown.

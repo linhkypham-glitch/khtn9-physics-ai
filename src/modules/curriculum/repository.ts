@@ -2,11 +2,11 @@ import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { LessonMaterialRow, LearningObjectiveRow } from "@/types/database";
-import { CURRICULUM } from "./catalog";
+import { SUBJECTS, type SubjectKey } from "./catalog";
 import type { CurriculumChapter, CurriculumResult } from "./types";
 
-function catalogChapters(): CurriculumChapter[] {
-  return CURRICULUM.map((c) => ({
+function catalogChapters(subject: SubjectKey): CurriculumChapter[] {
+  return SUBJECTS[subject].curriculum.map((c) => ({
     id: null,
     number: c.number,
     roman: c.roman,
@@ -21,14 +21,15 @@ function catalogChapters(): CurriculumChapter[] {
   }));
 }
 
-/** Lấy mục lục chương trình học (chương + bài) từ database. */
-export async function getCurriculum(): Promise<CurriculumResult> {
+/** Lấy mục lục chương trình học (chương + bài) của một môn từ database (mặc định Vật lý). */
+export async function getCurriculum(subject: SubjectKey = "vat-ly"): Promise<CurriculumResult> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return { ok: true, source: "catalog", chapters: catalogChapters() };
+  if (!supabase) return { ok: true, source: "catalog", chapters: catalogChapters(subject) };
 
   const { data, error } = await supabase
     .from("chapters")
-    .select("id, number, roman, title, sort_order, lessons(id, number, title, slug, lesson_type, sort_order)")
+    .select("id, number, roman, title, sort_order, textbooks!inner(code), lessons(id, number, title, slug, lesson_type, sort_order)")
+    .eq("textbooks.code", SUBJECTS[subject].textbook.code)
     .order("sort_order", { ascending: true })
     .order("sort_order", { referencedTable: "lessons", ascending: true });
 
@@ -81,7 +82,7 @@ export async function getLessonBySlug(slug: string): Promise<LessonDetailResult>
 
   const { data: lesson, error } = await supabase
     .from("lessons")
-    .select("id, number, title, slug, lesson_type, summary, chapters(number, roman, title)")
+    .select("id, number, title, slug, lesson_type, summary, chapters(number, roman, title, textbook_id)")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -94,7 +95,8 @@ export async function getLessonBySlug(slug: string): Promise<LessonDetailResult>
   const [objectivesRes, materialsRes, siblingsRes] = await Promise.all([
     supabase.from("learning_objectives").select("*").eq("lesson_id", lesson.id).order("sort_order"),
     supabase.from("lesson_materials").select("*").eq("lesson_id", lesson.id).order("sort_order"),
-    supabase.from("lessons").select("slug, number, title").order("number"),
+    // Bài trước / bài sau chỉ trong cùng một sách (cùng môn)
+    supabase.from("lessons").select("slug, number, title, chapters!inner(textbook_id)").eq("chapters.textbook_id", lesson.chapters.textbook_id).order("number"),
   ]);
 
   if (objectivesRes.error || materialsRes.error || siblingsRes.error) {

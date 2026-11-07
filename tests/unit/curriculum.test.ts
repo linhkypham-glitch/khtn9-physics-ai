@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { CURRICULUM, TEXTBOOK } from "@/modules/curriculum/catalog";
-import { buildCurriculumSeedSql } from "@/modules/curriculum/seed-sql";
+import { CURRICULUM, CURRICULUM_HOA, TEXTBOOK, TEXTBOOK_HOA, textbookCodeOfLesson } from "@/modules/curriculum/catalog";
+import { buildAllCurriculumSeedSql, buildCurriculumSeedSql } from "@/modules/curriculum/seed-sql";
 import { formatChapterLabel, formatLessonLabel } from "@/modules/curriculum/types";
 
 /** Mục lục chính thức (nguyên văn yêu cầu) – dùng để đối chiếu. */
@@ -62,7 +62,7 @@ describe("Danh mục chương trình KHTN 9 – Vật lý", () => {
 describe("Seed SQL chương trình học", () => {
   it("file supabase/seed/01_curriculum.sql được sinh từ danh mục chuẩn (không sửa tay)", () => {
     const file = readFileSync(resolve(__dirname, "../../supabase/seed/01_curriculum.sql"), "utf8");
-    expect(file).toBe(buildCurriculumSeedSql());
+    expect(file).toBe(buildAllCurriculumSeedSql());
   });
 
   it("escape dấu nháy đơn an toàn", () => {
@@ -75,5 +75,60 @@ describe("Seed SQL chương trình học", () => {
 
   it("chứa mã sách giáo khoa", () => {
     expect(buildCurriculumSeedSql()).toContain(TEXTBOOK.code);
+  });
+});
+
+/** Mục lục Hoá học 9 chép từ các trang đầu chương và đầu bài của SGK. */
+const OFFICIAL_HOA = [
+  "CHƯƠNG VI. KIM LOẠI. SỰ KHÁC NHAU CƠ BẢN GIỮA PHI KIM VÀ KIM LOẠI",
+  "Bài 18. Tính chất chung của kim loại.",
+  "Bài 19. Dãy hoạt động hoá học.",
+  "Bài 20. Tách kim loại và việc sử dụng hợp kim.",
+  "Bài 21. Sự khác nhau cơ bản giữa phi kim và kim loại.",
+  "CHƯƠNG VII. GIỚI THIỆU VỀ CHẤT HỮU CƠ. HYDROCARBON VÀ NGUỒN NHIÊN LIỆU",
+  "Bài 22. Giới thiệu về hợp chất hữu cơ.",
+  "Bài 23. Alkane.",
+  "Bài 24. Alkene.",
+  "Bài 25. Nguồn nhiên liệu.",
+  "CHƯƠNG VIII. ETHYLIC ALCOHOL VÀ ACETIC ACID",
+  "Bài 26. Ethylic alcohol.",
+  "Bài 27. Acetic acid.",
+  "CHƯƠNG IX. LIPID. CARBOHYDRATE. PROTEIN. POLYMER",
+  "Bài 28. Lipid.",
+  "Bài 29. Carbohydrate. Glucose và saccharose.",
+  "Bài 30. Tinh bột và cellulose.",
+  "Bài 31. Protein.",
+  "Bài 32. Polymer.",
+  "CHƯƠNG X. KHAI THÁC TÀI NGUYÊN TỪ VỎ TRÁI ĐẤT",
+  "Bài 33. Sơ lược về hoá học vỏ Trái Đất và khai thác tài nguyên từ vỏ Trái Đất.",
+  "Bài 34. Khai thác đá vôi. Công nghiệp silicate.",
+  "Bài 35. Khai thác nhiên liệu hoá thạch. Nguồn carbon. Chu trình carbon và sự ấm lên toàn cầu.",
+];
+
+describe("Danh mục chương trình KHTN 9 – Hoá học", () => {
+  it("khớp mục lục SGK: 5 chương, Bài 18 → Bài 35", () => {
+    const rendered = CURRICULUM_HOA.flatMap((c) => [formatChapterLabel(c).toLocaleUpperCase("vi"), ...c.lessons.map((l) => formatLessonLabel(l))]);
+    expect(rendered).toEqual(OFFICIAL_HOA);
+    expect(CURRICULUM_HOA.flatMap((c) => c.lessons.map((l) => l.number))).toEqual(Array.from({ length: 18 }, (_, i) => i + 18));
+  });
+
+  it("slug không trùng với Vật lý và hợp lệ", () => {
+    const all = [...CURRICULUM, ...CURRICULUM_HOA].flatMap((c) => c.lessons.map((l) => l.slug));
+    expect(new Set(all).size).toBe(all.length);
+    for (const s of all) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+  });
+
+  it("số chương không trùng giữa hai sách, mã sách đúng theo số bài", () => {
+    expect(new Set([...CURRICULUM, ...CURRICULUM_HOA].map((c) => c.number)).size).toBe(10);
+    expect(TEXTBOOK_HOA.code).not.toBe(TEXTBOOK.code);
+    expect(textbookCodeOfLesson(17)).toBe(TEXTBOOK.code);
+    expect(textbookCodeOfLesson(18)).toBe(TEXTBOOK_HOA.code);
+  });
+
+  it("seed sinh cho Hoá học chứa mã sách Hoá học", () => {
+    const sql = buildCurriculumSeedSql(CURRICULUM_HOA, TEXTBOOK_HOA);
+    expect(sql).toContain("KHTN9-KNTT-HH");
+    expect(sql).toContain("Hoá học");
+    expect(sql).not.toContain("KHTN9-KNTT-VL");
   });
 });

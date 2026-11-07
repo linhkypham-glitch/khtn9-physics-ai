@@ -25,23 +25,24 @@ end $$;
 do $$
 declare n_ch int; n_ls int; min_no int; max_no int;
 begin
-  select count(*) into n_ch from public.chapters;
-  select count(*), min(number), max(number) into n_ls, min_no, max_no from public.lessons;
-  if n_ch <> 5 then raise exception 'FAIL: cần 5 chương, có %', n_ch; end if;
+  -- Vật lý (sách KHTN9-KNTT-VL): 5 chương, Bài 2 → Bài 17
+  select count(distinct c.id), count(l.id), min(l.number), max(l.number) into n_ch, n_ls, min_no, max_no
+    from public.chapters c join public.textbooks t on t.id = c.textbook_id and t.code = 'KHTN9-KNTT-VL' left join public.lessons l on l.chapter_id = c.id;
+  if n_ch <> 5 then raise exception 'FAIL: Vật lý cần 5 chương, có %', n_ch; end if;
   if n_ls <> 16 or min_no <> 2 or max_no <> 17 then
     raise exception 'FAIL: cần Bài 2 → Bài 17 (16 bài), có % bài (% → %)', n_ls, min_no, max_no;
   end if;
   if exists (select 1 from public.lessons where number = 1) then
     raise exception 'FAIL: không được có Bài 1';
   end if;
-  raise notice 'PASS 1: seed 5 chương, Bài 2 → Bài 17';
+  raise notice 'PASS 1: seed Vật lý 5 chương, Bài 2 → Bài 17';
 end $$;
 
 -- 2. Khách (anon) đọc được chương trình nhưng không đọc được hồ sơ / lớp
 set local role anon;
 do $$
 begin
-  if (select count(*) from public.lessons) <> 16 then raise exception 'FAIL: anon không đọc được bài học'; end if;
+  if (select count(*) from public.lessons) <> 34 then raise exception 'FAIL: anon không đọc được bài học (Vật lý 16 + Hoá học 18)'; end if;
   if (select count(*) from public.profiles) <> 0 then raise exception 'FAIL: anon đọc được profiles'; end if;
   if (select count(*) from public.classes) <> 0 then raise exception 'FAIL: anon đọc được classes'; end if;
   raise notice 'PASS 2: anon chỉ đọc được chương trình học';
@@ -226,7 +227,7 @@ select pg_temp.logout();
 select pg_temp.login_as('b0000000-0000-0000-0000-000000000001');
 do $$
 begin
-  if (select count(*) from public.question_bank) <> 112 then raise exception 'FAIL: giáo viên không thấy đủ 112 câu hỏi'; end if;
+  if (select count(*) from public.question_bank) <> 200 then raise exception 'FAIL: giáo viên không thấy đủ 200 câu hỏi (Vật lý 112 + Hoá học 88)'; end if;
   if (select count(*) from public.experiment_attempts) <> 1 then raise exception 'FAIL: giáo viên không thấy kết quả thí nghiệm của HS lớp mình'; end if;
   raise notice 'PASS 14: quyền giáo viên với câu hỏi và kết quả';
 end $$;
@@ -246,7 +247,7 @@ begin
   if (select count(*) from public.lesson_materials) < 60 then raise exception 'FAIL: khách không đọc được học liệu'; end if;
   if (select count(*) from public.learning_objectives) < 60 then raise exception 'FAIL: khách không đọc được mục tiêu'; end if;
   if (select count(*) from public.question_bank) <> 0 then raise exception 'FAIL: khách đọc được câu hỏi'; end if;
-  if (select count(*) from public.experiments) <> 16 then raise exception 'FAIL: khách không thấy danh mục thí nghiệm'; end if;
+  if (select count(*) from public.experiments) <> 27 then raise exception 'FAIL: khách không thấy danh mục thí nghiệm (Vật lý 16 + Hoá học 11)'; end if;
   raise notice 'PASS 16: truy cập mở cho nội dung bài học';
 end $$;
 reset role;
@@ -375,6 +376,33 @@ begin
   update public.classes set show_leaderboard = true where id = '30000000-0000-0000-0000-00000000009c';
   if found then raise exception 'FAIL: GV bật BXH lớp không phụ trách'; end if;
   raise notice 'PASS 22: quyền cài đặt bảng xếp hạng đúng';
+end $$;
+select pg_temp.logout();
+
+-- 23. Hoá học 9: chương trình, nội dung và câu hỏi đã nạp; người dùng ẩn danh chỉ đọc được nội dung đã xuất bản
+set local role anon;
+do $$
+declare v_l int; v_c int; v_m int; v_q int; v_e int;
+begin
+  select count(*), count(distinct c.id) into v_l, v_c
+    from public.lessons l join public.chapters c on c.id = l.chapter_id join public.textbooks t on t.id = c.textbook_id where t.code = 'KHTN9-KNTT-HH';
+  if v_l <> 18 or v_c <> 5 then raise exception 'FAIL: Hoá học phải có 5 chương, 18 bài (có % chương, % bài)', v_c, v_l; end if;
+  select count(*) into v_m from public.lesson_materials m join public.lessons l on l.id = m.lesson_id where l.number between 18 and 35;
+  if v_m < 60 then raise exception 'FAIL: thiếu học liệu Hoá học (%)', v_m; end if;
+  select count(*) into v_e from public.experiments e join public.lessons l on l.id = e.lesson_id where l.number between 18 and 35;
+  if v_e <> 11 then raise exception 'FAIL: Hoá học cần 11 thí nghiệm ảo (có %)', v_e; end if;
+  if (select count(*) from public.lessons where number = 5 or number = 18) <> 2 then raise exception 'FAIL: Vật lý và Hoá học phải cùng tồn tại'; end if;
+  raise notice 'PASS 23: Hoá học 9 có 5 chương, 18 bài, % học liệu, % thí nghiệm ảo', v_m, v_e;
+end $$;
+reset role;
+select pg_temp.login_as('c0000000-0000-0000-0000-0000000009a1');
+do $$
+declare v_q int;
+begin
+  -- học sinh không đọc được bảng đáp án của câu hỏi Hoá học (dữ liệu chỉ qua máy chủ)
+  select count(*) into v_q from public.question_options o join public.question_bank q on q.id = o.question_id join public.lessons l on l.id = q.lesson_id where l.number between 18 and 35;
+  if v_q <> 0 then raise exception 'FAIL: học sinh đọc được đáp án câu hỏi Hoá học (%)', v_q; end if;
+  raise notice 'PASS 24: học sinh không đọc được đáp án câu hỏi Hoá học';
 end $$;
 select pg_temp.logout();
 

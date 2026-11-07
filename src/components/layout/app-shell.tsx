@@ -20,7 +20,7 @@ export function AppShell({ user, children }: { user: CurrentUser; children: Reac
           <SidebarNav role={user.role} inverted />
         </div>
         <div className="relative mt-auto rounded-xl bg-white/10 px-3 py-3 text-xs text-orange-50 ring-1 ring-white/10">
-          <p className="font-semibold text-white">KHTN 9 · Vật lý</p>
+          <p className="font-semibold text-white">KHTN 9 · Vật lý · Hoá học</p>
           <p className="mt-0.5">Kết nối tri thức với cuộc sống</p>
         </div>
       </aside>
