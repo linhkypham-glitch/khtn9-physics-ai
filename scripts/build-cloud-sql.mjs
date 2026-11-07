@@ -28,7 +28,8 @@ writeFileSync(
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 3 (đề kiểm tra, giao bài, nhận xét, AI) cho dự án đã chạy cloud-update-m2.sql.\n-- Chạy MỘT lần trong SQL Editor.\n\n${m3.map(read).join("\n\n")}`,
 );
 const m4 = migrations.filter((m) => m.split("/").pop() >= "20261109" && m.split("/").pop() < "20261110");
-const m5 = migrations.filter((m) => m.split("/").pop() >= "20261110");
+const m5 = migrations.filter((m) => m.split("/").pop() >= "20261110" && m.split("/").pop() < "20261111");
+const m6 = migrations.filter((m) => m.split("/").pop() >= "20261111");
 writeFileSync(
   join(root, "cloud-update-m4.sql"),
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 4 (câu tự luận do giáo viên chấm, bảng xếp hạng) cho dự án đã chạy cloud-update-m3.sql.\n-- Chạy MỘT lần trong SQL Editor.\n\n${m4.map(read).join("\n\n")}`,
@@ -37,6 +38,11 @@ writeFileSync(
 writeFileSync(
   join(root, "cloud-update-m5.sql"),
   `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 5 (đối chiếu thí nghiệm Bài 12 – 17 với SGK).\n-- Chạy MỘT lần trong SQL Editor, sau khi đã chạy cloud-update-m4.sql (hoặc cloud-repair-m3-m4.sql).\n-- Chạy lại nhiều lần vẫn an toàn.\n\n${[...m5, "seed/03_lesson_content.sql", "seed/05_experiments.sql"].map(read).join("\n\n")}`,
+);
+
+writeFileSync(
+  join(root, "cloud-update-m6.sql"),
+  `-- FILE SINH TỰ ĐỘNG – CẬP NHẬT lên Milestone 6 (đối chiếu kiến thức và thí nghiệm Bài 2 – 17 với SGK).\n-- Chạy MỘT lần trong SQL Editor, sau cloud-update-m5.sql. Chạy lại nhiều lần vẫn an toàn.\n-- Chỉ thay nội dung mẫu chưa bị giáo viên sửa; nội dung giáo viên tự thêm hoặc đã sửa được giữ nguyên.\n\n${[...m6, "seed/03_lesson_content.sql", "seed/05_experiments.sql"].map(read).join("\n\n")}`,
 );
 
 /**
@@ -57,4 +63,4 @@ writeFileSync(
   join(root, "cloud-repair-m3-m4.sql"),
   `-- FILE SINH TỰ ĐỘNG – CHẠY LẠI AN TOÀN bản cập nhật Milestone 3 + 4.\n-- Dùng khi cloud-update-m3.sql / m4.sql báo lỗi "already exists" hoặc "does not exist" (đã chạy dở).\n-- Chạy được nhiều lần: bỏ qua phần đã có, tạo phần còn thiếu. Không xoá dữ liệu.\n\n${[...m3, ...m4].map((p) => idempotent(read(p))).join("\n\n")}`,
 );
-console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql, cloud-update-m4.sql, cloud-update-m5.sql, cloud-repair-m3-m4.sql");
+console.log("Đã ghi cloud-setup.sql, cloud-update-m2.sql, cloud-update-m3.sql, cloud-update-m4.sql, cloud-update-m5.sql, cloud-update-m6.sql, cloud-repair-m3-m4.sql");

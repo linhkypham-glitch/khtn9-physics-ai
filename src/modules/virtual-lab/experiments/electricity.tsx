@@ -71,7 +71,8 @@ function Switch({ x, y, closed }: { x: number; y: number; closed: boolean }) {
 /* Bài 11 – Định luật Ohm                                                   */
 /* ======================================================================== */
 
-const RESISTORS = { R1: 10, R2: 20, R3: 40 } as const;
+/** R₁ = 6 Ω khớp Bảng 11.2 của SGK (U = 3 V → I = 0,5 A; U = 9 V → I = 1,5 A). */
+const RESISTORS = { R1: 6, R2: 12, R3: 24 } as const;
 type RKey = keyof typeof RESISTORS;
 const SERIES_COLORS: Record<RKey, string> = { R1: "#ea580c", R2: "#2563eb", R3: "#16a34a" };
 
@@ -118,6 +119,7 @@ export function OhmLawLab() {
           <Readout label="Hiệu điện thế U" value={fmt(closed ? U : 0, 1)} unit="V" tone="blue" />
           <Readout label="Cường độ I" value={fmt(I, 3)} unit="A" tone="red" />
           <Readout label="Tỉ số U/I" value={closed && I > 0 ? fmt(U / I, 1) : "—"} unit="Ω" tone="green" />
+          <Readout label="Độ sáng bóng đèn (TN 1 SGK)" value={!closed || I === 0 ? "Không sáng" : I > 1.2 ? "Sáng mạnh" : I > 0.6 ? "Sáng vừa" : "Sáng yếu"} tone="orange" />
         </>
       }
       controls={

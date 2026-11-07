@@ -11,61 +11,61 @@ export type ExperimentDef = {
   guide: string[];
   questions: string[];
   /** book: bám thí nghiệm trong SGK (đã đối chiếu); support: mô phỏng bổ trợ vì SGK bài này không có thí nghiệm thực hành. */
-  basis?: "book" | "support";
+  basis?: "book" | "support"; // không gắn nhãn khi bài chỉ có hoạt động thực hành đơn giản trong SGK
 };
 
 export const EXPERIMENTS: ExperimentDef[] = [
   {
-    key: "kinetic-potential", lessonNumber: 2,
+    key: "kinetic-potential", lessonNumber: 2, basis: "support",
     title: "Động năng và thế năng của quả bóng",
     summary: "Thay đổi khối lượng, tốc độ, độ cao và quan sát động năng, thế năng thay đổi.",
     guide: ["Chọn khối lượng m của quả bóng.", "Điều chỉnh tốc độ v và độ cao h.", "Bấm Bắt đầu để quả bóng chuyển động; đọc giá trị Wđ, Wt.", "Bấm Ghi số liệu để lưu vào bảng, thay đổi một đại lượng và lặp lại."],
     questions: ["Khi tăng gấp đôi tốc độ, động năng thay đổi thế nào?", "Thế năng phụ thuộc vào những đại lượng nào?"],
   },
   {
-    key: "mechanical-energy", lessonNumber: 3,
+    key: "mechanical-energy", lessonNumber: 3, basis: "book",
     title: "Bảo toàn cơ năng của con lắc",
     summary: "Quan sát sự chuyển hoá động năng – thế năng của con lắc, có và không có ma sát.",
     guide: ["Chọn khối lượng vật nặng và góc thả ban đầu.", "Bấm Bắt đầu để thả con lắc.", "Quan sát cột năng lượng và đồ thị theo thời gian.", "Bật ma sát để thấy cơ năng giảm dần."],
     questions: ["Ở vị trí nào động năng lớn nhất? Thế năng lớn nhất?", "Vì sao khi có ma sát con lắc dừng lại dần?"],
   },
   {
-    key: "work-power", lessonNumber: 4,
+    key: "work-power", lessonNumber: 4, basis: "support",
     title: "Cần cẩu nâng hàng – Công và công suất",
     summary: "Nâng thùng hàng với khối lượng, độ cao và thời gian khác nhau để so sánh công và công suất.",
     guide: ["Chọn khối lượng thùng hàng, độ cao cần nâng và thời gian nâng.", "Bấm Bắt đầu để cần cẩu nâng hàng.", "Đọc lực nâng, công và công suất.", "Ghi số liệu và so sánh các lần nâng."],
     questions: ["Nâng cùng thùng hàng lên cùng độ cao nhưng nhanh hơn thì công và công suất thay đổi thế nào?"],
   },
   {
-    key: "refraction", lessonNumber: 5,
+    key: "refraction", lessonNumber: 5, basis: "book",
     title: "Khúc xạ ánh sáng qua mặt phân cách",
     summary: "Thay đổi góc tới và cặp môi trường; đo góc khúc xạ và kiểm chứng định luật khúc xạ.",
-    guide: ["Chọn môi trường 1 và môi trường 2.", "Bấm Bật nguồn sáng, điều chỉnh góc tới i.", "Đọc góc khúc xạ r, ghi số liệu vào bảng.", "Tính sin i / sin r và so sánh với n₂/n₁."],
+    guide: ["Chọn môi trường 1 (không khí) và môi trường 2 (thuỷ tinh) như thí nghiệm của SGK.", "Bấm Bật nguồn sáng, chọn góc tới 0°, 20°, 40°, 60°, 80° (Bảng 5.1).", "Đọc góc khúc xạ r, ghi số liệu vào bảng.", "Tính sin i / sin r và so sánh với n₂/n₁."],
     questions: ["Khi ánh sáng đi từ không khí vào nước, r lớn hơn hay nhỏ hơn i?", "Tỉ số sin i / sin r có thay đổi khi đổi góc tới không?"],
   },
   {
-    key: "total-reflection", lessonNumber: 6,
+    key: "total-reflection", lessonNumber: 6, basis: "book",
     title: "Phản xạ toàn phần và góc tới hạn",
     summary: "Chiếu ánh sáng từ môi trường chiết quang hơn ra môi trường kém chiết quang, tìm góc tới hạn.",
     guide: ["Chọn môi trường chứa nguồn sáng (nước, thuỷ tinh, kim cương).", "Bật nguồn sáng, tăng dần góc tới.", "Quan sát tia khúc xạ yếu dần và biến mất.", "Ghi lại góc tới khi bắt đầu phản xạ toàn phần, so sánh với góc tới hạn tính theo công thức."],
     questions: ["Điều kiện nào để xảy ra phản xạ toàn phần?", "Môi trường có chiết suất càng lớn thì góc tới hạn càng lớn hay càng nhỏ?"],
   },
   {
-    key: "prism", lessonNumber: 7,
+    key: "prism", lessonNumber: 7, basis: "book",
     title: "Đường truyền ánh sáng qua lăng kính",
     summary: "Quan sát tia sáng lệch về phía đáy và ánh sáng trắng bị tán sắc thành dải màu.",
     guide: ["Chọn loại ánh sáng: đơn sắc (đỏ, lục, tím) hoặc ánh sáng trắng.", "Điều chỉnh góc chiết quang A và góc tới.", "Bật nguồn sáng, quan sát tia ló và góc lệch D.", "So sánh góc lệch của các màu."],
     questions: ["Tia ló lệch về phía nào của lăng kính?", "Màu nào bị lệch nhiều nhất? Vì sao?"],
   },
   {
-    key: "lens", lessonNumber: 8,
+    key: "lens", lessonNumber: 8, basis: "book",
     title: "Dựng ảnh qua thấu kính hội tụ và phân kì",
     summary: "Di chuyển vật, thay đổi tiêu cự; quan sát ba tia sáng đặc biệt và đặc điểm ảnh.",
     guide: ["Chọn loại thấu kính.", "Kéo thanh trượt để thay đổi khoảng cách vật d và tiêu cự f.", "Quan sát các tia đặc biệt và vị trí ảnh.", "Ghi lại đặc điểm ảnh (thật/ảo, cùng/ngược chiều, lớn/nhỏ) ở các vị trí khác nhau."],
     questions: ["Đặt vật ở đâu để thấu kính hội tụ cho ảnh ảo?", "Thấu kính phân kì có bao giờ cho ảnh thật của vật thật không?"],
   },
   {
-    key: "focal-length", lessonNumber: 9,
+    key: "focal-length", lessonNumber: 9, basis: "book",
     title: "Thực hành đo tiêu cự thấu kính hội tụ",
     summary: "Dịch vật và màn cách đều thấu kính đến khi ảnh rõ nét, cao bằng vật; tính f = L/4.",
     guide: ["Thấu kính có tiêu cự chưa biết được đặt giữa giá quang học.", "Dịch chuyển vật và màn (luôn cách đều thấu kính).", "Khi ảnh rõ nét và cao bằng vật, bấm Ghi lần đo.", "Đo 3 lần, tính tiêu cự trung bình."],
@@ -79,10 +79,10 @@ export const EXPERIMENTS: ExperimentDef[] = [
     questions: ["Muốn nhìn rõ ảnh phóng to, phải đặt vật ở đâu?", "Kính lúp 10x có tiêu cự bao nhiêu?"],
   },
   {
-    key: "ohm-law", lessonNumber: 11,
+    key: "ohm-law", lessonNumber: 11, basis: "book",
     title: "Thí nghiệm định luật Ohm",
     summary: "Thay đổi hiệu điện thế nguồn, đo cường độ dòng điện; vẽ đồ thị I – U.",
-    guide: ["Chọn điện trở R cần khảo sát.", "Bấm Đóng khoá K để dòng điện chạy trong mạch.", "Thay đổi hiệu điện thế U, đọc số chỉ ampe kế và vôn kế.", "Ghi ít nhất 5 cặp số liệu để vẽ đồ thị I – U."],
+    guide: ["Chọn vật dẫn (R₁ = 6 Ω khớp Bảng 11.2 của SGK) rồi bấm Đóng khoá K.", "Quan sát độ sáng bóng đèn với R₁, R₂, R₃ (thí nghiệm 1 của SGK).", "Thay đổi U = 0, 3, 6, 9, 12 V; đọc số chỉ ampe kế và vôn kế (thí nghiệm 2).", "Ghi 5 cặp số liệu để vẽ đồ thị I – U."],
     questions: ["Đồ thị I – U có dạng gì?", "Từ bảng số liệu, tính U/I. Nhận xét kết quả."],
   },
   {

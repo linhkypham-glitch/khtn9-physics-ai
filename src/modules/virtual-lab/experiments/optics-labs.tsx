@@ -138,6 +138,7 @@ export function RefractionLab() {
         <>
           <Segmented label="Môi trường 1 (chứa tia tới)" value={m1} options={Object.entries(MEDIA).map(([k, v]) => ({ value: k as MediumKey, label: v.label }))} onChange={setM1} />
           <Segmented label="Môi trường 2" value={m2} options={Object.entries(MEDIA).map(([k, v]) => ({ value: k as MediumKey, label: v.label }))} onChange={setM2} />
+          <Segmented label="Góc tới theo Bảng 5.1 (SGK)" value={String(i)} options={[0, 20, 40, 60, 80].map((a) => ({ value: String(a), label: `${a}°` }))} onChange={(v) => setI(Number(v))} />
           <Slider label="Góc tới i" value={i} min={0} max={85} step={1} unit="°" digits={0} onChange={setI} />
           <RunControls
             startLabel="Bật nguồn sáng"

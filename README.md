@@ -74,18 +74,26 @@ Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra �
   quản trị viên có công tắc tắt toàn hệ thống. Chỉ hiển thị họ tên, lớp, điểm, thời gian, số ý đúng.
 - **AI viết bản nháp nhận xét** quá trình học tập từ số liệu thật (không suy đoán phẩm chất, hoàn cảnh); giáo viên đọc, sửa rồi mới lưu.
 
-### Đối chiếu thí nghiệm với SGK (Milestone 5)
+### Đối chiếu kiến thức và thí nghiệm với SGK (Milestone 5 – 6)
 
-Mỗi bài 2 – 17 có đúng một thí nghiệm ảo. Mức đối chiếu với sách giáo khoa:
+Đã đối chiếu **toàn bộ Bài 2 – 17** với các trang SGK KHTN 9 Kết nối tri thức. Mỗi bài có đúng một thí nghiệm ảo; giao diện ghi rõ mức đối chiếu:
 
-| Bài | Đối chiếu | Ghi chú |
+| Bài | SGK có thí nghiệm? | Thí nghiệm ảo |
 |---|---|---|
-| 2 – 11 | Theo kế hoạch bài dạy KHTN 9 KNTT | |
-| 12 | Theo trang SGK | Có sẵn đúng các phép đo của Bảng 12.1 (nguồn 12 V; R₁ = 6, R₂ = 10, R₃ = 16 Ω) và Bảng 12.2 (nguồn 6 V; R₁ = 10, R₂ = 6 Ω) |
-| 13 | SGK **không có thí nghiệm thực hành** | Mô phỏng bổ trợ, có nhãn trên giao diện |
-| 14 | Theo trang SGK | Đủ 4 thí nghiệm cảm ứng điện từ và mô hình máy phát điện xoay chiều (2 đèn LED) |
-| 15 | Theo trang SGK | Tác dụng nhiệt, phát sáng, từ (cuộn dây hút đinh sắt – Hình 15.4) |
-| 16, 17 | SGK **không có thí nghiệm thực hành** | Mô phỏng bổ trợ, có nhãn trên giao diện |
+| 3 | Có (con lắc đơn, xe thế năng) | Theo SGK |
+| 5 | Có (3 thí nghiệm; Bảng 5.1) | Theo SGK – có nút chọn góc tới 0°, 20°, 40°, 60°, 80° |
+| 6 | Có (Bảng 6.1) | Theo SGK |
+| 7 | Có (tán sắc; ánh sáng đơn sắc) | Theo SGK |
+| 8 | Có (đường truyền tia sáng; đặc điểm ảnh) | Theo SGK |
+| 9 | Có (thực hành đo tiêu cự – Silbermann) | Theo SGK |
+| 11 | Có (tính chất điện trở; Bảng 11.2) | Theo SGK – R₁ = 6 Ω khớp Bảng 11.2, có độ sáng bóng đèn |
+| 12 | Có (Bảng 12.1, 12.2) | Theo SGK – có sẵn đúng các phép đo của sách |
+| 14 | Có (4 thí nghiệm cảm ứng; mô hình máy phát) | Theo SGK – đủ nam châm vĩnh cửu, nam châm điện, thay đổi tiết diện, máy phát 2 đèn LED |
+| 15 | Có (Hình 15.4: cuộn dây hút đinh sắt) | Theo SGK |
+| 10 | Chỉ hoạt động dùng kính lúp và bài tập | Không gắn nhãn |
+| 2, 4, 13, 16, 17 | **Không** (chỉ hoạt động quan sát, bài tập) | Mô phỏng minh hoạ bổ trợ – có nhãn trên giao diện |
+
+Phần kiến thức bám theo nội dung từng bài của SGK; nội dung vượt SGK (ví dụ công thức thấu kính 1/f = 1/d + 1/d', P = I²R, Q = q·m, công suất pin Mặt Trời) được đánh dấu **"Mở rộng"**.
 
 ### Bật AI (tạo đề, gợi ý chấm tự luận, nháp nhận xét)
 
@@ -154,7 +162,7 @@ npm run dev
    - Đã cài Milestone 1? Chạy **một lần** lần lượt `cloud-update-m2.sql` → `cloud-update-m3.sql` → `cloud-update-m4.sql`.
    - Đã cài Milestone 2? Chạy **một lần** `cloud-update-m3.sql` rồi `cloud-update-m4.sql`.
    - Đã cài Milestone 3? Chỉ chạy **một lần** `supabase/cloud-update-m4.sql`.
-   - Sau đó, với mọi bản đã cài đến Milestone 4: chạy thêm **một lần** `supabase/cloud-update-m5.sql` (đối chiếu thí nghiệm Bài 12 – 17 với SGK, chạy lại nhiều lần vẫn an toàn).
+   - Sau đó, với mọi bản đã cài đến Milestone 4: chạy thêm lần lượt `cloud-update-m5.sql` rồi `cloud-update-m6.sql` (đối chiếu kiến thức và thí nghiệm Bài 2 – 17 với SGK; chạy lại nhiều lần vẫn an toàn, nội dung giáo viên tự thêm hoặc đã sửa được giữ nguyên).
    - Bị lỗi *already exists* / *does not exist* do chạy dở? Chạy `supabase/cloud-repair-m3-m4.sql` (chạy lại nhiều lần vẫn an toàn).
 4. Tạo người dùng đầu tiên ở Authentication → Users, rồi cấp quyền quản trị:
    ```sql

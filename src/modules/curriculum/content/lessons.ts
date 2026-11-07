@@ -52,8 +52,8 @@ export const LESSON_CONTENT: LessonContent[] = [
         kind: "text",
         title: "2. Thế năng trọng trường",
         body:
-          "Năng lượng mà vật có được do ở một độ cao nào đó so với mặt đất (hoặc so với một vị trí được chọn làm mốc) gọi là thế năng trọng trường.\n" +
-          "Vật có trọng lượng càng lớn, ở càng cao thì thế năng trọng trường càng lớn. Vật nằm trên mặt đất (vị trí mốc) có thế năng bằng 0.",
+          "Thế năng trọng trường (gọi tắt là thế năng) là năng lượng của một vật khi nó ở một độ cao nhất định so với mặt đất hoặc so với một vật được chọn làm gốc để tính độ cao.\n" +
+          "Vật có trọng lượng càng lớn, ở càng cao thì thế năng trọng trường càng lớn. Giá trị của thế năng phụ thuộc vào gốc chọn để tính độ cao (gọi là gốc thế năng); người ta thường chọn mặt đất làm gốc, khi đó vật nằm trên mặt đất có thế năng bằng 0.",
       },
       {
         kind: "formula",
@@ -67,6 +67,14 @@ export const LESSON_CONTENT: LessonContent[] = [
           "Một quả bóng khối lượng 0,5 kg bay với tốc độ 4 m/s ở độ cao 2 m so với mặt đất.\n" +
           "• Động năng: Wđ = ½·0,5·4² = 4 J.\n" +
           "• Thế năng: Wt = 10·0,5·2 = 10 J.",
+      },
+      {
+        kind: "text",
+        title: "Em có biết: các dạng thế năng khác",
+        body:
+          "Ngoài thế năng trọng trường, trong thực tiễn vật còn có thể dự trữ năng lượng dưới dạng:\n" +
+          "• Thế năng đàn hồi: xuất hiện khi một vật bị biến dạng đàn hồi (ví dụ cây cung đang bị kéo căng).\n" +
+          "• Thế năng tĩnh điện: khi một điện tích đặt cạnh một điện tích khác, lực tương tác giữa các điện tích tạo ra thế năng của hệ điện tích.",
       },
     ],
   },
@@ -101,8 +109,8 @@ export const LESSON_CONTENT: LessonContent[] = [
         kind: "text",
         title: "3. Bảo toàn cơ năng",
         body:
-          "Khi vật chuyển động chỉ chịu tác dụng của trọng lực (bỏ qua ma sát, lực cản của không khí) thì cơ năng của vật được bảo toàn: động năng và thế năng chuyển hoá qua lại nhưng tổng của chúng không đổi.\n" +
-          "Nếu có ma sát hoặc lực cản, một phần cơ năng chuyển hoá thành nhiệt năng nên cơ năng giảm dần.",
+          "Nếu cơ năng của vật không chuyển hoá thành dạng năng lượng khác thì tổng động năng và thế năng của vật luôn không đổi: cơ năng của vật được bảo toàn (ví dụ khi bỏ qua ma sát và lực cản của không khí).\n" +
+          "Trong nhiều trường hợp, cơ năng có thể chuyển hoá thành các dạng năng lượng khác (như nhiệt năng do ma sát, lực cản của không khí); khi đó cơ năng không được bảo toàn nhưng năng lượng vẫn được bảo toàn.",
       },
       {
         kind: "example",
@@ -139,7 +147,9 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "Công thức tính công",
         body:
           "A = F·s\n\nTrong đó: A – công (J); F – lực tác dụng (N); s – quãng đường vật dịch chuyển theo hướng của lực (m).\n" +
-          "1 J = 1 N·m; 1 kJ = 1 000 J. Đơn vị năng lượng thường dùng khác: 1 cal ≈ 4,2 J; 1 kWh = 3 600 000 J.",
+          "Khi F = 1 N và s = 1 m thì A = 1 N·m = 1 J. Bội của jun: 1 kJ = 10³ J; 1 MJ = 10⁶ J.\n" +
+          "Trong thực tế còn dùng các đơn vị: 1 BTU = 1 055 J; 1 cal = 4,186 J; 1 kcal = 1 000 cal = 4 186 J.\n" +
+          "Mở rộng: nếu vật dịch chuyển không theo phương của lực thì A = F·s·cosα (α là góc giữa hướng của lực và hướng dịch chuyển); khi lực vuông góc với hướng dịch chuyển thì công bằng 0.",
       },
       {
         kind: "text",
@@ -149,7 +159,7 @@ export const LESSON_CONTENT: LessonContent[] = [
       {
         kind: "formula",
         title: "Công thức công suất",
-        body: "P = A / t\n\nTrong đó: P – công suất (W); A – công thực hiện (J); t – thời gian thực hiện công (s).\n1 W = 1 J/s; 1 kW = 1 000 W; 1 MW = 1 000 000 W.",
+        body: "P = A / t\n\nTrong đó: P – công suất (W); A – công thực hiện (J); t – thời gian thực hiện công (s).\n1 W = 1 J/s; 1 kW = 10³ W; 1 MW = 10⁶ W; 1 GW = 10⁹ W.\nĐơn vị khác: 1 mã lực (HP) = 746 W; 1 BTU/h = 0,293 W.",
       },
       {
         kind: "example",
@@ -190,7 +200,9 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "Chiết suất của môi trường",
         body:
           "Chiết suất tuyệt đối: n = c / v\nChiết suất tỉ đối của môi trường 2 đối với môi trường 1: n₂₁ = n₂ / n₁\n\nTrong đó: c ≈ 3·10⁸ m/s – tốc độ ánh sáng trong chân không; v – tốc độ ánh sáng trong môi trường.\n" +
-          "Chiết suất một số môi trường: không khí ≈ 1,00; nước ≈ 1,33; thuỷ tinh ≈ 1,5; kim cương ≈ 2,42.",
+          "Chiết suất của chân không là 1; của không khí là 1,00029 (rất gần với chân không) nên thường được làm tròn là 1.\n" +
+          "Chiết suất một số môi trường (Bảng 5.2): nước đá 1,309; muối ăn (NaCl) 1,544; kim cương 2,419; thuỷ tinh crown 1,464 – 1,532; thuỷ tinh flint 1,603 – 1,865; nước 1,333; ethylic alcohol 1,361; không khí 1,00029; khí carbon dioxide 1,00045.\n" +
+          "Nếu n₂₁ > 1 thì r < i: tia khúc xạ bị lệch lại gần pháp tuyến; nếu n₂₁ < 1 thì r > i: tia khúc xạ bị lệch xa pháp tuyến.",
       },
       {
         kind: "formula",
@@ -206,7 +218,9 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "Ví dụ",
         body:
           "Chiếu tia sáng từ không khí (n₁ = 1) vào nước (n₂ = 1,33) với góc tới 45°.\n" +
-          "sin r = n₁·sin i / n₂ = 1·sin 45° / 1,33 ≈ 0,707 / 1,33 ≈ 0,532 → r ≈ 32°.",
+          "sin r = n₁·sin i / n₂ = 1·sin 45° / 1,33 ≈ 0,707 / 1,33 ≈ 0,532 → r ≈ 32°.\n\n" +
+          "Bài tập SGK: tính chiết suất của nước, biết tia sáng truyền từ không khí với góc tới i = 60° thì góc khúc xạ r = 40°.\n" +
+          "n = sin i / sin r = sin 60° / sin 40° ≈ 0,866 / 0,643 ≈ 1,35.",
       },
     ],
   },
@@ -241,14 +255,30 @@ export const LESSON_CONTENT: LessonContent[] = [
         body:
           "sin i_th = n₂ / n₁   (n₁ > n₂)\n\n" +
           "Ví dụ: từ nước (n = 1,33) ra không khí: sin i_th = 1/1,33 ≈ 0,75 → i_th ≈ 48,8°.\n" +
-          "Từ thuỷ tinh (n = 1,5) ra không khí: sin i_th = 1/1,5 ≈ 0,667 → i_th ≈ 41,8°.",
+          "Từ thuỷ tinh (n = 1,5) ra không khí: sin i_th = 1/1,5 ≈ 0,667 → i_th ≈ 41,8°.\n\n" +
+          "Giải thích: khi ánh sáng đi từ môi trường chiết suất lớn n₁ sang môi trường chiết suất nhỏ n₂ thì r > i. Tăng góc tới i thì góc khúc xạ r cũng tăng; khi r = 90° thì i đạt giá trị i_th. Khi i ≥ i_th không còn tia khúc xạ, toàn bộ tia sáng bị phản xạ ở mặt phân cách.",
       },
       {
         kind: "text",
         title: "3. Ứng dụng: sợi quang (cáp quang)",
         body:
           "Sợi quang gồm lõi có chiết suất lớn và vỏ có chiết suất nhỏ hơn. Ánh sáng đi vào lõi bị phản xạ toàn phần liên tiếp tại mặt tiếp giáp lõi – vỏ nên truyền đi rất xa mà ít bị mất mát.\n" +
-          "Ứng dụng: truyền tín hiệu Internet, điện thoại; nội soi trong y học.",
+          "Ứng dụng: truyền dữ liệu trong công nghệ thông tin; trong y học (SGK).",
+      },
+      {
+        kind: "text",
+        title: "4. Giải thích hiện tượng ảo ảnh",
+        body:
+          "Vào ngày nắng nóng, trên mặt đường nhựa ta có thể thấy như có lớp nước phản xạ ánh sáng (ảo ảnh).\n" +
+          "Lớp không khí càng gần mặt đường càng nóng nên chiết suất càng nhỏ. Tia sáng từ ngọn cây đi xuống bị khúc xạ liên tiếp qua các lớp không khí; khi góc tới ở lớp dưới đạt giá trị lớn hơn góc tới hạn thì tia sáng bị phản xạ toàn phần và hắt lên, đến mắt ta như phát ra từ phía dưới mặt đường – ta có cảm giác như có lớp nước phản xạ ánh sáng.",
+      },
+      {
+        kind: "example",
+        title: "Bài tập SGK",
+        body:
+          "Chiếu một tia sáng từ nước (n₁ = 4/3) tới mặt phân cách với không khí (n₂ = 1).\n" +
+          "a) Góc tới 30°: sin r = (4/3)·sin 30° = 2/3 → r ≈ 41,8°.\n" +
+          "b) Góc tới 60°: sin r = (4/3)·sin 60° ≈ 1,155 > 1 → không có tia khúc xạ, xảy ra phản xạ toàn phần.",
       },
     ],
   },
@@ -294,9 +324,10 @@ export const LESSON_CONTENT: LessonContent[] = [
         kind: "text",
         title: "4. Màu sắc của vật",
         body:
-          "Vật có màu nào thì tán xạ (hắt lại) mạnh ánh sáng màu đó và hấp thụ các ánh sáng màu khác.\n" +
-          "Vật màu trắng tán xạ tốt mọi ánh sáng màu; vật màu đen hấp thụ tất cả các ánh sáng màu, không có ánh sáng phản xạ – ta nhận ra vật màu đen vì nó được đặt bên cạnh những vật có màu khác.\n" +
-          "Ví dụ: lá cây dưới ánh sáng trắng có màu xanh lục vì lá tán xạ mạnh ánh sáng lục.",
+          "Màu sắc của một vật mà ta nhìn thấy phụ thuộc vào màu sắc của ánh sáng bị vật đó hấp thụ và phản xạ.\n" +
+          "Dưới ánh sáng trắng, vật có màu là do nó phản xạ ánh sáng màu đó vào mắt ta và hấp thụ những màu còn lại.\n" +
+          "Vật màu đen hấp thụ tất cả các ánh sáng màu và không có ánh sáng phản xạ – ta nhận ra vật màu đen vì nó được đặt bên cạnh những vật có màu sắc khác.\n" +
+          "Ví dụ: cánh hoa hướng dương màu vàng vì phản xạ ánh sáng vàng; lá màu xanh vì phản xạ ánh sáng lục.",
       },
     ],
   },
@@ -327,31 +358,32 @@ export const LESSON_CONTENT: LessonContent[] = [
         body:
           "• Trục chính: đường thẳng vuông góc với mặt thấu kính, đi qua quang tâm.\n" +
           "• Quang tâm O: điểm chính giữa thấu kính; tia sáng qua O truyền thẳng.\n" +
-          "• Tiêu điểm F, F': nằm trên trục chính, cách đều hai bên quang tâm.\n" +
-          "• Tiêu cự f = OF = OF'.",
+          "• Tiêu điểm chính F: chùm tia tới song song với trục chính cho chùm tia ló hội tụ tại một điểm F nằm trên trục chính (thấu kính hội tụ); hoặc đường kéo dài của chùm tia ló hội tụ tại một điểm F nằm trên trục chính (thấu kính phân kì).\n" +
+          "• Tiêu cự f = OF: khoảng cách từ quang tâm O đến tiêu điểm chính F.",
       },
       {
         kind: "text",
-        title: "3. Ba tia sáng đặc biệt (thấu kính hội tụ)",
+        title: "3. Hai tia sáng đặc biệt dùng để vẽ ảnh",
         body:
-          "• Tia tới qua quang tâm O → tia ló truyền thẳng.\n" +
-          "• Tia tới song song với trục chính → tia ló đi qua tiêu điểm F'.\n" +
-          "• Tia tới đi qua tiêu điểm F → tia ló song song với trục chính.\n" +
-          "Với thấu kính phân kì: tia tới song song với trục chính cho tia ló có đường kéo dài đi qua tiêu điểm F.",
+          "• Tia sáng tới quang tâm O thì đi thẳng.\n" +
+          "• Tia sáng tới song song với trục chính thì tia ló đi qua tiêu điểm chính F (thấu kính hội tụ), hoặc có đường kéo dài đi qua tiêu điểm chính F (thấu kính phân kì).\n" +
+          "Giao điểm S' của chùm tia ló (hoặc đường kéo dài) là ảnh của điểm sáng S. Quy tắc vẽ: ảnh thật vẽ bằng mũi tên nét liền, ảnh ảo vẽ bằng mũi tên nét đứt.\n" +
+          "Mở rộng: tia tới đi qua tiêu điểm vật thì tia ló song song với trục chính.",
       },
       {
         kind: "text",
         title: "4. Đặc điểm ảnh",
         body:
           "Thấu kính hội tụ:\n" +
-          "• Vật đặt ngoài khoảng tiêu cự (d > f): ảnh thật, ngược chiều với vật (d > 2f: ảnh nhỏ hơn vật; d = 2f: ảnh bằng vật; f < d < 2f: ảnh lớn hơn vật).\n" +
-          "• Vật đặt trong khoảng tiêu cự (d < f): ảnh ảo, cùng chiều, lớn hơn vật.\n" +
-          "• Vật đặt tại tiêu điểm: không cho ảnh (tia ló song song).\n" +
-          "Thấu kính phân kì: vật đặt ở mọi vị trí luôn cho ảnh ảo, cùng chiều, nhỏ hơn vật và nằm trong khoảng tiêu cự.",
+          "• Vật đặt ngoài khoảng tiêu cự (d > f): ảnh thật, ngược chiều với vật.\n" +
+          "• Vật đặt trong khoảng tiêu cự (d < f): ảnh ảo, lớn hơn vật và cùng chiều với vật.\n" +
+          "Thấu kính phân kì: vật đặt ở mọi vị trí luôn cho ảnh ảo, cùng chiều và nhỏ hơn vật.\n" +
+          "Ảnh thật hứng được trên màn chắn; ảnh ảo không hứng được trên màn chắn.\n" +
+          "Mở rộng: với thấu kính hội tụ, d > 2f thì ảnh nhỏ hơn vật; d = 2f thì ảnh bằng vật; f < d < 2f thì ảnh lớn hơn vật.",
       },
       {
         kind: "formula",
-        title: "Công thức liên hệ (rút ra từ tam giác đồng dạng)",
+        title: "Mở rộng (không bắt buộc trong SGK): công thức thấu kính",
         body:
           "Thấu kính hội tụ, ảnh thật:  1/f = 1/d + 1/d'      h'/h = d'/d\n\n" +
           "Trong đó: d – khoảng cách từ vật đến thấu kính; d' – khoảng cách từ ảnh đến thấu kính; h, h' – chiều cao vật, ảnh.",
@@ -381,6 +413,12 @@ export const LESSON_CONTENT: LessonContent[] = [
           "Khi đó khoảng cách giữa vật và màn ảnh là L = d + d' = 4f.",
       },
       { kind: "formula", title: "Công thức tính tiêu cự", body: "f = (d + d') / 4 = L / 4" },
+      {
+        kind: "text",
+        title: "Em có biết: phương pháp Bessel (hoán vị)",
+        body:
+          "Đặt vật và màn cố định, cách nhau khoảng L; dịch chuyển thấu kính để tìm hai vị trí cho ảnh rõ nét trên màn. Gọi l là khoảng cách giữa hai vị trí đó thì tiêu cự f = (L² − l²) / (4L).",
+      },
       {
         kind: "text",
         title: "3. Các bước tiến hành",
@@ -424,6 +462,7 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "Số bội giác",
         body:
           "G = 25 / f   (f tính bằng cm)\n\n" +
+          "Ngắm chừng ở vô cực: đặt vật tại tiêu điểm (d = f), ảnh ở xa vô cực; ngắm chừng ở cực cận: ảnh ở điểm cực cận của mắt.\n" +
           "Số bội giác là tỉ số giữa góc trông ảnh qua kính và góc trông vật (khi đặt vật ở điểm nhìn rõ gần mắt nhất, cách mắt khoảng 25 cm).\n" +
           "Số bội giác được ghi trên vành kính, ví dụ 2x, 3x, 5x. Kính có số bội giác càng lớn thì tiêu cự càng ngắn và cho ảnh quan sát càng lớn.",
       },
@@ -439,11 +478,11 @@ export const LESSON_CONTENT: LessonContent[] = [
       },
       {
         kind: "example",
-        title: "Ví dụ",
+        title: "Bài tập SGK (Hình 10.6)",
         body:
-          "Vật AB cao 2 cm đặt vuông góc trục chính của thấu kính hội tụ tiêu cự f = 10 cm, cách thấu kính d = 30 cm.\n" +
-          "Từ tam giác đồng dạng: 1/f = 1/d + 1/d' → 1/d' = 1/10 − 1/30 = 2/30 → d' = 15 cm.\n" +
-          "h' = h·d'/d = 2·15/30 = 1 cm. Ảnh thật, ngược chiều, nhỏ hơn vật.",
+          "Vật AB cao 2 cm đặt vuông góc với trục chính của thấu kính hội tụ, cách thấu kính khoảng 7,5 cm (A nằm trên trục chính); tiêu cự f = 5 cm. Vẽ ảnh theo tỉ lệ 1 cạnh ô vuông ứng với 1 cm.\n" +
+          "Cách vẽ: tia từ B tới quang tâm O đi thẳng; tia từ B song song trục chính cho tia ló qua tiêu điểm F; giao điểm hai tia ló là B', hạ B'A' vuông góc trục chính.\n" +
+          "Kết quả: ảnh thật, ngược chiều với vật, cách thấu kính d' = 15 cm và cao h' = 4 cm (kiểm tra bằng tam giác đồng dạng hoặc 1/f = 1/d + 1/d').",
       },
     ],
   },
@@ -467,7 +506,8 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "1. Điện trở",
         body:
           "Điện trở của dây dẫn biểu thị mức độ cản trở dòng điện nhiều hay ít của dây dẫn.\n" +
-          "Đơn vị: ôm (Ω); 1 kΩ = 1 000 Ω; 1 MΩ = 1 000 000 Ω.",
+          "Thương số U/I có giá trị không đổi với mỗi đoạn dây dẫn và đặc trưng cho sự cản trở dòng điện của đoạn dây đó, gọi là điện trở R = U/I.\n" +
+          "Đơn vị: ôm (Ω), 1 Ω = 1 V / 1 A; 1 mΩ = 0,001 Ω; 1 kΩ = 1 000 Ω; 1 MΩ = 1 000 000 Ω.",
       },
       {
         kind: "formula",
@@ -488,7 +528,7 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "Điện trở của dây dẫn",
         body:
           "R = ρ · l / S\n\nTrong đó: ρ – điện trở suất của vật liệu (Ω·m); l – chiều dài dây (m); S – tiết diện dây (m²).\n" +
-          "Điện trở dây tỉ lệ thuận với chiều dài, tỉ lệ nghịch với tiết diện và phụ thuộc vật liệu làm dây. Ví dụ ρ đồng ≈ 1,7·10⁻⁸ Ω·m, ρ nichrome ≈ 1,1·10⁻⁶ Ω·m.",
+          "Điện trở dây tỉ lệ thuận với chiều dài, tỉ lệ nghịch với tiết diện và phụ thuộc vật liệu làm dây. Điện trở suất (Bảng 11.3, ở 20 °C, đơn vị Ω·m): bạc 1,47·10⁻⁸; đồng 1,70·10⁻⁸; vàng 2,35·10⁻⁸; nhôm 2,80·10⁻⁸; tungsten 5,50·10⁻⁸; sắt 12,00·10⁻⁸; nikelin 40,00·10⁻⁸; manganin 43,00·10⁻⁸; constantan 50,00·10⁻⁸; nicrom 110,00·10⁻⁸.",
       },
       {
         kind: "example",
@@ -537,7 +577,8 @@ export const LESSON_CONTENT: LessonContent[] = [
         body:
           "R₁ = 6 Ω, R₂ = 3 Ω, U = 12 V.\n" +
           "• Nối tiếp: R_tđ = 9 Ω; I = 12/9 ≈ 1,33 A; U₁ = 8 V; U₂ = 4 V.\n" +
-          "• Song song: R_tđ = 6·3/(6+3) = 2 Ω; I = 6 A; I₁ = 2 A; I₂ = 4 A.",
+          "• Song song: R_tđ = 6·3/(6+3) = 2 Ω; I = 6 A; I₁ = 2 A; I₂ = 4 A.\n\n" +
+          "Bài tập SGK: hai điện trở 20 Ω và 40 Ω mắc song song vào hiệu điện thế 24 V: R_tđ = 20·40/(20+40) ≈ 13,3 Ω; I = 24/13,3 ≈ 1,8 A (I₁ = 1,2 A; I₂ = 0,6 A).",
       },
     ],
   },
@@ -559,7 +600,7 @@ export const LESSON_CONTENT: LessonContent[] = [
         kind: "text",
         title: "1. Năng lượng của dòng điện",
         body:
-          "Dòng điện có năng lượng vì nó có thể thực hiện công và cung cấp nhiệt lượng.\n" +
+          "Dòng điện có năng lượng, gọi là điện năng. Tác dụng nhiệt của dòng điện chứng tỏ điện năng chuyển hoá thành nhiệt năng; tác dụng phát sáng chứng tỏ điện năng chuyển hoá thành quang năng.\n" +
           "Ví dụ: quạt điện (điện năng → cơ năng), bàn là (→ nhiệt năng), đèn LED (→ quang năng), sạc pin (→ hoá năng).",
       },
       {
@@ -573,8 +614,10 @@ export const LESSON_CONTENT: LessonContent[] = [
         kind: "formula",
         title: "Công suất điện",
         body:
-          "P = U · I\n\nVới đoạn mạch chỉ có điện trở: P = I²·R = U²/R.\n" +
-          "Số oát ghi trên dụng cụ điện là công suất định mức – công suất khi dụng cụ hoạt động ở hiệu điện thế định mức.",
+          "P = U · I\n\nCông suất điện là năng lượng của dòng điện chạy qua một đoạn mạch trong một đơn vị thời gian.\n" +
+          "Công suất định mức của một thiết bị tiêu thụ điện là công suất mà thiết bị tiêu thụ khi hoạt động bình thường; số ghi trên thiết bị, ví dụ 220 V – 60 W nghĩa là để đèn sáng bình thường phải mắc vào hiệu điện thế 220 V, khi đó công suất của bóng đèn là 60 W.\n" +
+          "Công tơ điện đo năng lượng điện tiêu thụ; mỗi số đếm ứng với 1 kWh (1 kWh = 3,6·10⁶ J).\n" +
+          "Mở rộng: với đoạn mạch chỉ có điện trở, P = I²·R = U²/R.",
       },
       {
         kind: "example",
@@ -612,7 +655,8 @@ export const LESSON_CONTENT: LessonContent[] = [
         title: "2. Điều kiện xuất hiện dòng điện cảm ứng",
         body:
           "Trong cuộn dây dẫn kín xuất hiện dòng điện cảm ứng khi số đường sức từ xuyên qua tiết diện S của cuộn dây biến thiên (tăng hoặc giảm).\n" +
-          "Khi số đường sức từ tăng và khi giảm, dòng điện cảm ứng có chiều ngược nhau.",
+          "Trong các thí nghiệm, kim điện kế lệch sang phải hoặc sang trái: dòng điện cảm ứng khi số đường sức từ tăng và khi giảm có chiều ngược nhau.\n" +
+          "Các cách làm biến thiên số đường sức từ: đưa nam châm lại gần hoặc ra xa cuộn dây; đóng, mở công tắc của nam châm điện; quay nam châm trước cuộn dây; thay đổi tiết diện của cuộn dây.",
       },
       {
         kind: "text",
@@ -623,134 +667,188 @@ export const LESSON_CONTENT: LessonContent[] = [
       },
       {
         kind: "text",
-        title: "4. Máy phát điện xoay chiều",
+        title: "4. Mô hình máy phát điện xoay chiều",
         body:
-          "Gồm hai bộ phận chính: nam châm và cuộn dây. Bộ phận đứng yên gọi là stato, bộ phận quay gọi là rôto.\n" +
-          "Máy phát điện xoay chiều biến đổi cơ năng thành điện năng. Lưới điện ở Việt Nam có tần số 50 Hz (dòng điện đổi chiều 100 lần mỗi giây).",
+          "Mô hình máy phát điện xoay chiều (Hình 14.8, 14.9): khung dây quay trong từ trường đều của nam châm; hai đầu cuộn dây được nối với hai vành khuyên (vòng tròn bằng đồng), hai chổi quét tì vào hai vành khuyên rồi nối với mạch ngoài (đèn LED) tạo thành mạch kín.\n" +
+          "Quay chậm cuộn dây thì hai đèn LED sáng, tối luân phiên; số đường sức từ xuyên qua tiết diện cuộn dây biến thiên (tăng, giảm luân phiên) theo thời gian nên trong cuộn dây xuất hiện dòng điện xoay chiều.\n" +
+          "Dòng điện xoay chiều tần số 50 Hz dùng trong lưới điện và gia đình có cường độ tăng, giảm tuần tự và chiều luân phiên thay đổi; dòng điện đổi chiều 100 lần trong 1 giây.",
       },
     ],
   },
   {
     lessonNumber: 15,
-    summary: "Dòng điện xoay chiều có các tác dụng nhiệt, phát sáng, từ và sinh lí; đo bằng ampe kế, vôn kế xoay chiều.",
+    summary: "Dòng điện xoay chiều có các tác dụng nhiệt, phát sáng, từ và sinh lí; mỗi tác dụng có ứng dụng trong đời sống và y học.",
     objectives: [
-      "Nêu được các tác dụng của dòng điện xoay chiều và lấy ví dụ.",
-      "Nhận biết ampe kế, vôn kế xoay chiều và cách sử dụng.",
+      "Lấy ví dụ chứng tỏ dòng điện xoay chiều có tác dụng nhiệt, tác dụng phát sáng, tác dụng từ, tác dụng sinh lí.",
+      "Nêu được một số ứng dụng của các tác dụng của dòng điện xoay chiều (máy khử rung tim, nam châm điện…).",
       "Có ý thức an toàn khi sử dụng điện.",
     ],
-    requirements: ["Lấy ví dụ để chứng tỏ dòng điện xoay chiều có tác dụng: nhiệt, phát sáng, tác dụng từ, tác dụng sinh lí."],
+    requirements: ["Lấy được ví dụ chứng tỏ dòng điện xoay chiều có tác dụng nhiệt, phát sáng, tác dụng từ, tác dụng sinh lí."],
     knowledge: [
       {
         kind: "text",
-        title: "1. Các tác dụng của dòng điện xoay chiều",
+        title: "1. Tác dụng nhiệt",
         body:
-          "• Tác dụng nhiệt: bàn là, nồi cơm điện, ấm siêu tốc nóng lên khi có dòng điện chạy qua.\n" +
-          "• Tác dụng phát sáng (quang): bóng đèn sợi đốt, đèn LED, đèn huỳnh quang phát sáng.\n" +
-          "• Tác dụng từ: nam châm điện dùng dòng xoay chiều hút được sắt; lực từ đổi chiều khi dòng điện đổi chiều (kim nam châm đặt gần dây dẫn sẽ dao động, rung, không quay hẳn về một phía).\n" +
-          "• Tác dụng sinh lí: dòng điện xoay chiều qua cơ thể người gây co giật cơ, có thể gây nguy hiểm đến tính mạng.",
+          "Dòng điện xoay chiều chạy qua vật dẫn làm vật nóng lên, chứng tỏ dòng điện xoay chiều có tác dụng nhiệt.\n" +
+          "Ví dụ: máy sấy tóc (hơi nóng thổi ra từ đầu sấy cho thấy năng lượng điện được chuyển hoá thành nhiệt năng), bình nước nóng, ấm đun nước, bàn là, bếp từ.",
       },
       {
         kind: "text",
-        title: "2. Đo cường độ dòng điện và hiệu điện thế xoay chiều",
+        title: "2. Tác dụng phát sáng",
         body:
-          "Dùng ampe kế và vôn kế xoay chiều (có kí hiệu AC hoặc dấu ~). Giá trị đo được là giá trị hiệu dụng; khi mắc vào mạch không cần phân biệt chốt (+) và (−).\n" +
-          "Hiệu điện thế hiệu dụng của mạng điện gia đình ở Việt Nam là 220 V.",
+          "Dòng điện xoay chiều chạy qua đèn sợi đốt làm đèn phát sáng chứng tỏ dòng điện xoay chiều có tác dụng phát sáng.\n" +
+          "Ví dụ: đèn huỳnh quang (đèn ống) khi có dòng điện xoay chiều chạy qua; đèn sợi đốt.",
       },
       {
         kind: "text",
-        title: "3. An toàn điện",
+        title: "3. Tác dụng từ",
         body:
-          "Không chạm vào dây điện trần, ổ cắm khi tay ướt; dùng thiết bị có vỏ cách điện, nối đất; lắp cầu dao chống giật (aptomat chống dòng rò).",
+          "Dòng điện xoay chiều chạy trong dây dẫn thẳng hay trong cuộn dây dẫn sinh ra từ trường, chứng tỏ dòng điện xoay chiều có tác dụng từ.\n" +
+          "Thí nghiệm (Hình 15.4): đóng công tắc K để dòng điện xoay chiều chạy qua cuộn dây thì đinh sắt bị hút lên. Nếu thay dòng điện xoay chiều bằng dòng điện một chiều thì đinh sắt cũng bị hút – tác dụng từ có ở cả hai loại dòng điện.\n" +
+          "Ứng dụng: nam châm điện xoay chiều có từ trường mạnh để di chuyển bột sắt; tạo nam châm điện, rơ le điện từ, động cơ điện, máy chụp cộng hưởng từ trong y học, tàu đệm từ…",
+      },
+      {
+        kind: "text",
+        title: "4. Tác dụng sinh lí",
+        body:
+          "Nếu cho dòng điện xoay chiều đi qua cơ thể thì dòng điện sẽ làm các cơ co giật, có thể làm tim ngừng đập, ngạt thở, thần kinh bị tê liệt – chứng tỏ dòng điện xoay chiều có tác dụng sinh lí.\n" +
+          "Trong y học, người ta ứng dụng tác dụng sinh lí của dòng điện xoay chiều thích hợp để điều trị một số bệnh. Máy khử rung tim là một trong số các thiết bị ứng dụng tác dụng sinh lí của dòng điện xoay chiều.\n" +
+          "Lưu ý: dòng điện xoay chiều có thể gây nguy hiểm tới tính mạng con người. Cần thận trọng khi sử dụng dòng điện xoay chiều ở gia đình và không được lại gần các trạm biến thế điện.",
+      },
+      {
+        kind: "text",
+        title: "Mở rộng: an toàn điện và đo dòng điện xoay chiều",
+        body:
+          "Không chạm vào dây điện trần, ổ cắm khi tay ướt; dùng thiết bị có vỏ cách điện, nối đất; lắp cầu dao chống giật.\n" +
+          "Dòng điện xoay chiều được đo bằng ampe kế, vôn kế xoay chiều (kí hiệu AC hoặc dấu ~); hiệu điện thế hiệu dụng của mạng điện gia đình là 220 V.",
       },
     ],
   },
   // ------------------------------------------------------------------ CHƯƠNG V
   {
     lessonNumber: 16,
-    summary: "Năng lượng trên Trái Đất chủ yếu có nguồn gốc từ Mặt Trời; năng lượng hoá thạch có hạn và gây ô nhiễm môi trường.",
+    summary: "Năng lượng trên Trái Đất có nguồn gốc từ Mặt Trời; năng lượng hoá thạch có ưu điểm nhưng cạn kiệt dần và gây ô nhiễm môi trường.",
     objectives: [
-      "Mô tả sơ lược vòng năng lượng trên Trái Đất.",
-      "Nêu được nguồn gốc, ưu điểm, nhược điểm của năng lượng hoá thạch.",
-      "Đề xuất biện pháp sử dụng năng lượng tiết kiệm, hiệu quả.",
+      "Dựa vào sơ đồ (hoặc hình ảnh) mô tả được vòng năng lượng trên Trái Đất, rút ra được: năng lượng của Trái Đất đến từ Mặt Trời.",
+      "Nêu được ưu điểm và nhược điểm của năng lượng hoá thạch.",
+      "Lấy được ví dụ chứng tỏ việc đốt cháy các nhiên liệu hoá thạch có thể gây ô nhiễm môi trường.",
+      "Thảo luận để chỉ ra được giá nhiên liệu phụ thuộc chi phí khai thác nó.",
     ],
     requirements: [
       "Dựa vào sơ đồ (hoặc hình ảnh) mô tả được sơ lược vòng năng lượng trên Trái Đất.",
-      "Nêu được sơ lược về nhiên liệu hoá thạch; lấy ví dụ chứng tỏ việc khai thác, sử dụng nhiên liệu hoá thạch có thể gây ô nhiễm môi trường.",
+      "Nêu được sơ lược về năng lượng hoá thạch; lấy ví dụ chứng tỏ việc đốt cháy nhiên liệu hoá thạch có thể gây ô nhiễm môi trường.",
     ],
     knowledge: [
       {
         kind: "text",
-        title: "1. Vòng năng lượng trên Trái Đất",
+        title: "1. Vòng năng lượng giữa các vật sống (Hình 16.1)",
         body:
-          "Mặt Trời là nguồn năng lượng chủ yếu của Trái Đất. Năng lượng Mặt Trời:\n" +
-          "• làm nóng mặt đất, nước bay hơi tạo thành mây, mưa → năng lượng của dòng nước (thuỷ năng);\n" +
-          "• làm không khí nóng không đều → gió (phong năng);\n" +
-          "• được thực vật hấp thụ qua quang hợp → năng lượng hoá học trong sinh vật; xác sinh vật bị chôn vùi hàng triệu năm → nhiên liệu hoá thạch.\n" +
-          "Năng lượng luôn được chuyển hoá từ dạng này sang dạng khác và cuối cùng phần lớn trở thành nhiệt toả ra môi trường.",
+          "Quá trình trao đổi chất và chuyển hoá năng lượng giữa các vật sống tạo thành một vòng năng lượng trên Trái Đất.\n" +
+          "Thực vật hấp thụ năng lượng mặt trời (quang hợp) để chuyển khí CO₂ và nước thành các phân tử đường, lưu trữ năng lượng hoá học trong lục lạp. Các phân tử đường cung cấp năng lượng cho động vật khi chúng ăn thực vật. Quá trình hô hấp giải phóng năng lượng, chuyển phân tử đường (hữu cơ) thành vật liệu vô cơ là khí CO₂, hơi nước và ATP.",
       },
       {
         kind: "text",
-        title: "2. Năng lượng hoá thạch",
+        title: "2. Vòng năng lượng theo vòng tuần hoàn của nước (Hình 16.2)",
         body:
-          "Nhiên liệu hoá thạch gồm than đá, dầu mỏ, khí tự nhiên – hình thành từ xác sinh vật qua hàng triệu năm.\n" +
-          "Ưu điểm: dễ khai thác, sử dụng; năng suất toả nhiệt cao; công nghệ phổ biến.\n" +
-          "Nhược điểm: không tái tạo được, đang cạn kiệt; khi đốt cháy sinh ra CO₂ (khí nhà kính), SO₂, bụi mịn… gây ô nhiễm môi trường, biến đổi khí hậu, mưa axit.",
+          "Năng lượng mặt trời chiếu xuống mặt đất và biển làm nóng nước và khí quyển; sự nóng lên không đều tạo ra chênh lệch nhiệt độ giữa các vùng trên Trái Đất, gây ra sự chuyển động của không khí và các dòng hải lưu (dòng biển) trong đại dương, tạo ra gió và các hiện tượng thời tiết.\n" +
+          "Nước bốc hơi, ngưng tụ thành mây, mưa, tuyết rồi chảy về sông, biển. Năng lượng từ gió, năng lượng từ dòng chảy, năng lượng từ sóng biển, từ dòng biển trên Trái Đất đều đến từ Mặt Trời.",
+      },
+      {
+        kind: "text",
+        title: "3. Năng lượng hoá thạch (Hình 16.3)",
+        body:
+          "Năng lượng hoá thạch được tạo ra từ các nhiên liệu hoá thạch, bao gồm than mỏ, dầu mỏ, khí mỏ dầu và khí thiên nhiên. Nguồn năng lượng này được hình thành từ việc phân huỷ xác các vật sống qua hàng triệu năm, nên năng lượng hoá thạch cũng có nguồn gốc từ Mặt Trời.\n" +
+          "Dầu mỏ hình thành từ xác động vật, thực vật bị trầm tích, vùi lấp dưới áp suất và nhiệt độ cao qua hàng triệu năm; vì tốc độ tạo ra quá chậm nên dầu mỏ không bổ sung kịp và sẽ dần cạn kiệt.",
+      },
+      {
+        kind: "text",
+        title: "4. Ưu điểm và nhược điểm của năng lượng hoá thạch",
+        body:
+          "Ưu điểm: có nguồn sẵn có, dễ khai thác, chế biến, vận chuyển, dễ tích trữ với khối lượng lớn; công nghệ khai thác và chuyển hoá phổ biến, chi phí rẻ.\n" +
+          "Nhược điểm: Trái Đất mất hàng triệu năm để tạo ra nhiên liệu hoá thạch trong khi con người tiêu thụ quá nhanh nên nguồn nhiên liệu ngày càng cạn kiệt; khai thác, xử lí, phân phối gây nhiều mối đe doạ cho môi trường; đốt cháy tạo ra chất thải rắn, phát thải các khí CO₂, CO, NO₂, NO, SO₂… gây ô nhiễm môi trường và hiệu ứng nhà kính, dẫn tới biến đổi khí hậu (băng tan, nước biển dâng, hạn hán, lũ lụt…).",
+      },
+      {
+        kind: "text",
+        title: "5. Các yếu tố ảnh hưởng đến giá nhiên liệu hoá thạch",
+        body:
+          "Giá nhiên liệu hoá thạch phụ thuộc vào chi phí khai thác và nhiều yếu tố khác như nhu cầu sử dụng, cung cầu trên thị trường, tình hình kinh tế toàn cầu, chính sách của các quốc gia có trữ lượng nhiên liệu lớn…\n" +
+          "Chi phí khai thác gồm chi phí thăm dò, chi phí khoan khai thác, chi phí vận chuyển, chi phí tích trữ lưu kho và chi phí xử lí các vấn đề môi trường liên quan. Chi phí này ngày càng tăng vì các mỏ dầu, khí thiên nhiên, than… dễ khai thác trên đất liền hoặc lộ thiên dần cạn kiệt nên phải thăm dò và khai thác các mỏ mới ở vùng biển sâu, ở địa dương hoặc vùng hẻo lánh.\n" +
+          "Ví dụ (Hình 16.4): chi phí khai thác chiếm tỉ lệ lớn trong giá thành bán xăng ra thị trường, có thể đến 50% giá bán.",
       },
       {
         kind: "formula",
-        title: "Nhiệt lượng toả ra khi đốt nhiên liệu",
+        title: "Mở rộng: nhiệt lượng toả ra khi đốt nhiên liệu",
         body:
           "Q = q · m\n\nTrong đó: Q – nhiệt lượng toả ra (J); q – năng suất toả nhiệt của nhiên liệu (J/kg); m – khối lượng nhiên liệu bị đốt cháy hoàn toàn (kg).\n" +
-          "Năng suất toả nhiệt (giá trị tham khảo): than đá ≈ 27·10⁶ J/kg; dầu hoả ≈ 44·10⁶ J/kg; khí đốt ≈ 44·10⁶ J/kg.",
-      },
-      {
-        kind: "text",
-        title: "3. Sử dụng năng lượng tiết kiệm",
-        body: "Tắt thiết bị khi không dùng; dùng đèn LED, thiết bị có nhãn năng lượng; đi xe đạp, phương tiện công cộng; tăng cường sử dụng năng lượng tái tạo.",
+          "Giá trị tham khảo (không có trong SGK): than đá ≈ 27·10⁶ J/kg; dầu hoả ≈ 44·10⁶ J/kg; khí đốt ≈ 44·10⁶ J/kg. Thí nghiệm ảo của bài dùng công thức này để minh hoạ.",
       },
     ],
   },
   {
     lessonNumber: 17,
-    summary: "Năng lượng tái tạo được bổ sung liên tục từ tự nhiên: Mặt Trời, gió, nước, sóng, địa nhiệt, sinh khối.",
+    summary: "Năng lượng tái tạo được bổ sung liên tục từ tự nhiên: năng lượng Mặt Trời, gió, sóng biển, dòng sông…; mỗi dạng có ưu, nhược điểm riêng.",
     objectives: [
-      "Kể tên và nêu được ưu, nhược điểm của một số dạng năng lượng tái tạo.",
-      "Giải thích được vai trò của năng lượng tái tạo đối với phát triển bền vững.",
-      "Tính được công suất của một số hệ thống năng lượng tái tạo đơn giản.",
+      "Nêu được sơ lược ưu điểm và nhược điểm của một số dạng năng lượng tái tạo (năng lượng mặt trời, năng lượng từ gió, năng lượng từ sóng biển, năng lượng từ dòng sông).",
+      "Thảo luận để nêu được một số biện pháp sử dụng hiệu quả năng lượng và bảo vệ môi trường.",
     ],
     requirements: [
-      "Lấy được ví dụ về một số dạng năng lượng tái tạo và cách khai thác chúng (năng lượng Mặt Trời, gió, sóng biển, thuỷ điện, địa nhiệt…).",
-      "Nêu được ưu điểm, nhược điểm của năng lượng tái tạo.",
+      "Nêu được sơ lược ưu điểm, nhược điểm của một số dạng năng lượng tái tạo.",
+      "Thảo luận để nêu được một số biện pháp sử dụng hiệu quả năng lượng và bảo vệ môi trường.",
     ],
     knowledge: [
       {
         kind: "text",
         title: "1. Năng lượng tái tạo",
         body:
-          "Năng lượng tái tạo là năng lượng từ những nguồn liên tục được bổ sung trong tự nhiên, gần như không cạn kiệt: năng lượng Mặt Trời, gió, nước (thuỷ điện), sóng biển, thuỷ triều, địa nhiệt, sinh khối.",
+          "Năng lượng tái tạo là năng lượng đến từ các nguồn năng lượng có sẵn trong thiên nhiên, liên tục được bổ sung thông qua các quá trình tự nhiên.\n" +
+          "Năng lượng tái tạo bao gồm: năng lượng mặt trời, năng lượng từ gió, năng lượng từ sóng biển, năng lượng từ dòng sông, năng lượng sinh khối, năng lượng địa nhiệt…\n" +
+          "Vì sao cần tăng cường sử dụng năng lượng tái tạo? – Vì nguồn năng lượng hoá thạch ngày càng cạn kiệt và gây ô nhiễm môi trường.",
       },
       {
         kind: "text",
-        title: "2. Một số dạng năng lượng tái tạo",
+        title: "2. Năng lượng mặt trời",
         body:
-          "• Năng lượng Mặt Trời: pin quang điện biến quang năng thành điện năng; bình nước nóng năng lượng Mặt Trời.\n" +
-          "• Năng lượng gió: tua-bin gió biến động năng của gió thành điện năng.\n" +
-          "• Thuỷ điện: nước từ hồ chứa trên cao chảy xuống làm quay tua-bin (thế năng → động năng → điện năng).\n" +
-          "• Sóng biển, thuỷ triều; địa nhiệt (nhiệt trong lòng đất); sinh khối (gỗ, phụ phẩm nông nghiệp, khí sinh học).",
+          "Ưu điểm: luôn có sẵn trong thiên nhiên, khó có khả năng bị cạn kiệt trong tương lai gần; khi sử dụng không gây ra tiếng ồn, không phát thải các chất gây ô nhiễm không khí hay khí gây hiệu ứng nhà kính. Được khai thác trực tiếp như chiếu sáng, làm khô quần áo, sấy nông sản, làm muối; chuyển hoá thành điện năng nhờ pin mặt trời hoặc khai thác gián tiếp qua thiết bị thu nhiệt để làm nóng nước, chạy nhà máy nhiệt điện.\n" +
+          "Nhược điểm: giá thành sản xuất tấm pin mặt trời còn cao, hệ thống hấp thụ nhiệt mặt trời có hiệu suất chuyển hoá thấp; pin hết hạn sử dụng (trung bình 25 năm) tạo ra rác thải; lắp đặt quá nhiều tấm pin có thể gây ô nhiễm ánh sáng, chiếm diện tích lớn và ảnh hưởng tới hệ sinh thái.\n" +
+          "Việt Nam có tiềm năng năng lượng mặt trời lớn, nhất là ở Tây Nguyên và Nam bộ (Đắk Lắk, Gia Lai, Nha Trang, Ninh Thuận, Bình Thuận, Tây Ninh, Bình Phước).",
       },
       {
         kind: "text",
-        title: "3. Ưu điểm và nhược điểm",
+        title: "3. Năng lượng từ gió",
         body:
-          "Ưu điểm: nguồn gần như vô tận; ít phát thải khí nhà kính, ít ô nhiễm; góp phần bảo đảm an ninh năng lượng.\n" +
-          "Nhược điểm: phụ thuộc thời tiết, địa hình (không có nắng, gió liên tục); chi phí đầu tư ban đầu cao; cần diện tích lớn; thuỷ điện có thể ảnh hưởng đến hệ sinh thái.",
+          "Ưu điểm: luôn có sẵn trong thiên nhiên; do không phát thải các chất gây ô nhiễm không khí hay khí gây hiệu ứng nhà kính nên khai thác năng lượng từ gió là một trong những giải pháp quan trọng nhằm giảm biến đổi khí hậu toàn cầu. Gió ngoài khơi mạnh và ổn định hơn nên tua-bin gió ngoài khơi là nguồn năng lượng có triển vọng lớn (Hình 17.3).\n" +
+          "Nhược điểm: hiệu suất chuyển đổi năng lượng thấp, giá thành đầu tư ban đầu cao; các nhà máy điện gió phát ra tiếng ồn gây ảnh hưởng đến môi trường sống của sinh vật, ảnh hưởng đến vùng hoạt động của các loài chim (đặc biệt là chim di cư) và dơi.",
+      },
+      {
+        kind: "text",
+        title: "4. Năng lượng từ sóng biển (Hình 17.4)",
+        body:
+          "Sóng biển được hình thành chủ yếu do tác động của gió. Năng lượng từ sóng biển là năng lượng có nguồn gốc từ dao động của các con sóng; được khai thác bằng các công nghệ hiện đại (Attenuator, Point Absorber, Oscillating water surge…) và chuyển hoá thành điện năng.\n" +
+          "Ưu điểm: nguồn năng lượng luôn có sẵn trong tự nhiên, không tạo chất thải.\n" +
+          "Nhược điểm: cần nhiều máy phát điện đặt trong không gian rộng, gây ảnh hưởng đến giao thông đường biển và hệ sinh thái; đòi hỏi giá thành đầu tư ban đầu cao và phụ thuộc rất lớn vào các mùa trong năm, chịu ảnh hưởng của thiên tai.",
+      },
+      {
+        kind: "text",
+        title: "5. Năng lượng từ dòng sông (thuỷ điện – Hình 17.5)",
+        body:
+          "Năng lượng từ dòng sông là năng lượng lấy từ sức chảy của dòng nước, tác động tiêu cực đến môi trường so với năng lượng hoá thạch ít hơn. Người ta xây dựng các nhà máy thuỷ điện (đập, hồ chứa nước) để chuyển hoá năng lượng này thành điện năng, làm quay tua-bin của máy phát điện.\n" +
+          "Nhược điểm: sử dụng đập để tích trữ nước cho thuỷ điện có nguy cơ ảnh hưởng đến môi trường; vỡ đập thuỷ điện gây thiệt hại lớn; động vật không di chuyển được từ hạ nguồn lên thượng nguồn; nước ngập ở thượng nguồn và cạn ở hạ nguồn làm thay đổi môi trường sống của sinh vật; diện tích rừng thay đổi khi xây dựng nhà máy thuỷ điện, có thể phải di dời dân cư.",
+      },
+      {
+        kind: "text",
+        title: "6. Một số biện pháp sử dụng hiệu quả năng lượng và bảo vệ môi trường",
+        body:
+          "Sử dụng hiệu quả năng lượng là việc dùng ít năng lượng hơn để thực hiện cùng một công việc hoặc cùng một chức năng của thiết bị, máy móc (ví dụ: dùng đèn LED thay thế đèn huỳnh quang hoặc đèn sợi đốt).\n" +
+          "Bảo vệ môi trường là hoạt động phòng ngừa, hạn chế tác động xấu đến môi trường; ứng phó sự cố môi trường; khắc phục ô nhiễm, suy thoái môi trường, cải thiện chất lượng môi trường; sử dụng hợp lí tài nguyên thiên nhiên…\n" +
+          "Ví dụ: sử dụng năng lượng tái tạo để chuyển hoá thành điện năng; sử dụng thiết bị tiết kiệm điện (đèn LED, tủ lạnh, điều hoà, bình nóng lạnh… có tính năng tiết kiệm năng lượng); tăng cường sử dụng, cải tiến máy móc tại các công ty, nhà máy, xí nghiệp; sử dụng phương tiện giao thông công cộng thay cho phương tiện cá nhân; tắt các thiết bị điện (ti vi, đèn điện…) khi không sử dụng; tạo ý thức tiết kiệm năng lượng và bảo vệ môi trường.",
       },
       {
         kind: "formula",
-        title: "Một số công thức tham khảo",
+        title: "Mở rộng: một số công thức tham khảo (không có trong SGK)",
         body:
           "• Pin Mặt Trời: P = H · S · η   (H – cường độ bức xạ, W/m²; S – diện tích tấm pin, m²; η – hiệu suất).\n" +
-          "• Thuỷ điện: P = η · 10 · m · h / t   (công của trọng lực khi khối nước m rơi độ cao h trong thời gian t).",
+          "• Thuỷ điện: P = η · 10 · m · h / t   (công của trọng lực khi khối nước m rơi độ cao h trong thời gian t).\n" +
+          "Thí nghiệm ảo của bài dùng các công thức này để minh hoạ.",
       },
     ],
   },
