@@ -99,6 +99,27 @@ export default async function Page({ params, searchParams }: PageProps<"/teacher
         </Card>
       </div>
 
+      {(r.weakLessons.length > 0 || r.hardQuestions.length > 0) && (
+        <div className="mb-6 grid gap-4 lg:grid-cols-2">
+          <Card className="gap-3">
+            <CardHeader><CardTitle className="text-base">Bài học nên ôn lại</CardTitle><CardDescription>Tỉ lệ đúng thấp nhất trong kỳ (từ 3 ý trả lời trở lên)</CardDescription></CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {r.weakLessons.map((l) => (
+                <div key={l.label} className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm"><span>{l.label}</span><b className={l.rate < 50 ? "text-red-600" : "text-amber-600"}>{l.rate}%</b></div>
+              ))}
+            </CardContent>
+          </Card>
+          <Card className="gap-3">
+            <CardHeader><CardTitle className="text-base">Câu hỏi cả lớp sai nhiều</CardTitle><CardDescription>Nên giảng lại hoặc xem lại câu hỏi (có thể câu quá khó hoặc diễn đạt chưa rõ)</CardDescription></CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {r.hardQuestions.map((q) => (
+                <div key={q.id} className="rounded-lg border px-3 py-2 text-sm"><div className="mb-0.5 flex items-center justify-between gap-2 text-xs text-muted-foreground"><span>{q.lesson} · {q.n} lượt</span><b className="text-red-600">đúng {q.rate}%</b></div><p className="line-clamp-2">{q.content}</p></div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {flagged.length > 0 && (
         <Card className="mb-6 gap-3 border-amber-300 bg-amber-50/50">
           <CardHeader><CardTitle className="flex items-center gap-2 text-base"><AlertTriangle className="size-4 text-amber-600" /> Học sinh cần chú ý ({flagged.length})</CardTitle><CardDescription>Gợi ý từ số liệu trong kỳ để giáo viên cân nhắc – không phải đánh giá về học sinh.</CardDescription></CardHeader>

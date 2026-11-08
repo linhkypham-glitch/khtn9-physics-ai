@@ -99,7 +99,25 @@ export async function getClassPeriodReport(classId: string, key: ReportPeriodKey
   const meta = await loadQuestionMeta(details.map((d) => d.q));
   const groups = aggregateDetails(details, meta);
 
+  // câu hỏi sai nhiều nhất trong kỳ (ít nhất 3 lượt trả lời)
+  const perQ = new Map<string, { earned: number; max: number; n: number }>();
+  for (const d of details) {
+    const g = perQ.get(d.q) ?? { earned: 0, max: 0, n: 0 };
+    g.earned += d.e;
+    g.max += d.m;
+    g.n++;
+    perQ.set(d.q, g);
+  }
+  const hardQuestions = [...perQ.entries()]
+    .filter(([, g]) => g.n >= 3 && g.max > 0)
+    .map(([id, g]) => ({ id, rate: Math.round((g.earned / g.max) * 100), n: g.n, content: meta.get(id)?.content ?? "", lesson: meta.get(id) ? `Bài ${meta.get(id)!.lessonNumber}` : "" }))
+    .sort((a, b) => a.rate - b.rate)
+    .slice(0, 5);
+  const weakLessons = groups.byLesson.filter((l) => l.total >= 3).map((l) => ({ ...l, rate: Math.round((l.correct / l.total) * 100) })).sort((a, b) => a.rate - b.rate).slice(0, 5);
+
   return {
+    hardQuestions,
+    weakLessons,
     classId,
     className: cls.name,
     periodLabel: period?.label ?? "Cả năm học",

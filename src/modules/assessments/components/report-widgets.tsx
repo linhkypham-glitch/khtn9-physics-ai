@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Bot, Loader2, MessageSquarePlus, Sparkles, Trash2 } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -113,5 +113,24 @@ export function DeleteCommentButton({ commentId, studentId }: { commentId: strin
     <Button size="icon" variant="ghost" className="size-7 text-muted-foreground hover:text-destructive" aria-label="Xoá nhận xét" disabled={pending} onClick={() => window.confirm("Xoá nhận xét này?") && start(async () => { const r = await deleteCommentAction(commentId, studentId); if (!r.ok) window.alert(r.message); })}>
       {pending ? <Loader2 className="animate-spin" /> : <Trash2 />}
     </Button>
+  );
+}
+
+/** Điểm các bài kiểm tra của một học sinh theo thời gian (đường nối + mốc 5 điểm). */
+export function ScoreTrendChart({ points }: { points: { label: string; title: string; score: number }[] }) {
+  if (points.length < 2) return <p className="text-sm text-muted-foreground">Cần ít nhất 2 bài kiểm tra để vẽ biểu đồ tiến bộ.</p>;
+  return (
+    <div className="h-56" role="img" aria-label="Điểm các bài kiểm tra theo thời gian">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={points} margin={{ top: 8, right: 16, bottom: 0, left: -20 }}>
+          <CartesianGrid vertical={false} stroke="#f0e4d8" />
+          <XAxis dataKey="label" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis domain={[0, 10]} ticks={[0, 2.5, 5, 7.5, 10]} tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+          <ReferenceLine y={5} stroke="#94a3b8" strokeDasharray="4 4" />
+          <Tooltip formatter={(v) => [`${v} điểm`, "Điểm"]} labelFormatter={(_l, p) => (p?.[0]?.payload as { title: string } | undefined)?.title ?? ""} />
+          <Line type="monotone" dataKey="score" stroke="#ea580c" strokeWidth={3} dot={{ r: 4, fill: "#ea580c" }} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireRole } from "@/lib/auth/session";
-import { AccuracyBars, CommentForm, DeleteCommentButton } from "@/modules/assessments/components/report-widgets";
+import { AccuracyBars, CommentForm, DeleteCommentButton, ScoreTrendChart } from "@/modules/assessments/components/report-widgets";
 import { getStudentReport, ReportError } from "@/modules/assessments/reports";
 import { getAiConfigStatus } from "@/lib/ai/config";
 
@@ -49,6 +49,11 @@ export default async function Page({ params }: PageProps<"/teacher/students/[id]
         <Card className="gap-2"><CardHeader><CardTitle className="text-base">Tỉ lệ đúng theo chương</CardTitle><CardDescription>Tổng hợp từ bài kiểm tra và tự đánh giá</CardDescription></CardHeader><CardContent><AccuracyBars items={r.groups.byChapter} /></CardContent></Card>
         <Card className="gap-2"><CardHeader><CardTitle className="text-base">Theo mức độ và dạng câu hỏi</CardTitle></CardHeader><CardContent className="flex flex-col gap-4"><AccuracyBars items={r.groups.byLevel} /><AccuracyBars items={r.groups.byType} /></CardContent></Card>
       </div>
+
+      <Card className="mb-6 gap-2">
+        <CardHeader><CardTitle className="text-base">Tiến bộ qua các bài kiểm tra</CardTitle><CardDescription>Điểm theo thứ tự thời gian nộp bài; đường nét đứt là mốc 5 điểm.</CardDescription></CardHeader>
+        <CardContent><ScoreTrendChart points={r.assessments.map((a) => ({ label: new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit" }).format(new Date(a.submittedAt)), title: a.title, score: a.score }))} /></CardContent>
+      </Card>
 
       <div className="mb-6 grid gap-4 lg:grid-cols-5">
         <Card className="gap-3 lg:col-span-3">
