@@ -72,6 +72,7 @@ export default async function Page({ params }: PageProps<"/teacher/classes/[id]"
             <div className="flex flex-col gap-4">
               <SelfJoinToggle classId={id} allow={info?.allow_self_join ?? true} />
               <ClassLeaderboardToggle classId={id} show={info?.show_leaderboard ?? false} />
+              <Link href={`/teacher/classes/${id}/bao-cao`} className="text-sm font-semibold text-primary hover:underline">Báo cáo lớp theo tuần / tháng / học kì →</Link>
               <Link href={`/teacher/leaderboard?lop=${id}`} className="text-sm font-semibold text-primary hover:underline">Xem bảng xếp hạng lớp →</Link>
             </div>
           </CardContent>

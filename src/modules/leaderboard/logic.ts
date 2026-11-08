@@ -44,3 +44,17 @@ export function monthPeriod(now: Date, ym?: string): Period {
   const to = new Date(new Date(`${next}-01T00:00:00+07:00`).getTime() - 1000);
   return { key: `${y}-${String(m).padStart(2, "0")}`, label: `Tháng ${m}/${y}`, from, to };
 }
+
+/** Tuần (thứ Hai – Chủ nhật, múi giờ Việt Nam) chứa `now`; `offset` = số tuần lùi lại (0 = tuần này). */
+export function weekPeriod(now: Date, offset = 0): Period {
+  const vn = new Date(now.getTime() + 7 * 3600_000); // dùng getUTC* như giờ VN
+  const dow = (vn.getUTCDay() + 6) % 7; // 0 = thứ Hai
+  const day0 = Date.UTC(vn.getUTCFullYear(), vn.getUTCMonth(), vn.getUTCDate()) - dow * 86400_000 - offset * 7 * 86400_000;
+  const from = new Date(day0 - 7 * 3600_000);
+  const to = new Date(from.getTime() + 7 * 86400_000 - 1000);
+  const d = (t: Date) => {
+    const v = new Date(t.getTime() + 7 * 3600_000);
+    return `${String(v.getUTCDate()).padStart(2, "0")}/${String(v.getUTCMonth() + 1).padStart(2, "0")}`;
+  };
+  return { key: "week", label: `Tuần ${d(from)} – ${d(to)}`, from, to };
+}

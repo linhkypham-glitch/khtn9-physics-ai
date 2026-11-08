@@ -1,5 +1,7 @@
 import ExcelJS from "exceljs";
 
+import type { ClassPeriodReport } from "@/modules/assessments/class-report";
+import { SUPPORT_LABEL } from "@/modules/assessments/class-report-logic";
 import type { AssignmentReport, StudentReport } from "@/modules/assessments/reports";
 
 const STATUS: Record<string, string> = { submitted: "Đã nộp", in_progress: "Đang làm", not_started: "Chưa làm" };
@@ -194,5 +196,70 @@ export async function buildStudentWorkbook(r: StudentReport): Promise<Buffer> {
   cm.columns = [{ header: "Ngày", key: "d", width: 22 }, { header: "Giáo viên", key: "t", width: 24 }, { header: "Nhận xét", key: "c", width: 90 }];
   r.comments.forEach((c) => cm.addRow({ d: dt(c.createdAt), t: c.teacherName, c: c.content }));
   styleSheet(cm);
+  return Buffer.from(await wb.xlsx.writeBuffer());
+}
+
+/** Báo cáo lớp theo kỳ: TONG_QUAN, HOC_SINH, BAI_KIEM_TRA, THEO_CHUONG. */
+export async function buildClassPeriodWorkbook(r: ClassPeriodReport): Promise<Buffer> {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "KHTN 9";
+
+  const s0 = wb.addWorksheet("TONG_QUAN");
+  s0.columns = [{ header: "Chỉ số", key: "k", width: 36 }, { header: "Giá trị", key: "v", width: 30 }];
+  [
+    ["Lớp", r.className],
+    ["Năm học", r.academicYear],
+    ["Kỳ báo cáo", r.periodLabel],
+    ["Sĩ số", r.summary.students],
+    ["Số học sinh có hoạt động", r.summary.active],
+    ["Số học sinh đã làm bài kiểm tra", r.summary.testTakers],
+    ["Điểm trung bình lớp (bài kiểm tra)", r.summary.classAvg ?? ""],
+    ["Số lần tự đánh giá", r.summary.practiceCount],
+    ["Số lần lưu kết quả thí nghiệm", r.summary.labRuns],
+    ...r.distribution.map((b) => [`Số học sinh: ${b.label}`, b.count]),
+  ].forEach(([k, v]) => s0.addRow({ k, v }));
+  styleSheet(s0);
+
+  const s1 = wb.addWorksheet("HOC_SINH");
+  s1.columns = [
+    { header: "STT", key: "stt", width: 6 },
+    { header: "Mã học sinh", key: "code", width: 16 },
+    { header: "Họ và tên", key: "name", width: 28 },
+    { header: "Số bài kiểm tra", key: "tests", width: 14 },
+    { header: "Điểm TB", key: "avg", width: 10 },
+    { header: "Điểm bài đầu kỳ", key: "first", width: 14 },
+    { header: "Điểm bài cuối kỳ", key: "last", width: 14 },
+    { header: "Lần tự đánh giá", key: "practice", width: 14 },
+    { header: "Điểm TB tự đánh giá", key: "pavg", width: 16 },
+    { header: "Thí nghiệm đã lưu", key: "labs", width: 14 },
+    { header: "Cần chú ý", key: "flag", width: 22 },
+  ];
+  r.students.forEach((s, i) =>
+    s1.addRow({ stt: i + 1, code: s.studentCode ?? "", name: s.fullName, tests: s.tests, avg: s.avg, first: s.first, last: s.last, practice: s.practice, pavg: s.practiceAvg, labs: s.labRuns, flag: SUPPORT_LABEL[s.flag] }),
+  );
+  ["avg", "first", "last", "pavg"].forEach((k) => (s1.getColumn(k).numFmt = "0.00"));
+  styleSheet(s1);
+
+  const s2 = wb.addWorksheet("BAI_KIEM_TRA");
+  s2.columns = [
+    { header: "Bài kiểm tra", key: "t", width: 40 },
+    { header: "Mã bài giao", key: "c", width: 14 },
+    { header: "Số HS đã nộp", key: "n", width: 14 },
+    { header: "Sĩ số", key: "total", width: 8 },
+    { header: "Điểm TB", key: "avg", width: 10 },
+  ];
+  r.perAssignment.forEach((a) => s2.addRow({ t: a.title, c: a.code, n: a.submitted, total: a.total, avg: a.avg }));
+  s2.getColumn("avg").numFmt = "0.00";
+  styleSheet(s2);
+
+  const s3 = wb.addWorksheet("THEO_CHUONG");
+  s3.columns = [{ header: "Nhóm", key: "g", width: 22 }, { header: "Nội dung", key: "l", width: 50 }, { header: "Số ý đúng", key: "c", width: 12 }, { header: "Tổng số ý", key: "t", width: 12 }, { header: "Tỉ lệ đúng (%)", key: "p", width: 14 }];
+  const add = (g: string, items: { label: string; correct: number; total: number }[]) => items.forEach((i) => s3.addRow({ g, l: i.label, c: i.correct, t: i.total, p: pct(i.correct, i.total) }));
+  add("Chương", r.groups.byChapter);
+  add("Mức độ", r.groups.byLevel);
+  add("Dạng câu hỏi", r.groups.byType);
+  add("Bài học", r.groups.byLesson);
+  styleSheet(s3);
+
   return Buffer.from(await wb.xlsx.writeBuffer());
 }

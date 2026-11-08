@@ -10,14 +10,14 @@ export class ReportError extends Error {}
 type Detail = { q: string; s: "correct" | "partial" | "wrong" | "blank"; e: number; m: number; a?: string; c?: string; cu?: number; tu?: number };
 type QMeta = { id: string; content: string; type: QuestionType; level: CognitiveLevel; lessonNumber: number; lessonTitle: string; chapterNumber: number; chapterRoman: string; chapterTitle: string };
 
-async function staffClient() {
+export async function staffClient() {
   const supabase = await createSupabaseServerClient();
   const admin = createSupabaseAdminClient();
   if (!supabase || !admin) throw new ReportError("Hệ thống chưa cấu hình đầy đủ.");
   return { supabase, admin };
 }
 
-async function loadQuestionMeta(ids: string[]): Promise<Map<string, QMeta>> {
+export async function loadQuestionMeta(ids: string[]): Promise<Map<string, QMeta>> {
   const admin = createSupabaseAdminClient();
   const map = new Map<string, QMeta>();
   if (!admin || !ids.length) return map;
