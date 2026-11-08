@@ -7,6 +7,7 @@ import {
   ClipboardCheck,
   ExternalLink,
   FlaskConical,
+  Image as ImageIcon,
   PencilLine,
   Target,
 } from "lucide-react";
@@ -27,6 +28,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LessonMaterialRow, LessonSection } from "@/types/database";
 import type { LessonDetail } from "../repository";
 import { formatChapterLabel } from "../types";
+import { FigureCard } from "../figures/primitives";
+import { figuresForLesson } from "../figures";
 import { youtubeEmbedUrl } from "../video";
 
 const SECTIONS: { value: LessonSection | "results"; label: string; icon: typeof BookOpenText }[] = [
@@ -170,6 +173,7 @@ export function LessonView({
   results: LessonResults | null;
 }) {
   const theme = chapterTheme(lesson.chapter.number);
+  const figures = figuresForLesson(lesson.number);
   const bySection = (s: LessonSection) => lesson.materials.filter((m) => m.section === s);
   const objectives = lesson.objectives.filter((o) => o.kind === "objective");
   const requirements = lesson.objectives.filter((o) => o.kind === "requirement");
@@ -228,6 +232,18 @@ export function LessonView({
               </CardContent>
             </Card>
           </div>
+          {figures.length > 0 && (
+            <section aria-label="Hình ảnh trực quan" className="grid gap-3">
+              <h2 className="flex items-center gap-2 text-base font-semibold"><ImageIcon className="size-4 text-primary" aria-hidden /> Hình ảnh trực quan</h2>
+              <div className="grid gap-4 lg:grid-cols-2">
+                {figures.map((f, i) => (
+                  <div key={f.id} className={figures.length % 2 === 1 && i === figures.length - 1 ? "lg:col-span-2" : undefined}>
+                    <FigureCard title={f.title} caption={f.caption}>{f.render()}</FigureCard>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
           <MaterialList
             items={bySection("knowledge")}
             emptyTitle="Chưa có nội dung lý thuyết"
