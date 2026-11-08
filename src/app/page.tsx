@@ -68,7 +68,7 @@ const ROLES = [
 ];
 
 export default async function HomePage() {
-  const [curriculum, curriculumHoa] = await Promise.all([getCurriculum(), getCurriculum("hoa-hoc")]);
+  const [curriculum, curriculumHoa] = await Promise.all([getCurriculum("vat-ly"), getCurriculum("hoa-hoc")]);
 
   return (
     <div className="min-h-dvh bg-card">
@@ -99,14 +99,14 @@ export default async function HomePage() {
           <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-primary" /> KHTN 9 · Vật lý và Hoá học · Kết nối tri thức
+                <span className="size-1.5 rounded-full bg-primary" /> KHTN 9 · Kết nối tri thức với cuộc sống
               </p>
               <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-balance sm:text-5xl">
                 Học Vật lý, Hoá học 9 bằng <span className="text-primary">thí nghiệm</span>, luyện tập và{" "}
                 <span className="text-rose-600">dữ liệu</span>.
               </h1>
               <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-                PHYSICS AI là nền tảng học tập, thí nghiệm mô phỏng, kiểm tra đánh giá và phân tích quá trình học
+                KHTN 9 là nền tảng học tập, thí nghiệm mô phỏng, kiểm tra đánh giá và phân tích quá trình học
                 tập dành cho học sinh lớp 9 và giáo viên.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -221,7 +221,7 @@ export default async function HomePage() {
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
-          <p>© {new Date().getFullYear()} KHTN 9 – PHYSICS AI</p>
+          <p>© {new Date().getFullYear()} KHTN 9 – Kết nối tri thức</p>
           <p>Nền tảng học tập Vật lý và Hoá học dành cho học sinh lớp 9</p>
         </div>
       </footer>

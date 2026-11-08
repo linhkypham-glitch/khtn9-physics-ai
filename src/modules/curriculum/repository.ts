@@ -2,11 +2,12 @@ import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { LessonMaterialRow, LearningObjectiveRow } from "@/types/database";
-import { SUBJECTS, type SubjectKey } from "./catalog";
+import { SUBJECTS, type SubjectFilter, type SubjectKey } from "./catalog";
 import type { CurriculumChapter, CurriculumResult } from "./types";
 
-function catalogChapters(subject: SubjectKey): CurriculumChapter[] {
-  return SUBJECTS[subject].curriculum.map((c) => ({
+function catalogChapters(subject: SubjectFilter): CurriculumChapter[] {
+  const source = subject === "all" ? (Object.keys(SUBJECTS) as SubjectKey[]).flatMap((k) => SUBJECTS[k].curriculum) : SUBJECTS[subject].curriculum;
+  return source.map((c) => ({
     id: null,
     number: c.number,
     roman: c.roman,
@@ -21,15 +22,15 @@ function catalogChapters(subject: SubjectKey): CurriculumChapter[] {
   }));
 }
 
-/** Lấy mục lục chương trình học (chương + bài) của một môn từ database (mặc định Vật lý). */
-export async function getCurriculum(subject: SubjectKey = "vat-ly"): Promise<CurriculumResult> {
+/** Lấy mục lục chương trình học (chương + bài) của một môn hoặc của tất cả các môn ("all") từ database. Mặc định: tất cả. */
+export async function getCurriculum(subject: SubjectFilter = "all"): Promise<CurriculumResult> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { ok: true, source: "catalog", chapters: catalogChapters(subject) };
 
   const { data, error } = await supabase
     .from("chapters")
     .select("id, number, roman, title, sort_order, textbooks!inner(code), lessons(id, number, title, slug, lesson_type, sort_order)")
-    .eq("textbooks.code", SUBJECTS[subject].textbook.code)
+    .in("textbooks.code", subject === "all" ? (Object.keys(SUBJECTS) as SubjectKey[]).map((k) => SUBJECTS[k].textbook.code) : [SUBJECTS[subject].textbook.code])
     .order("sort_order", { ascending: true })
     .order("sort_order", { referencedTable: "lessons", ascending: true });
 

@@ -15,8 +15,8 @@ export function Logo({ href = "/", className, inverted = false }: { href?: strin
         <Atom className="size-5" aria-hidden />
       </span>
       <span className="flex flex-col leading-tight">
-        <span className={cn("text-[15px] tracking-tight", inverted && "text-white")}>PHYSICS AI</span>
-        <span className={cn("text-[11px] font-medium", inverted ? "text-orange-100" : "text-muted-foreground")}>KHTN 9 – Vật lý · Hoá học</span>
+        <span className={cn("text-[15px] tracking-tight", inverted && "text-white")}>KHTN 9</span>
+        <span className={cn("text-[11px] font-medium", inverted ? "text-orange-100" : "text-muted-foreground")}>Kết nối tri thức</span>
       </span>
     </Link>
   );

@@ -184,9 +184,12 @@ export const SUBJECTS: Record<SubjectKey, { label: string; textbook: { code: str
   "hoa-hoc": { label: "Hoá học", textbook: TEXTBOOK_HOA, curriculum: CURRICULUM_HOA },
 };
 
-export function parseSubject(value: string | string[] | undefined): SubjectKey {
+export type SubjectFilter = SubjectKey | "all";
+
+/** Đọc tham số ?mon=: "vat-ly", "hoa-hoc"; mặc định (không có hoặc giá trị khác) là tất cả các môn. */
+export function parseSubject(value: string | string[] | undefined): SubjectFilter {
   const v = Array.isArray(value) ? value[0] : value;
-  return v === "hoa-hoc" ? "hoa-hoc" : "vat-ly";
+  return v === "hoa-hoc" || v === "vat-ly" ? v : "all";
 }
 
 /** Mã sách của một bài học theo số bài (Bài 2 – 17: Vật lý; Bài 18 – 35: Hoá học). */

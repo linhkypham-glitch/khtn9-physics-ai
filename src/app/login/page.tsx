@@ -25,11 +25,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <div className="grid min-h-dvh lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 p-10 text-primary-foreground lg:flex">
         <div className="relative z-10 flex items-center gap-2.5 font-semibold">
-          <span className="text-lg tracking-tight">PHYSICS AI</span>
-          <span className="text-sm font-medium text-orange-50">· KHTN 9 – Vật lý</span>
+          <span className="text-lg tracking-tight">KHTN 9</span>
+          <span className="text-sm font-medium text-orange-50">· Kết nối tri thức</span>
         </div>
         <div className="relative z-10 max-w-md">
-          <h2 className="text-3xl font-bold leading-tight">Học Vật lý bằng thí nghiệm, luyện tập và dữ liệu.</h2>
+          <h2 className="text-3xl font-bold leading-tight">Học Khoa học tự nhiên bằng thí nghiệm, luyện tập và dữ liệu.</h2>
           <ul className="mt-8 space-y-4 text-orange-50">
             <li className="flex gap-3">
               <FlaskConical className="size-5 shrink-0" /> Thí nghiệm mô phỏng tương tác theo từng bài học

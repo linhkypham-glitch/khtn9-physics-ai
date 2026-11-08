@@ -11,9 +11,9 @@ const beVietnam = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: { default: "KHTN 9 – PHYSICS AI", template: "%s · PHYSICS AI" },
+  title: { default: "KHTN 9 – Kết nối tri thức", template: "%s · KHTN 9" },
   description:
-    "Nền tảng học tập, thí nghiệm mô phỏng, luyện tập và đánh giá môn KHTN 9 – phân môn Vật lý.",
+    "Nền tảng học tập, thí nghiệm mô phỏng, luyện tập và đánh giá môn KHTN 9 (Vật lý, Hoá học).",
 };
 
 export const viewport: Viewport = { themeColor: "#ea580c" };

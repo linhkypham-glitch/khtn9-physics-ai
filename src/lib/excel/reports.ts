@@ -23,7 +23,7 @@ function styleSheet(ws: ExcelJS.Worksheet, titleRows = 0) {
 /** Báo cáo một bài giao: 4 sheet BANG_DIEM, CHI_TIET_BAI_LAM, THONG_KE_LOP, PHAN_TICH_HOC_TAP. */
 export async function buildAssignmentWorkbook(r: AssignmentReport): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
-  wb.creator = "KHTN 9 – PHYSICS AI";
+  wb.creator = "KHTN 9";
 
   const s1 = wb.addWorksheet("BANG_DIEM");
   s1.columns = [
@@ -150,7 +150,7 @@ export function buildAssignmentCsv(r: AssignmentReport): string {
 /** Hồ sơ học tập của một học sinh. */
 export async function buildStudentWorkbook(r: StudentReport): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
-  wb.creator = "KHTN 9 – PHYSICS AI";
+  wb.creator = "KHTN 9";
   const info = wb.addWorksheet("HOC_SINH");
   info.columns = [{ header: "Thông tin", key: "k", width: 30 }, { header: "Giá trị", key: "v", width: 70 }];
   [

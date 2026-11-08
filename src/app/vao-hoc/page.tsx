@@ -37,7 +37,7 @@ export default async function EnterPage() {
         <Card className="gap-6 overflow-hidden border-orange-100 pt-0 shadow-xl shadow-orange-500/10">
           <div className="bg-gradient-to-r from-orange-500 to-amber-400 px-6 py-5 text-white">
             <p className="text-sm font-medium text-orange-50">Xin chào! 👋</p>
-            <p className="text-xl font-bold">Vào học Vật lý 9</p>
+            <p className="text-xl font-bold">Vào học KHTN 9</p>
             <div className="mt-3 flex gap-4 text-xs text-orange-50">
               <span className="flex items-center gap-1"><BookOpen className="size-3.5" /> Bài học</span>
               <span className="flex items-center gap-1"><FlaskConical className="size-3.5" /> Thí nghiệm</span>

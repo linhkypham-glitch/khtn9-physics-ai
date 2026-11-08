@@ -100,7 +100,7 @@ function styleHeader(ws: ExcelJS.Worksheet) {
 /** File mẫu để giáo viên điền danh sách lớp. */
 export async function buildRosterTemplate(): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
-  wb.creator = "KHTN 9 – PHYSICS AI";
+  wb.creator = "KHTN 9";
   const ws = wb.addWorksheet("DANH_SACH_LOP");
   ws.columns = [
     { header: "STT", key: "stt", width: 6 },

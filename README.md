@@ -1,4 +1,4 @@
-# KHTN 9 – PHYSICS AI
+# KHTN 9 – Kết nối tri thức (Vật lý, Hoá học)
 
 Nền tảng học tập, thí nghiệm mô phỏng, luyện tập, kiểm tra đánh giá và phân tích quá trình học tập cho
 **KHTN 9 – phân môn Vật lý** (bộ sách *Kết nối tri thức với cuộc sống*). Phục vụ 3 vai trò: Quản trị viên, Giáo viên, Học sinh.

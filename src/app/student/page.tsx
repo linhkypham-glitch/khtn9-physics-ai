@@ -44,7 +44,7 @@ export default async function StudentDashboard() {
     <>
       <WelcomeBanner
         title={`Xin chào, ${user.fullName}! 👋`}
-        subtitle={myClass ? `Lớp ${myClass.name}${myClass.academicYear ? ` · Năm học ${myClass.academicYear}` : ""} · Hôm nay mình cùng khám phá Vật lý nhé!` : "Chúc em học tốt môn Vật lý!"}
+        subtitle={myClass ? `Lớp ${myClass.name}${myClass.academicYear ? ` · Năm học ${myClass.academicYear}` : ""} · Hôm nay mình cùng khám phá khoa học nhé!` : "Chúc em học tốt môn KHTN!"}
       />
 
       <div className="grid gap-4 sm:grid-cols-3">

@@ -24,7 +24,7 @@ export default async function TeacherDashboard() {
 
   return (
     <>
-      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan lớp học và chương trình giảng dạy KHTN 9 – Vật lý.">
+      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan lớp học và chương trình giảng dạy KHTN 9 (Vật lý, Hoá học).">
         <Button asChild size="sm" className="bg-white text-orange-700 hover:bg-orange-50"><Link href="/teacher/classes">Quản lý lớp</Link></Button>
         <Button asChild size="sm" variant="outline" className="border-white/50 bg-white/10 text-white hover:bg-white/20 hover:text-white"><Link href="/teacher/questions">Ngân hàng câu hỏi</Link></Button>
       </WelcomeBanner>

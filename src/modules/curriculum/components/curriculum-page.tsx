@@ -4,14 +4,14 @@ import { BookX } from "lucide-react";
 import { EmptyState, ErrorState } from "@/components/dashboard/states";
 import { PageHeader } from "@/components/layout/page-header";
 import { cn } from "@/lib/utils";
-import { SUBJECTS, type SubjectKey } from "../catalog";
+import { SUBJECTS, type SubjectFilter, type SubjectKey } from "../catalog";
 import { getCurriculum } from "../repository";
 import { countLessons } from "../types";
 import { CurriculumList } from "./curriculum-list";
 import { CurriculumSourceNotice } from "./curriculum-source-notice";
 
 /** Trang danh sách chương trình học dùng chung cho các vai trò. */
-export async function CurriculumPage({ basePath, title = "Chương trình học", subject = "vat-ly" }: { basePath: string; title?: string; subject?: SubjectKey }) {
+export async function CurriculumPage({ basePath, title = "Chương trình học", subject = "all" }: { basePath: string; title?: string; subject?: SubjectFilter }) {
   const result = await getCurriculum(subject);
 
   if (!result.ok) {
@@ -31,12 +31,12 @@ export async function CurriculumPage({ basePath, title = "Chương trình học"
     <>
       <PageHeader
         title={title}
-        description={`KHTN 9 – ${SUBJECTS[subject].label} · ${result.chapters.length} chương · ${lessonCount} bài học${range}`}
+        description={`KHTN 9 – ${subject === "all" ? "Vật lý và Hoá học" : SUBJECTS[subject].label} · ${result.chapters.length} chương · ${lessonCount} bài học${range}`}
       />
       <nav aria-label="Chọn môn" className="mb-4 flex flex-wrap gap-1.5">
-        {(Object.keys(SUBJECTS) as SubjectKey[]).map((k) => (
-          <Link key={k} href={k === "vat-ly" ? basePath : `${basePath}?mon=${k}`} className={cn("rounded-full border px-4 py-1.5 text-sm font-medium", k === subject ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted")}>
-            {SUBJECTS[k].label}
+        {(["all", ...Object.keys(SUBJECTS)] as (SubjectKey | "all")[]).map((k) => (
+          <Link key={k} href={k === "all" ? basePath : `${basePath}?mon=${k}`} className={cn("rounded-full border px-4 py-1.5 text-sm font-medium", k === subject ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted")}>
+            {k === "all" ? "Tất cả" : SUBJECTS[k].label}
           </Link>
         ))}
       </nav>

@@ -37,7 +37,7 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan toàn hệ thống KHTN 9 – PHYSICS AI.">
+      <WelcomeBanner title={`Xin chào, ${user.fullName}!`} subtitle="Tổng quan toàn hệ thống KHTN 9.">
         <Button asChild size="sm" className="bg-white text-orange-700 hover:bg-orange-50"><Link href="/teacher/classes">Quản lý lớp</Link></Button>
         <Button asChild size="sm" variant="outline" className="border-white/50 bg-white/10 text-white hover:bg-white/20 hover:text-white"><Link href="/admin/settings">Cấu hình hệ thống</Link></Button>
       </WelcomeBanner>
